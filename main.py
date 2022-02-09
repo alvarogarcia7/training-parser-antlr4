@@ -1,6 +1,6 @@
-from dist.training_mineLexer import training_mineLexer
-from dist.training_mineParser import training_mineParser
-from dist.training_mineVisitor import *
+from dist.trainingLexer import trainingLexer
+from dist.trainingParser import trainingParser
+from dist.trainingVisitor import *
 
 from antlr4 import FileStream, CommonTokenStream
 
@@ -11,14 +11,14 @@ def main() -> None:
     print('input_stream:')
     print(input_stream)
     print()
-    lexer = training_mineLexer(input_stream)
+    lexer = trainingLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
     token_stream.fill()
     print('tokens:')
     for tk in token_stream.tokens:
         print(tk)
     print()
-    parser = training_mineParser(token_stream)
+    parser = trainingParser(token_stream)
     tree = parser.sessions()
 
     print('tree:')

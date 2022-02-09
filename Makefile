@@ -25,6 +25,6 @@ requirements: requirements.txt
 pre-commit: test
 .PHONY: pre-commit
 
-compile-grammar: training_mine.g4
+compile-grammar: training.g4
 	rm -rf dist/
-	time java -jar antlr*.jar -Dlanguage=Python3 training_mine.g4 -listener -visitor -o dist
+	time java -jar antlr*.jar -Dlanguage=Python3 training.g4 -listener -visitor -o dist
