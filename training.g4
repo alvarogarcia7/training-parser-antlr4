@@ -2,11 +2,10 @@
 
 grammar training;
 
-prog:   stat+ ;
+prog:   (stat NEWLINE)+ ;
 
-stat:   expr NEWLINE          # returnValue
-    |   ID '=' expr NEWLINE   # assignment
-    |   NEWLINE               # ignore
+stat:   expr        # returnValue
+    |   ID '=' expr   # assignment
     ;
 
 expr:  <assoc=right> expr '^' expr # expo
