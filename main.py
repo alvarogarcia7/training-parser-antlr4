@@ -1,8 +1,10 @@
-from dist.trainingLexer import trainingLexer
-from dist.trainingParser import trainingParser
-from dist.trainingVisitor import *
+from pprint import pprint
 
 from antlr4 import FileStream, CommonTokenStream
+
+from dist.trainingLexer import trainingLexer
+from dist.trainingParser import trainingParser
+from parser import Formatter
 
 
 def main() -> None:
@@ -21,9 +23,11 @@ def main() -> None:
     parser = trainingParser(token_stream)
     tree = parser.sessions()
 
-    print('tree:')
-    lisp_tree_str = tree.toStringTree(recog=parser)
-    print(lisp_tree_str)
+    print('visitor:')
+    formatter = Formatter()
+    formatter.visit(tree)
+    result = formatter.result
+    pprint(result)
     print()
 
 
