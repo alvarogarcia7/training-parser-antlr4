@@ -16,9 +16,13 @@ session:
 
 
 mini_reps:
-    INT (',' mini_reps)*
-    | INT 'x' INT mini_reps*
-    | INT 'x' INT 'x' INT 'k' mini_reps*;
+    single_reps mini_reps*
+    | group_of_reps mini_reps*
+    | whole_reps mini_reps*;
+
+whole_reps: INT 'x' INT 'x' INT 'k';
+group_of_reps: INT 'x' INT;
+single_reps: INT (',' mini_reps)*;
 
 fragment DIGIT: '0'..'9' ;
 
