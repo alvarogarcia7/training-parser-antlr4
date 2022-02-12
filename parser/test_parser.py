@@ -18,5 +18,10 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Squat', [self.serie(10, 5) for _ in range(5)])])
 
+    def test_visit_sessions_multi_series_format(self) -> None:
+        result = Parser.from_string('Overhead press 5x6x40k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Overhead press', [self.serie(40, 6) for _ in range(5)])])
+
     def serie(self, amount: int, repetition: int) -> Repetition:
         return {'repetitions': repetition, 'weight': {'amount': amount, 'unit': Units.KILOGRAM}}
