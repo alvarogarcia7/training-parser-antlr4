@@ -33,18 +33,19 @@ class Formatter(trainingVisitor):
         number_of_repetitions: int = int(chunks[1])
         weight: int = int(chunks[2].removesuffix('k'))
         for i in range(int(number_of_series) + 1):
-            self.current['repetitions'].append(
-                {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
+            self.append_serie(number_of_repetitions, weight)
 
     def visitGroup_of_reps(self, ctx: trainingParser.Group_of_repsContext) -> Any:
         super().visitGroup_of_reps(ctx)
         number_of_series, number_of_repetitions = ctx.getText().split('x')
         for i in range(int(number_of_series) + 1):
-            self.current['repetitions'].append({'repetitions': number_of_repetitions,
-                                                'weight': {'amount': self.current['weight'], 'unit': Units.KILOGRAM}})
+            self.append_serie(number_of_repetitions, self.current['weight'])
 
     def visitRep1(self, ctx: trainingParser.Rep1Context) -> Any:
         super().visitRep1(ctx)
         number_of_repetitions = int(ctx.getText())
-        self.current['repetitions'].append({'repetitions': number_of_repetitions,
-                                            'weight': {'amount': self.current['weight'], 'unit': Units.KILOGRAM}})
+        self.append_serie(number_of_repetitions, self.current['weight'])
+
+    def append_serie(self, number_of_repetitions: int, weight: int) -> None:
+        self.current['repetitions'].append(
+            {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
