@@ -7,7 +7,15 @@ repos:
     -   id: trailing-whitespace
 -   repo: local
     hooks:
+    -   id: mypy-typecheck
+        name: MyPy Typecheck
+        entry: make typecheck
+        language: system
+    -   id: compile-grammar
+        name: ANTLRv4 Compile Grammar
+        entry: make compile-grammar
+        language: system
     -   id: unittest
-        name: unittest
-        entry: make pre-commit
+        name: Python Unit Tests
+        entry: make test-python
         language: system
