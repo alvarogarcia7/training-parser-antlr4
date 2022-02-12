@@ -23,7 +23,7 @@ test: typecheck compile-grammar test-python
 .PHONY: test
 
 test-python: check-virtual-env
-	pytest tests
+	pytest parser tests
 .PHONY: test-python
 
 typecheck:
