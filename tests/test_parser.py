@@ -20,12 +20,9 @@ class TestParser(unittest.TestCase):
         parser = trainingParser(token_stream)
         tree = parser.sessions()
 
-        print('visitor:')
         formatter = Formatter()
         formatter.visit(tree)
         result = formatter.result
-        pprint(result)
-        print()
         self.assertListEqual(result,
                              [Exercise('Bench press', [self.serie(10, 4)] + [self.serie(10, 5) for _ in range(5)])])
         self.assertEqual(True, True)
