@@ -26,7 +26,7 @@ class Formatter(trainingVisitor):
 
     def visitWeight(self, ctx: trainingParser.WeightContext) -> Any:
         super().visitWeight(ctx)
-        self.current['weight'] = ctx.getText().removesuffix('k')
+        self.current['weight'] = int(ctx.getText().removesuffix('k'))
 
     def visitWhole_reps(self, ctx: trainingParser.Whole_repsContext) -> Any:
         super().visitWhole_reps(ctx)
@@ -35,13 +35,15 @@ class Formatter(trainingVisitor):
         number_of_series: int = int(chunks[0])
         number_of_repetitions: int = int(chunks[1])
         weight: int = int(chunks[2].removesuffix('k'))
-        for i in range(int(number_of_series) + 1):
+        for i in range(int(number_of_series)):
             self.append_serie(number_of_repetitions, weight)
 
     def visitGroup_of_reps(self, ctx: trainingParser.Group_of_repsContext) -> Any:
         super().visitGroup_of_reps(ctx)
-        number_of_series, number_of_repetitions = ctx.getText().split('x')
-        for i in range(int(number_of_series) + 1):
+        chunks: list[str] = ctx.getText().split('x')
+        number_of_series: int = int(chunks[0])
+        number_of_repetitions: int = int(chunks[1])
+        for i in range(number_of_series):
             self.append_serie(number_of_repetitions, self.current['weight'])
 
     def visitRep1(self, ctx: trainingParser.Rep1Context) -> Any:

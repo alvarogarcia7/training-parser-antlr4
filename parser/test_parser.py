@@ -1,4 +1,5 @@
 import unittest
+from pprint import pprint
 
 from parser import Exercise, Units, Repetition, Parser
 
@@ -11,12 +12,12 @@ class TestParser(unittest.TestCase):
         result = Parser.from_string('Bench press 10k: 4, 4x5\n').parse_sessions()
 
         self.assertListEqual(result,
-                             [Exercise('Bench press', [self.serie(4, 10)] + [self.serie(5, 10) for _ in range(5)])])
+                             [Exercise('Bench press', [self.serie(4, 10)] + [self.serie(5, 10) for _ in range(4)])])
 
     def test_visit_sessions_only_multiple(self) -> None:
-        result = Parser.from_string('Squat 70k: 5x10').parse_sessions()
+        result = Parser.from_string('Squat 70k: 5x10\n').parse_sessions()
 
-        self.assertListEqual(result, [Exercise('Squat', [self.serie(5, 10) for _ in range(5)])])
+        self.assertListEqual(result, [Exercise('Squat', [self.serie(10, 70) for _ in range(5)])])
 
     def test_visit_sessions_multi_series_format(self) -> None:
         result = Parser.from_string('Overhead press 5x6x40k\n').parse_sessions()
@@ -33,5 +34,5 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Row en maquina', [self.serie(i, 41) for i in [15, 8]])])
 
-    def serie(self, repetition: int, amount: int) -> Repetition:
-        return {'repetitions': repetition, 'weight': {'amount': amount, 'unit': Units.KILOGRAM}}
+    def serie(self, repetition: int, weight: int) -> Repetition:
+        return {'repetitions': repetition, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}}

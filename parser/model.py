@@ -20,7 +20,8 @@ class Exercise:
 
     def __eq__(self, o: object) -> bool:
         if isinstance(o, Exercise):
-            return self.name == o.name
+            return self.name == o.name and \
+                   self.repetitions == o.repetitions
 
         return False
 
