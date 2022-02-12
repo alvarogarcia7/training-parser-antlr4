@@ -1,5 +1,4 @@
 import unittest
-from pprint import pprint
 
 from parser import Exercise, Units, Repetition, Parser
 
@@ -11,8 +10,7 @@ class TestParser(unittest.TestCase):
     def test_visit_sessions_mixing_single_and_multiple(self) -> None:
         result = Parser.from_string('Bench press 10k: 4, 4x5\n').parse_sessions()
 
-        self.assertListEqual(result,
-                             [Exercise('Bench press', [self.serie(4, 10)] + [self.serie(5, 10) for _ in range(4)])])
+        self.assertListEqual(result, [(Exercise('Bench press', [self.serie(i, 10) for i in [4] + 4 * [5]]))])
 
     def test_visit_sessions_only_multiple(self) -> None:
         result = Parser.from_string('Squat 70k: 5x10\n').parse_sessions()
