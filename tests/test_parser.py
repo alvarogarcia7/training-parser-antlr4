@@ -5,7 +5,7 @@ from antlr4 import CommonTokenStream, InputStream
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
-from parser import Formatter, Exercise, Units
+from parser import Formatter, Exercise, Units, Repetition
 
 
 class TestParser(unittest.TestCase):
@@ -27,13 +27,8 @@ class TestParser(unittest.TestCase):
         pprint(result)
         print()
         self.assertListEqual(result,
-                         [Exercise('Bench press',
-                                  [
-                                      {'repetitions': 4, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                      {'repetitions': 5, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                      {'repetitions': 5, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                      {'repetitions': 5, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                      {'repetitions': 5, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                      {'repetitions': 5, 'weight': {'amount': 10, 'unit': Units.KILOGRAM}},
-                                  ])])
+                             [Exercise('Bench press', [self.serie(10, 4)] + [self.serie(10, 5) for _ in range(5)])])
         self.assertEqual(True, True)
+
+    def serie(self, amount: int, repetition: int) -> Repetition:
+        return {'repetitions': repetition, 'weight': {'amount': amount, 'unit': Units.KILOGRAM}}
