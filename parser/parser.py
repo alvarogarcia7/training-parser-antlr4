@@ -1,5 +1,8 @@
 from typing import Any
 
+from antlr4 import CommonTokenStream, InputStream
+
+from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from dist.trainingVisitor import trainingVisitor
 from . import Exercise, Units
@@ -49,3 +52,24 @@ class Formatter(trainingVisitor):
     def append_serie(self, number_of_repetitions: int, weight: int) -> None:
         self.current['repetitions'].append(
             {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
+
+
+class Parser:
+    def __init__(self, input_stream: InputStream):
+        self.input_stream = input_stream
+
+    @classmethod
+    def from_string(cls, string: str) -> Any:
+        input_stream = InputStream(string)
+        return Parser(input_stream)
+
+    def parse_sessions(self) -> list[Exercise]:
+        lexer = trainingLexer(self.input_stream)
+        token_stream = CommonTokenStream(lexer)
+        token_stream.fill()
+        parser = trainingParser(token_stream)
+        tree = parser.sessions()
+
+        formatter = Formatter()
+        formatter.visit(tree)
+        return formatter.result
