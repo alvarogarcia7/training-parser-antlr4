@@ -6,7 +6,7 @@ from antlr4 import InputStream, CommonTokenStream
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
-from parser import Formatter, Exercise
+from parser import Formatter, Exercise, StandardizeName
 
 
 def parse(param: str) -> Any:
@@ -74,8 +74,9 @@ def main() -> None:
         jobs2.append(job_tmp)
 
     file_path_: str = 'output.csv'
+    renamer = StandardizeName()
     with open(file_path_, mode='w+', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+        csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
         for job2 in jobs2:
             row: Exercise
             for row in job2['parsed']:
@@ -87,11 +88,11 @@ def main() -> None:
                     assert False
                 csv_writer.writerow([
                     job2['date'],
-                    row.name,
+                    renamer.run(row.name),
                     None,
                     "{:d}".format(len(repetitions_)),
                     "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                    "{:d}".format(int(row.sets_[0]['weight']['amount']))
+                    "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
                 ]
                 )
 
