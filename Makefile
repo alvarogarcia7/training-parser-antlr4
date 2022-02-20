@@ -40,3 +40,19 @@ compile-grammar: training.g4
 	rm -rf dist/
 	java -jar antlr*.jar -Dlanguage=Python3 training.g4 -listener -visitor -o dist
 	@echo "Grammar generated"
+
+run: check-virtual-env
+	$(MAKE) run-splitter
+	$(MAKE) to-clipboard
+.PHONY: run
+
+run-splitter:
+	python3 splitter.py
+	head output.csv
+.PHONY: run-splitter
+
+to-clipboard:
+	@cat output.csv | pbcopy
+	@echo "The output is in your copy-paste clipboard."
+	@echo "Paste it in column Strength!F"
+.PHONY: to-clipboard
