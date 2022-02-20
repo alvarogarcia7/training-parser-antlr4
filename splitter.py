@@ -38,9 +38,6 @@ def main() -> None:
         'date': str,
         'payload': str,
         'notes': str})
-    # Repetition = TypedDict('Repetition', {
-    #     'repetitions': int,
-    #     'weight': Weight})
 
     jobs: list[Parsing1] = []
     current = []
@@ -72,11 +69,9 @@ def main() -> None:
         'notes': str})
     jobs2: list[Parsing2] = []
     for job in jobs:
-        # pprint(job['payload'])
         job_tmp: Any = copy.deepcopy(job)
         job_tmp['parsed'] = parse(job['payload'])
         jobs2.append(job_tmp)
-        # job.pop('payload')
 
     file_path_: str = 'output.csv'
     with open(file_path_, mode='w+', newline='') as csvfile:
