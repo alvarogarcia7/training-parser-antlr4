@@ -6,6 +6,7 @@ Synonym = TypedDict('Synonym', {
     'synonyms': list[str],
 })
 
+
 class StandardizeName:
     def __init__(self) -> None:
         self._synonyms: list[Synonym] = [
