@@ -69,3 +69,8 @@ coverage.xml
 # Examples for ANTLRv4
 antlr4_Python3_examples-master/
 antlr4_Python3_examples-master.zip
+
+# Data
+data.txt
+data/
+output.csv

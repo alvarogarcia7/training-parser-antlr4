@@ -1,7 +1,7 @@
 from typing import TypedDict
 
 Weight = TypedDict('Weight', {
-    'amount': int,
+    'amount': float,
     'unit': str})
 Repetition = TypedDict('Repetition', {
     'repetitions': int,
@@ -30,5 +30,5 @@ class Exercise:
         for repetition in self.repetitions:
             weight = repetition['weight']
             repetitions_repr.append(f"{repetition['repetitions']} - {weight['amount']}{weight['unit']}")
-        return "".join([self.name, ": ",
-                        ', '.join(repetitions_repr)])
+        repetitions = ', '.join(repetitions_repr)
+        return f"{self.name}: {repetitions}"

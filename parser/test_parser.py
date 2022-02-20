@@ -32,5 +32,5 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Row en maquina', [self.serie(i, 41) for i in [15, 8]])])
 
-    def serie(self, repetition: int, weight: int) -> Repetition:
+    def serie(self, repetition: int, weight: float) -> Repetition:
         return {'repetitions': repetition, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}}

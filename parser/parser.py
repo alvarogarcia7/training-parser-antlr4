@@ -14,8 +14,8 @@ class Formatter(trainingVisitor):
         self.result: list[Exercise] = []
         self.current: dict[str, Any] = {}
 
-    def visitSession(self, ctx: trainingParser.SessionContext) -> Any:
-        self.current = {'name': "", 'repetitions': [], 'weight': 0}
+    def visitSession(self, ctx: trainingParser.SessionContext) -> None:
+        self.current = {'name': "", 'repetitions': [], 'weight': float(0)}
         super().visitSession(ctx)
         self.result.append(Exercise(
             self.current['name'], self.current['repetitions']))
@@ -26,7 +26,7 @@ class Formatter(trainingVisitor):
 
     def visitWeight(self, ctx: trainingParser.WeightContext) -> Any:
         super().visitWeight(ctx)
-        self.current['weight'] = int(ctx.getText().removesuffix('k'))
+        self.current['weight'] = float(ctx.getText().removesuffix('k'))
 
     def visitWhole_reps(self, ctx: trainingParser.Whole_repsContext) -> Any:
         super().visitWhole_reps(ctx)
@@ -34,7 +34,7 @@ class Formatter(trainingVisitor):
         chunks = text.split('x')
         number_of_series: int = int(chunks[0])
         number_of_repetitions: int = int(chunks[1])
-        weight: int = int(chunks[2].removesuffix('k'))
+        weight: float = float(chunks[2].removesuffix('k'))
         for i in range(int(number_of_series)):
             self.append_serie(number_of_repetitions, weight)
 
@@ -46,12 +46,12 @@ class Formatter(trainingVisitor):
         for i in range(number_of_series):
             self.append_serie(number_of_repetitions, self.current['weight'])
 
-    def visitRep1(self, ctx: trainingParser.Rep1Context) -> Any:
-        super().visitRep1(ctx)
+    def visitSingle_reps(self, ctx:trainingParser.Single_repsContext) -> Any:
+        super().visitSingle_reps(ctx)
         number_of_repetitions = int(ctx.getText())
         self.append_serie(number_of_repetitions, self.current['weight'])
 
-    def append_serie(self, number_of_repetitions: int, weight: int) -> None:
+    def append_serie(self, number_of_repetitions: int, weight: float) -> None:
         self.current['repetitions'].append(
             {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
 
