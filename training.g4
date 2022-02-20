@@ -1,6 +1,6 @@
 grammar training;
 
-sessions: session+;
+workout: exercise+;
 
 EXERCISE_NAME: 'Deadlift' | 'Squat' | 'Bench press'| 'Overhead press' | NAME;
 exercise_name : EXERCISE_NAME;
@@ -8,19 +8,19 @@ NAME: ALPHABET+ (WS+ ALPHABET+)*;
 
 weight: INT ('.' INT)? 'k'? ;
 INT: DIGIT+;
-session:
+exercise:
     exercise_name weight NEWLINE
-    | exercise_name weight ':'? mini_reps NEWLINE
-    | exercise_name ':'? mini_reps NEWLINE;
+    | exercise_name weight ':'? set_ NEWLINE
+    | exercise_name ':'? set_ NEWLINE;
 
-mini_reps:
-    single_reps (','? mini_reps)*
-    | group_of_reps (','? mini_reps)*
-    | whole_reps (','? mini_reps)*;
+set_:
+    single_rep_set (','? set_)*
+    | group_of_rep_set (','? set_)*
+    | whole_set_ (','? set_)*;
 
-whole_reps: INT 'x' INT 'x' weight;
-group_of_reps: INT 'x' INT;
-single_reps: INT;
+whole_set_: INT 'x' INT 'x' weight;
+group_of_rep_set: INT 'x' INT;
+single_rep_set: INT;
 
 fragment DIGIT: '0'..'9' ;
 

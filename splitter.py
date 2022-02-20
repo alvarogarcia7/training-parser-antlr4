@@ -15,7 +15,7 @@ def parse(param: str) -> Any:
     token_stream = CommonTokenStream(lexer)
     token_stream.fill()
     parser = trainingParser(token_stream)
-    tree = parser.sessions()
+    tree = parser.workout()
 
     formatter = Formatter()
     formatter.visit(tree)
@@ -84,8 +84,8 @@ def main() -> None:
         for job2 in jobs2:
             row: Exercise
             for row in job2['parsed']:
-                repetitions_ = [i['repetitions'] for i in row.repetitions]
-                weights = [i['weight']['amount'] for i in row.repetitions]
+                repetitions_ = [i['repetitions'] for i in row.sets_]
+                weights = [i['weight']['amount'] for i in row.sets_]
                 weights_ = weights[0] == sum(weights) / len(weights)
                 if not weights_:
                     print(f"Failed for {row}")
@@ -96,7 +96,7 @@ def main() -> None:
                     None,
                     "{:d}".format(len(repetitions_)),
                     "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                    "{:d}".format(int(row.repetitions[0]['weight']['amount']))
+                    "{:d}".format(int(row.sets_[0]['weight']['amount']))
                 ]
                 )
 

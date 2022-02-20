@@ -3,7 +3,7 @@ from typing import TypedDict
 Weight = TypedDict('Weight', {
     'amount': float,
     'unit': str})
-Repetition = TypedDict('Repetition', {
+Set_ = TypedDict('Set_', {
     'repetitions': int,
     'weight': Weight})
 
@@ -14,20 +14,20 @@ class Units:
 
 class Exercise:
 
-    def __init__(self, name: str, repetitions: list[Repetition]) -> None:
+    def __init__(self, name: str, sets_: list[Set_]) -> None:
         self.name = name
-        self.repetitions = repetitions
+        self.sets_ = sets_
 
     def __eq__(self, o: object) -> bool:
         if isinstance(o, Exercise):
             return self.name == o.name and \
-                   self.repetitions == o.repetitions
+                   self.sets_ == o.sets_
 
         return False
 
     def __repr__(self) -> str:
         repetitions_repr = []
-        for repetition in self.repetitions:
+        for repetition in self.sets_:
             weight = repetition['weight']
             repetitions_repr.append(f"{repetition['repetitions']} - {weight['amount']}{weight['unit']}")
         repetitions = ', '.join(repetitions_repr)

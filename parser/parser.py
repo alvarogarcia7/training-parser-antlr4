@@ -14,9 +14,9 @@ class Formatter(trainingVisitor):
         self.result: list[Exercise] = []
         self.current: dict[str, Any] = {}
 
-    def visitSession(self, ctx: trainingParser.SessionContext) -> None:
+    def visitExercise(self, ctx:trainingParser.ExerciseContext) -> None:
         self.current = {'name': "", 'repetitions': [], 'weight': float(0)}
-        super().visitSession(ctx)
+        super().visitExercise(ctx)
         self.result.append(Exercise(
             self.current['name'], self.current['repetitions']))
 
@@ -28,8 +28,8 @@ class Formatter(trainingVisitor):
         super().visitWeight(ctx)
         self.current['weight'] = float(ctx.getText().removesuffix('k'))
 
-    def visitWhole_reps(self, ctx: trainingParser.Whole_repsContext) -> Any:
-        super().visitWhole_reps(ctx)
+    def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
+        super().visitWhole_set_(ctx)
         text: str = ctx.getText()
         chunks = text.split('x')
         number_of_series: int = int(chunks[0])
@@ -38,16 +38,16 @@ class Formatter(trainingVisitor):
         for i in range(int(number_of_series)):
             self.append_serie(number_of_repetitions, weight)
 
-    def visitGroup_of_reps(self, ctx: trainingParser.Group_of_repsContext) -> Any:
-        super().visitGroup_of_reps(ctx)
+    def visitGroup_of_rep_set(self, ctx:trainingParser.Group_of_rep_setContext) -> Any:
+        super().visitGroup_of_rep_set(ctx)
         chunks: list[str] = ctx.getText().split('x')
         number_of_series: int = int(chunks[0])
         number_of_repetitions: int = int(chunks[1])
         for i in range(number_of_series):
             self.append_serie(number_of_repetitions, self.current['weight'])
 
-    def visitSingle_reps(self, ctx:trainingParser.Single_repsContext) -> Any:
-        super().visitSingle_reps(ctx)
+    def visitSingle_rep_set(self, ctx:trainingParser.Single_rep_setContext) -> Any:
+        super().visitSingle_rep_set(ctx)
         number_of_repetitions = int(ctx.getText())
         self.append_serie(number_of_repetitions, self.current['weight'])
 
@@ -70,7 +70,7 @@ class Parser:
         token_stream = CommonTokenStream(lexer)
         token_stream.fill()
         parser = trainingParser(token_stream)
-        tree = parser.sessions()
+        tree = parser.workout()
 
         formatter = Formatter()
         formatter.visit(tree)
