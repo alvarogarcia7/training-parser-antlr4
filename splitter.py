@@ -27,7 +27,16 @@ class Splitter:
         exercises = self._rename_exercises(exercises)
         self._write_output(exercises, 'output.csv')
 
-    def _parse(self, param: str) -> Any:
+    def _parse_exercises(self, jobs: list[Parsing1]) -> list[Parsing2]:
+        jobs2: list[Parsing2] = []
+        for job in jobs:
+            job_tmp: Any = copy.deepcopy(job)
+            job_tmp['parsed'] = self._parse(job['payload'])
+            jobs2.append(job_tmp)
+        return jobs2
+
+    @staticmethod
+    def _parse(param: str) -> Any:
         input_stream = InputStream(param)
         lexer = trainingLexer(input_stream)
         token_stream = CommonTokenStream(lexer)
@@ -40,7 +49,8 @@ class Splitter:
         result = formatter.result
         return result
 
-    def _write_output(self, exercises: list[Parsing2], file_path_: str) -> None:
+    @staticmethod
+    def _write_output(exercises: list[Parsing2], file_path_: str) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
             for job2 in exercises:
@@ -61,14 +71,6 @@ class Splitter:
                         "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
                     ]
                     )
-
-    def _parse_exercises(self, jobs: list[Parsing1]) -> list[Parsing2]:
-        jobs2: list[Parsing2] = []
-        for job in jobs:
-            job_tmp: Any = copy.deepcopy(job)
-            job_tmp['parsed'] = self._parse(job['payload'])
-            jobs2.append(job_tmp)
-        return jobs2
 
     @staticmethod
     def _group_exercises(lines: list[str]) -> list[Parsing1]:
@@ -97,7 +99,8 @@ class Splitter:
             current.append(lines[idx])
         return jobs
 
-    def _read_all_lines(self, file_name: str) -> list[str]:
+    @staticmethod
+    def _read_all_lines(file_name: str) -> list[str]:
         lines: list[str] = []
         file_path: TextIO
         with open(file_name, 'r') as file_path:
@@ -108,7 +111,8 @@ class Splitter:
                 lines.append(line.rstrip())
         return lines
 
-    def _rename_exercises(self, parsing2s: list[Parsing2]) -> list[Parsing2]:
+    @staticmethod
+    def _rename_exercises(parsing2s: list[Parsing2]) -> list[Parsing2]:
         renamer = StandardizeName()
         for parsing2 in parsing2s:
             for exercise in parsing2['parsed']:
