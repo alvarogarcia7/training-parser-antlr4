@@ -55,22 +55,23 @@ class Splitter:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
             for job2 in exercises:
                 row: Exercise
-                for row in job2['parsed']:
-                    repetitions_ = [i['repetitions'] for i in row.sets_]
-                    weights = [i['weight']['amount'] for i in row.sets_]
-                    weights_ = weights[0] == sum(weights) / len(weights)
-                    if not weights_:
-                        print(f"Failed for {row}")
-                        assert False
-                    csv_writer.writerow([
-                        job2['date'],
-                        row.name,
-                        None,
-                        "{:d}".format(len(repetitions_)),
-                        "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                        "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
-                    ]
-                    )
+                for row_group in job2['parsed']:
+                    for row in row_group.flatten():
+                        repetitions_ = [i['repetitions'] for i in row.sets_]
+                        weights = [i['weight']['amount'] for i in row.sets_]
+                        weights_ = weights[0] == sum(weights) / len(weights)
+                        if not weights_:
+                            print(f"Failed for {row}")
+                            assert False
+                        csv_writer.writerow([
+                            job2['date'],
+                            row.name,
+                            None,
+                            "{:d}".format(len(repetitions_)),
+                            "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
+                            "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
+                        ]
+                        )
 
     @staticmethod
     def _group_exercises(lines: list[str]) -> list[Parsing1]:

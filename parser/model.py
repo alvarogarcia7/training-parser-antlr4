@@ -1,4 +1,7 @@
-from typing import TypedDict
+import copy
+from itertools import groupby
+from operator import itemgetter
+from typing import TypedDict, Any
 
 Weight = TypedDict('Weight', {
     'amount': float,
@@ -32,3 +35,11 @@ class Exercise:
             repetitions_repr.append(f"{repetition['repetitions']} - {weight['amount']}{weight['unit']}")
         repetitions = ', '.join(repetitions_repr)
         return f"{self.name}: {repetitions}"
+
+    def flatten(self) -> list[Any]:
+        result = []
+        for group in groupby(self.sets_, lambda x:(x['weight'], x['repetitions'])):
+            c = copy.deepcopy(self)
+            c.sets_ = list(group[1])
+            result.append(c)
+        return result
