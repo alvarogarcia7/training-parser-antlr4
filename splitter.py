@@ -24,15 +24,7 @@ class Splitter:
         return result
 
     def main(self) -> None:
-        file_name = 'data.txt'
-        lines: list[str] = []
-        file_path: TextIO
-        with open(file_name, 'r') as file_path:
-            while True:
-                line = file_path.readline()
-                if not line:
-                    break
-                lines.append(line.rstrip())
+        lines = self._read_all_lines('data.txt')
 
         Parsing1 = TypedDict('Parsing1', {
             'date': str,
@@ -95,6 +87,17 @@ class Splitter:
                         "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
                     ]
                     )
+
+    def _read_all_lines(self, file_name: str) -> list[str]:
+        lines: list[str] = []
+        file_path: TextIO
+        with open(file_name, 'r') as file_path:
+            while True:
+                line = file_path.readline()
+                if not line:
+                    break
+                lines.append(line.rstrip())
+        return lines
 
 
 if __name__ == "__main__":
