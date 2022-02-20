@@ -8,8 +8,25 @@ from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from parser import Formatter, Exercise, StandardizeName
 
+Parsing1 = TypedDict('Parsing1', {
+    'date': str,
+    'payload': str,
+    'notes': str})
+
+Parsing2 = TypedDict('Parsing2', {
+    'date': str,
+    'parsed': list[Exercise],
+    'notes': str})
+
 
 class Splitter:
+    def main(self) -> None:
+        lines = self._read_all_lines('data.txt')
+        raw_exercises = self._group_exercises(lines)
+        exercises = self._parse_exercises(raw_exercises)
+        exercises = self._rename_exercises(exercises)
+        self._write_output(exercises, 'output.csv')
+
     def _parse(self, param: str) -> Any:
         input_stream = InputStream(param)
         lexer = trainingLexer(input_stream)
@@ -23,14 +40,38 @@ class Splitter:
         result = formatter.result
         return result
 
-    def main(self) -> None:
-        lines = self._read_all_lines('data.txt')
+    def _write_output(self, exercises: list[Parsing2], file_path_: str) -> None:
+        with open(file_path_, mode='w+', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
+            for job2 in exercises:
+                row: Exercise
+                for row in job2['parsed']:
+                    repetitions_ = [i['repetitions'] for i in row.sets_]
+                    weights = [i['weight']['amount'] for i in row.sets_]
+                    weights_ = weights[0] == sum(weights) / len(weights)
+                    if not weights_:
+                        print(f"Failed for {row}")
+                        assert False
+                    csv_writer.writerow([
+                        job2['date'],
+                        row.name,
+                        None,
+                        "{:d}".format(len(repetitions_)),
+                        "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
+                        "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
+                    ]
+                    )
 
-        Parsing1 = TypedDict('Parsing1', {
-            'date': str,
-            'payload': str,
-            'notes': str})
+    def _parse_exercises(self, jobs: list[Parsing1]) -> list[Parsing2]:
+        jobs2: list[Parsing2] = []
+        for job in jobs:
+            job_tmp: Any = copy.deepcopy(job)
+            job_tmp['parsed'] = self._parse(job['payload'])
+            jobs2.append(job_tmp)
+        return jobs2
 
+    @staticmethod
+    def _group_exercises(lines: list[str]) -> list[Parsing1]:
         jobs: list[Parsing1] = []
         current = []
         notes: list[str] = []
@@ -54,39 +95,7 @@ class Splitter:
                 date = lines[idx]
                 continue
             current.append(lines[idx])
-
-        Parsing2 = TypedDict('Parsing2', {
-            'date': str,
-            'parsed': list[Exercise],
-            'notes': str})
-        jobs2: list[Parsing2] = []
-        for job in jobs:
-            job_tmp: Any = copy.deepcopy(job)
-            job_tmp['parsed'] = self._parse(job['payload'])
-            jobs2.append(job_tmp)
-
-        file_path_: str = 'output.csv'
-        renamer = StandardizeName()
-        with open(file_path_, mode='w+', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
-            for job2 in jobs2:
-                row: Exercise
-                for row in job2['parsed']:
-                    repetitions_ = [i['repetitions'] for i in row.sets_]
-                    weights = [i['weight']['amount'] for i in row.sets_]
-                    weights_ = weights[0] == sum(weights) / len(weights)
-                    if not weights_:
-                        print(f"Failed for {row}")
-                        assert False
-                    csv_writer.writerow([
-                        job2['date'],
-                        renamer.run(row.name),
-                        None,
-                        "{:d}".format(len(repetitions_)),
-                        "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                        "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
-                    ]
-                    )
+        return jobs
 
     def _read_all_lines(self, file_name: str) -> list[str]:
         lines: list[str] = []
@@ -98,6 +107,13 @@ class Splitter:
                     break
                 lines.append(line.rstrip())
         return lines
+
+    def _rename_exercises(self, parsing2s: list[Parsing2]) -> list[Parsing2]:
+        renamer = StandardizeName()
+        for parsing2 in parsing2s:
+            for exercise in parsing2['parsed']:
+                exercise.name = renamer.run(exercise.name)
+        return parsing2s
 
 
 if __name__ == "__main__":
