@@ -48,6 +48,11 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Bench', [self.serie(1, 60)] + [self.serie(2, 40)])])
 
+    def test_visit_sessions_support_mixed_formats__singles_then_multi_series(self) -> None:
+        result = Parser.from_string('Bench 60k: 2,3, 1x1x60k 1x2x40k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench', [self.serie(i, 60) for i in [2, 3]] + [self.serie(1, 60)] + [self.serie(2, 40)])])
+
     def test_visit_sessions_can_parse_accents(self) -> None:
         result = Parser.from_string('Row en máquina 41k: 1\n').parse_sessions()
 
