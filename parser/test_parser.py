@@ -43,5 +43,10 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Row en maquina', [self.serie(i, 41) for i in [15, 8]])])
 
+    def test_visit_sessions_can_parse_accents(self) -> None:
+        result = Parser.from_string('Row en máquina 41k: 1\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Row en máquina', [self.serie(1, 41)])])
+
     def serie(self, repetition: int, weight: float) -> Repetition:
         return {'repetitions': repetition, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}}
