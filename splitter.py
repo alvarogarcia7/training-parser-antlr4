@@ -10,7 +10,7 @@ from parser import Formatter, Exercise, StandardizeName
 
 
 class Splitter:
-    def parse(self, param: str) -> Any:
+    def _parse(self, param: str) -> Any:
         input_stream = InputStream(param)
         lexer = trainingLexer(input_stream)
         token_stream = CommonTokenStream(lexer)
@@ -70,7 +70,7 @@ class Splitter:
         jobs2: list[Parsing2] = []
         for job in jobs:
             job_tmp: Any = copy.deepcopy(job)
-            job_tmp['parsed'] = self.parse(job['payload'])
+            job_tmp['parsed'] = self._parse(job['payload'])
             jobs2.append(job_tmp)
 
         file_path_: str = 'output.csv'
