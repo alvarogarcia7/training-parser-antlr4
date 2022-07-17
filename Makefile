@@ -47,8 +47,11 @@ run: check-virtual-env
 .PHONY: run
 
 run-splitter:
+	# paste data into data.txt
+	# If data is coming from todoist, it is compacted into a single line, separated by ' - ' symbols. Split again using:
+	# %s/ - /\r/g
 	python3 splitter.py
-	head output.csv
+	cat output.csv | pbcopy
 .PHONY: run-splitter
 
 to-clipboard:
