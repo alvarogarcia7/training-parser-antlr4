@@ -1,6 +1,6 @@
 import copy
 import csv
-from typing import Any, TextIO, TypedDict
+from typing import Any, TextIO, TypedDict, List
 
 from antlr4 import InputStream, CommonTokenStream
 
@@ -66,7 +66,6 @@ class Splitter:
                         csv_writer.writerow([
                             job2['date'],
                             row.name,
-                            None,
                             "{:d}".format(len(repetitions_)),
                             "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
                             "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
@@ -76,18 +75,12 @@ class Splitter:
     @staticmethod
     def _group_exercises(lines: list[str]) -> list[Parsing1]:
         jobs: list[Parsing1] = []
-        current = []
+        current: list[Any] = []
         notes: list[str] = []
         date: Any = None
         for idx in range(len(lines)):
             if lines[idx] == '':
-                current.append("")
-                assert date is not None
-                job: Parsing1 = {'date': date,
-                                 'payload': "\n".join(current.copy()),
-                                 'notes': "\n".join(notes.copy())
-                                 }
-                jobs.append(job)
+                jobs.append(Splitter.build_job(current, date, notes))
                 current = []
                 date = None
                 continue
@@ -98,7 +91,18 @@ class Splitter:
                 date = lines[idx]
                 continue
             current.append(lines[idx])
+
+        jobs.append(Splitter.build_job(current, date, notes))
         return jobs
+
+    @staticmethod
+    def build_job(current: List[Any], date: Any, notes: list[str]) -> Parsing1:
+        current.append("")
+        assert date is not None, f"current={current}, date={date}, notes={notes}"
+        return {'date': date,
+                'payload': "\n".join(current.copy()),
+                'notes': "\n".join(notes.copy())
+                }
 
     @staticmethod
     def _read_all_lines(file_name: str) -> list[str]:
