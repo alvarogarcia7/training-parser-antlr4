@@ -1,6 +1,6 @@
 from typing import Any
 
-from antlr4 import CommonTokenStream, InputStream
+from antlr4 import CommonTokenStream, InputStream, ErrorNode
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
@@ -55,6 +55,10 @@ class Formatter(trainingVisitor):
         self.current['repetitions'].append(
             {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
 
+    def visitErrorNode(self, node: ErrorNode) -> None:
+        print(type(node))
+        super().visitErrorNode(node)
+        raise ValueError(node)
 
 class Parser:
     def __init__(self, input_stream: InputStream):

@@ -67,5 +67,11 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Row en máquina', [self.serie(1, 41)])])
 
+    def test_raise_error_on_wrong_input(self) -> None:
+        valid_input = 'Deadlift: 1x20x20k'
+        wrong_input = valid_input.removesuffix("k") + "l"
+        with self.assertRaises(ValueError):
+            Parser.from_string(wrong_input + "\n").parse_sessions()
+
     def serie(self, repetition: int, weight: float) -> Set_:
         return {'repetitions': repetition, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}}
