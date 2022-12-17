@@ -46,6 +46,9 @@ run: check-virtual-env
 	$(MAKE) to-clipboard
 .PHONY: run
 
+archive-data:
+	cp data.txt data/$(shell date "+%Y-%m-%d").txt
+
 run-splitter:
 	# paste data into data.txt
 	# If data is coming from todoist, it is compacted into a single line, separated by ' - ' symbols. Split again using:
@@ -57,5 +60,6 @@ run-splitter:
 to-clipboard:
 	@cat output.csv | pbcopy
 	@echo "The output is in your copy-paste clipboard."
+	@echo "Open https://docs.google.com/spreadsheets/d/1F1a95XZRIBLXj3TqpEZoIEB1-n17O8KYs65kf0s-HqA/edit#gid=1836141740"
 	@echo "Paste it in column Strength!F"
 .PHONY: to-clipboard
