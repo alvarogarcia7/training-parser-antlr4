@@ -48,6 +48,7 @@ run: check-virtual-env
 
 archive-data:
 	cp data.txt data/$(shell date "+%Y-%m-%d").txt
+	$(MAKE) -C ./data save
 
 run-splitter:
 	# paste data into data.txt
