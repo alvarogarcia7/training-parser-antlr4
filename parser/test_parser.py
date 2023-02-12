@@ -62,8 +62,7 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Bench press',
                                                [self.serie(50, 10) for _ in range(3)]
-                                               + [self.serie(12, 60) for _ in range(1)]
-                                               + [self.serie(11, 60) for _ in range(1)]
+                                               + [self.serie(i, 60) for i in [12, 11]]
                                                )])
 
     def test_visit_sessions_support_mixing_straight_series_and_variable_repetitions_with_kg(self) -> None:
@@ -71,8 +70,7 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Bench press',
                                                [self.serie(50, 10) for _ in range(3)]
-                                               + [self.serie(12, 60) for _ in range(1)]
-                                               + [self.serie(11, 60) for _ in range(1)]
+                                               + [self.serie(i, 60) for i in [12, 11]]
                                                )])
 
     def test_visit_sessions_support_mixed_formats__singles_then_multi_series(self) -> None:
