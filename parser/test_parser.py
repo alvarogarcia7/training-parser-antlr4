@@ -57,6 +57,24 @@ class TestParser(unittest.TestCase):
                                                + [self.serie(6, 10) for _ in range(3)]
                                                )])
 
+    def test_visit_sessions_support_mixing_straight_series_and_variable_repetitions(self) -> None:
+        result = Parser.from_string('Bench press 3x50x10k 60: 12,11\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench press',
+                                               [self.serie(50, 10) for _ in range(3)]
+                                               + [self.serie(12, 60) for _ in range(1)]
+                                               + [self.serie(11, 60) for _ in range(1)]
+                                               )])
+
+    def test_visit_sessions_support_mixing_straight_series_and_variable_repetitions_with_kg(self) -> None:
+        result = Parser.from_string('Bench press 3x50x10k 60k: 12,11\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench press',
+                                               [self.serie(50, 10) for _ in range(3)]
+                                               + [self.serie(12, 60) for _ in range(1)]
+                                               + [self.serie(11, 60) for _ in range(1)]
+                                               )])
+
     def test_visit_sessions_support_mixed_formats__singles_then_multi_series(self) -> None:
         result = Parser.from_string('Bench 60k: 2,3, 1x1x60k 1x2x40k\n').parse_sessions()
 
