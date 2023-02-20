@@ -46,7 +46,7 @@ run: check-virtual-env
 	$(MAKE) to-clipboard
 .PHONY: run
 
-archive-data:
+archive-data: run-splitter
 	cp data.txt data/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) -C ./data save
 
