@@ -12,25 +12,25 @@ check-virtual-env:
 install: requirements install-githooks install-antlr
 .PHONY: install
 
-install-githooks:
+install-githooks: check-virtual-env
 	pre-commit install
 .PHONY: install-githooks
 
 install-antlr:
 	curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
 
-test: typecheck compile-grammar test-python
+test: check-virtual-env typecheck compile-grammar test-python
 .PHONY: test
 
 test-python: check-virtual-env
 	pytest parser tests
 .PHONY: test-python
 
-typecheck:
+typecheck: check-virtual-env
 	mypy . --exclude venv
 .PHONY: typecheck
 
-requirements: requirements.txt
+requirements: check-virtual-env requirements.txt
 	pip3 install -r requirements.txt
 
 pre-commit: test
@@ -50,7 +50,7 @@ archive-data:
 	cp data.txt data/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) -C ./data save
 
-run-splitter:
+run-splitter: check-virtual-env
 	# paste data into data.txt
 	# If data is coming from todoist, it is compacted into a single line, separated by ' - ' symbols. Split again using:
 	# %s/ - /\r/g
