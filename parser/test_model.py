@@ -14,6 +14,10 @@ class TestModel(unittest.TestCase):
             Exercise('b', [{'repetitions': repetition, 'weight': {'amount': amount, 'unit': Units.KILOGRAM}}]),
             Exercise('b', []))
 
+
+
+
+
     def test_exercise_group_by_weight(self) -> None:
         unflattened = Exercise('name',
                                [{'repetitions': 50, 'weight': {'amount': 20.0, 'unit': 'kg'}},
