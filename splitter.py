@@ -59,10 +59,7 @@ class Splitter:
                     for row in row_group.flatten():
                         repetitions_ = [i['repetitions'] for i in row.sets_]
                         weights = [i['weight']['amount'] for i in row.sets_]
-                        weights_ = weights[0] == sum(weights) / len(weights)
-                        if not weights_:
-                            print(f"Failed for {row}")
-                            assert False
+                        assert weights[0] == (sum(weights) / len(weights)), f"Failed condition: Not all weights are equal in '{row}'"
                         csv_writer.writerow([
                             job2['date'],
                             row.name,
