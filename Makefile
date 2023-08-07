@@ -59,6 +59,11 @@ run-splitter: check-virtual-env
 	cat output.csv | pbcopy
 .PHONY: run-splitter
 
+verify-splitter: check-virtual-env
+	@python3 splitter.py
+	@echo "Data is correct"
+.PHONY: verify-splitter
+
 to-clipboard:
 	@cat output.csv | pbcopy
 	@echo "The output is in your copy-paste clipboard."
