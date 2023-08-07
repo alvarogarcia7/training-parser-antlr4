@@ -47,7 +47,8 @@ run: check-virtual-env
 .PHONY: run
 
 archive-data: run-splitter
-	cp data.txt data/$(shell date "+%Y-%m-%d").txt
+	touch data/$(shell date "+%Y-%m-%d").txt
+	cat data.txt >> data/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) -C ./data save
 
 run-splitter: check-virtual-env
