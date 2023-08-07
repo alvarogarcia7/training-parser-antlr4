@@ -11,7 +11,7 @@ class StandardizeName:
     def __init__(self) -> None:
         self._synonyms: list[Synonym] = [
             {'clean': 'overhead press', 'synonyms': ['oh', 'overhead', 'op']},
-            {'clean': 'bench press', 'synonyms': ['bench']},
+            {'clean': 'bench press', 'synonyms': ['bench', 'bp']},
             {'clean': 'lateral pull-down', 'synonyms': ['lat pull-down', 'lat pull down']}
         ]
         self._check_synonym_configuration(self._synonyms)
