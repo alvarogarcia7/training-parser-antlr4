@@ -51,6 +51,17 @@ class Formatter(trainingVisitor):
         number_of_repetitions = int(ctx.getText())
         self.append_serie(number_of_repetitions, self.current['weight'])
 
+    def visitSingle_rep_set2(self, ctx:trainingParser.Single_rep_set2Context) -> Any:
+        self.current['visitSingle_rep_set2'] = True
+        super().visitSingle_rep_set2(ctx)
+        self.current['repet'] = int(ctx.getText())
+
+    def visitSet_(self, ctx:trainingParser.Set_Context) -> Any:
+        super().visitSet_(ctx)
+        if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
+            self.append_serie(self.current['repet'], self.current['weight'])
+            del self.current['visitSingle_rep_set2']
+
     def append_serie(self, number_of_repetitions: int, weight: float) -> None:
         self.current['repetitions'].append(
             {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
