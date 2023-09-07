@@ -50,6 +50,7 @@ archive-data: run-splitter
 	touch data/$(shell date "+%Y-%m-%d").txt
 	cat data.txt >> data/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) -C ./data save
+	echo "" > data.txt
 
 run-splitter: check-virtual-env
 	# paste data into data.txt
