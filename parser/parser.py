@@ -56,8 +56,8 @@ class Formatter(trainingVisitor):
         super().visitSingle_rep_set2(ctx)
         self.current['repet'] = int(ctx.getText())
 
-    def visitSet_(self, ctx:trainingParser.Set_Context) -> Any:
-        super().visitSet_(ctx)
+    def visitFixed_repetitions(self, ctx: trainingParser.Fixed_repetitionsContext) -> Any:
+        super().visitFixed_repetitions(ctx)
         if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
             self.append_serie(self.current['repet'], self.current['weight'])
             del self.current['visitSingle_rep_set2']
