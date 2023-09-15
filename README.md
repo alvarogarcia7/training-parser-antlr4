@@ -8,3 +8,11 @@ To do:
 
 To Do:
   * Explain which syntax is available, in words / description. Do not only rely on grammar + tests to document it.
+
+2023-09-15 18:12:20 AGB
+
+To Do:
+  * Cleanup the grammar, moving the "moving parts" to a builder.
+    * use a 'addSeriesIfComplete'.
+
+* The series is like a ternary operator, in which you can vary any of the three components: weight, repetitions, amount of series
