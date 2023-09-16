@@ -28,6 +28,12 @@ class Formatter(trainingVisitor):
         super().visitWeight(ctx)
         self.current['weight'] = float(ctx.getText().removesuffix('k'))
 
+    def visitSet_(self, ctx: trainingParser.Set_Context) -> None:
+        super().visitSet_(ctx)
+        if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
+            self.append_serie(self.current['repet'], self.current['weight'])
+            del self.current['visitSingle_rep_set2']
+
     def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
         super().visitWhole_set_(ctx)
         text: str = ctx.getText()
@@ -55,12 +61,6 @@ class Formatter(trainingVisitor):
         self.current['visitSingle_rep_set2'] = True
         super().visitSingle_rep_set2(ctx)
         self.current['repet'] = int(ctx.getText())
-
-    def visitFixed_repetitions(self, ctx: trainingParser.Fixed_repetitionsContext) -> Any:
-        super().visitFixed_repetitions(ctx)
-        if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
-            self.append_serie(self.current['repet'], self.current['weight'])
-            del self.current['visitSingle_rep_set2']
 
     def append_serie(self, number_of_repetitions: int, weight: float) -> None:
         self.current['repetitions'].append(
