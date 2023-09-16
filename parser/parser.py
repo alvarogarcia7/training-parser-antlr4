@@ -28,11 +28,16 @@ class Formatter(trainingVisitor):
         self.current['weights'].append(float(ctx.getText().removesuffix('k')))
 
     def visitSet_(self, ctx: trainingParser.Set_Context) -> None:
+        self._append_for_single_rep_set2()
         super().visitSet_(ctx)
+        self._append_for_single_rep_set2()
+
+    def _append_for_single_rep_set2(self) -> None:
         if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
             for weight in self.current['weights']:
                 self.append_serie(self.current['repet'], weight)
             del self.current['visitSingle_rep_set2']
+            self.current['weights'] = []
 
     def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
         super().visitWhole_set_(ctx)

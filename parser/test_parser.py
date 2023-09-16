@@ -99,6 +99,20 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(result, [Exercise('Squat', [self.serie(15, weight) for weight in [40, 50]])])
 
+    def test_parse_format_of_multiple_fixed_repetitions_mixed_with_multi_series_format(self) -> None:
+        result = Parser.from_string('Squat: 15xx40,50 1x1x10k\n').parse_sessions()
+
+        self.assertListEqual(result,
+                             [Exercise('Squat', [self.serie(15, weight) for weight in [40, 50]] + [self.serie(1, 10)])])
+
+    def test_parse_format_of_multiple_fixed_repetitions_mixed_with_fixed_weight(self) -> None:
+        result = Parser.from_string('Squat: 15xx40,50 60k: 12,11\n').parse_sessions()
+
+        self.assertListEqual(result,
+                             [Exercise('Squat',
+                                       [self.serie(15, weight) for weight in [40, 50]] +
+                                       [self.serie(i, 60) for i in [12, 11]])])
+
     def test_raise_error_on_wrong_input(self) -> None:
         valid_input = 'Deadlift: 1x20x20k'
         wrong_input = valid_input.removesuffix("k") + "l"
