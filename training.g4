@@ -15,7 +15,7 @@ set_:
     | group_of_rep_set (','? set_)*
     | whole_set_ (','? set_)*
     | weight ':'? (','? set_)+
-    | single_rep_set2 'xx' weight (',' weight)*
+    | single_rep_set2 'xx' weight (',' weight)* (','? set_)*
     ;
 
 whole_set_: INT 'x' INT 'x' weight;
