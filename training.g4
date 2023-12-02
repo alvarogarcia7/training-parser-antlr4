@@ -16,7 +16,7 @@ set_:
     | group_of_rep_set #group_of_rep_set_
     | whole_set_ #whole_set__
     | weight ':'? set_? #weight_
-    | INT 'xx' weight (',' weight)* #single_rep_set2_
+    | INT 'xx' weight (',' weight)* #fixed_reps_multiple_weight
     ;
 
 whole_set_: INT 'x' INT 'x' weight;

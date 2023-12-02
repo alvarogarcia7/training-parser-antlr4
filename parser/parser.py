@@ -53,8 +53,9 @@ class Formatter(trainingVisitor):
         number_of_repetitions = int(ctx.getText())
         for weight in self.current['weights']:
             self.append_serie(number_of_repetitions, weight)
-    def visitSingle_rep_set2_(self, ctx: trainingParser.Single_rep_set2_Context) -> Any:
-        super().visitSingle_rep_set2_(ctx)
+
+    def visitFixed_reps_multiple_weight(self, ctx: trainingParser.Fixed_reps_multiple_weightContext) -> Any:
+        super().visitFixed_reps_multiple_weight(ctx)
         repetitions = int(ctx.getChild(0).getText())
         for weight in self.current['weights']:
             self.append_serie(repetitions, weight)
