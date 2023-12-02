@@ -14,12 +14,11 @@ set_:
     set_ ','? set_ #multiple_set_
     | INT #single_rep_set_
     | group_of_rep_set #group_of_rep_set_
-    | whole_set_ #whole_set__
+    | INT 'x' INT 'x' weight #whole_set_
     | weight ':'? set_? #weight_
     | INT 'xx' weight (',' weight)* #fixed_reps_multiple_weight
     ;
 
-whole_set_: INT 'x' INT 'x' weight;
 group_of_rep_set: INT 'x' INT;
 
 fragment DIGIT: '0'..'9' ;
