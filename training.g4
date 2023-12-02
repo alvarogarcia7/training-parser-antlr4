@@ -11,17 +11,16 @@ INT: DIGIT+;
 exercise: exercise_name ':'? set_ NEWLINE;
 
 set_:
-    single_rep_set (','? set_)*
-    | group_of_rep_set (','? set_)*
-    | whole_set_ (','? set_)*
-    | weight ':'? (','? set_)+
-    | single_rep_set2 'xx' weight (',' weight)* (','? set_)*
+    set_ ','? set_ #multiple_set_
+    | INT #single_rep_set_
+    | group_of_rep_set #group_of_rep_set_
+    | whole_set_ #whole_set__
+    | weight ':'? set_? #weight_
+    | INT 'xx' weight (',' weight)* #single_rep_set2_
     ;
 
 whole_set_: INT 'x' INT 'x' weight;
 group_of_rep_set: INT 'x' INT;
-single_rep_set: INT;
-single_rep_set2: INT;
 
 fragment DIGIT: '0'..'9' ;
 

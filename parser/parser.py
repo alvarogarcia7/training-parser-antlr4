@@ -15,7 +15,7 @@ class Formatter(trainingVisitor):
         self.current: dict[str, Any] = {}
 
     def visitExercise(self, ctx: trainingParser.ExerciseContext) -> None:
-        self.current = {'name': "", 'repetitions': [], 'weights': []}
+        self.current = {'name': "", 'repetitions': [], 'weights': [], 'repetitions_val': []}
         super().visitExercise(ctx)
         self.result.append(Exercise(self.current['name'], self.current['repetitions']))
 
@@ -26,18 +26,6 @@ class Formatter(trainingVisitor):
     def visitWeight(self, ctx: trainingParser.WeightContext) -> Any:
         super().visitWeight(ctx)
         self.current['weights'].append(float(ctx.getText().removesuffix('k')))
-
-    def visitSet_(self, ctx: trainingParser.Set_Context) -> None:
-        self._append_for_single_rep_set2()
-        super().visitSet_(ctx)
-        self._append_for_single_rep_set2()
-
-    def _append_for_single_rep_set2(self) -> None:
-        if 'visitSingle_rep_set2' in self.current and self.current['visitSingle_rep_set2']:
-            for weight in self.current['weights']:
-                self.append_serie(self.current['repet'], weight)
-            del self.current['visitSingle_rep_set2']
-            self.current['weights'] = []
 
     def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
         super().visitWhole_set_(ctx)
@@ -50,7 +38,7 @@ class Formatter(trainingVisitor):
             self.append_serie(number_of_repetitions, weight)
         self.current['weights'] = []
 
-    def visitGroup_of_rep_set(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
+    def visitGroup_of_rep_set_(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
         super().visitGroup_of_rep_set(ctx)
         chunks: list[str] = ctx.getText().split('x')
         number_of_series: int = int(chunks[0])
@@ -60,16 +48,19 @@ class Formatter(trainingVisitor):
         for i in range(number_of_series):
             self.append_serie(number_of_repetitions, weights_[0])
 
-    def visitSingle_rep_set(self, ctx: trainingParser.Single_rep_setContext) -> Any:
-        super().visitSingle_rep_set(ctx)
+    def visitSingle_rep_set_(self, ctx: trainingParser.Single_rep_set_Context) -> Any:
+        super().visitSingle_rep_set_(ctx)
         number_of_repetitions = int(ctx.getText())
         for weight in self.current['weights']:
             self.append_serie(number_of_repetitions, weight)
-
-    def visitSingle_rep_set2(self, ctx: trainingParser.Single_rep_set2Context) -> Any:
-        self.current['visitSingle_rep_set2'] = True
-        super().visitSingle_rep_set2(ctx)
-        self.current['repet'] = int(ctx.getText())
+    def visitSingle_rep_set2_(self, ctx: trainingParser.Single_rep_set2_Context) -> Any:
+        super().visitSingle_rep_set2_(ctx)
+        repetitions = int(ctx.getChild(0).getText())
+        for weight in self.current['weights']:
+            self.append_serie(repetitions, weight)
+        # del self.current['visitSingle_rep_set2']
+        self.current['weights'] = []
+        self.current['repetitions_val'] = []
 
     def append_serie(self, number_of_repetitions: int, weight: float) -> None:
         self.current['repetitions'].append(

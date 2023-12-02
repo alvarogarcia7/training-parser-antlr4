@@ -108,10 +108,9 @@ class TestParser(unittest.TestCase):
     def test_parse_format_of_multiple_fixed_repetitions_mixed_with_fixed_weight(self) -> None:
         result = Parser.from_string('Squat: 15xx40,50 60k: 12,11\n').parse_sessions()
 
-        self.assertListEqual(result,
-                             [Exercise('Squat',
-                                       [self.serie(15, weight) for weight in [40, 50]] +
-                                       [self.serie(i, 60) for i in [12, 11]])])
+        expected_series = [self.serie(15, weight) for weight in [40, 50]] + [self.serie(i, 60) for i in [12, 11]]
+        assert len(expected_series) == 4
+        self.assertListEqual(result, [Exercise('Squat', expected_series)])
 
     def test_raise_error_on_wrong_input(self) -> None:
         valid_input = 'Deadlift: 1x20x20k'
