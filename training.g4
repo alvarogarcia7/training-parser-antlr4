@@ -8,7 +8,7 @@ NAME: ALPHABET+ (WS+ ALPHABET+)*;
 
 weight: INT ('.' INT)? 'k'? ;
 INT: DIGIT+;
-exercise: exercise_name ':'? set_ NEWLINE;
+exercise: exercise_name ':'? set_ NEWLINE*;
 
 set_:
     set_ ','? set_ #multiple_set_
