@@ -38,7 +38,7 @@ class Formatter(trainingVisitor):
             self.append_serie(number_of_repetitions, weight)
         self.current['weights'] = []
 
-    def visitGroup_of_rep_set_(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
+    def visitGroup_of_rep_set(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
         super().visitGroup_of_rep_set(ctx)
         chunks: list[str] = ctx.getText().split('x')
         number_of_series: int = int(chunks[0])
