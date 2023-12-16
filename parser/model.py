@@ -29,10 +29,12 @@ class Exercise:
         return False
 
     def __repr__(self) -> str:
+        flattened = self.flatten()
         repetitions_repr = []
-        for repetition in self.sets_:
+        for exercise in flattened:
+            repetition = exercise.sets_[0]
             weight = repetition['weight']
-            repetitions_repr.append(f"{repetition['repetitions']} - {weight['amount']}{weight['unit']}")
+            repetitions_repr.append(f"{len(exercise.sets_)}x{repetition['repetitions']}@{weight['amount']}{weight['unit']}")
         repetitions = ', '.join(repetitions_repr)
         return f"{self.name}: {repetitions}"
 

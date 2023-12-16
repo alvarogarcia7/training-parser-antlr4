@@ -62,3 +62,16 @@ class TestModel(unittest.TestCase):
         ]
 
         self.assertEqual(unflattened.flatten(), flattened_list_by_weight)
+
+    def test_flattened_exercise__should_repr_for_object(self) -> None:
+        exercise = Exercise('name',
+                            [{'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                             {'repetitions': 6, 'weight': {'amount': 40.0, 'unit': 'kg'}}])
+        self.assertEqual(exercise.__repr__(), "name: 1x10@40.0kg, 1x6@40.0kg")
+
+    def test_unflattened_exercise__should_repr_for_object(self) -> None:
+        exercise = Exercise('name',
+                            [{'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                             {'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                             {'repetitions': 6, 'weight': {'amount': 40.0, 'unit': 'kg'}}])
+        self.assertEqual("name: 2x10@40.0kg, 1x6@40.0kg", exercise.__repr__())
