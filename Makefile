@@ -42,28 +42,37 @@ compile-grammar: training.g4
 	@echo "Grammar generated"
 
 run: check-virtual-env
-	$(MAKE) run-splitter
+	FILE=data.txt $(MAKE) output.csv
 	$(MAKE) to-clipboard
 .PHONY: run
 
-archive-data: run-splitter
+archive-data:
 	touch data/$(shell date "+%Y-%m-%d").txt
 	cat data.txt >> data/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) -C ./data save
 	echo "" > data.txt
 
-run-splitter: check-virtual-env
+
+run-splitter: output.csv
+
+output.csv: check-virtual-env data.txt
+	FILE=data.txt $(MAKE) output.csv-generic
+
+output.csv-generic: check-virtual-env
 	# paste data into data.txt
 	# If data is coming from todoist, it is compacted into a single line, separated by ' - ' symbols. Split again using:
 	# %s/ - /\r/g
-	python3 splitter.py
-	cat output.csv | pbcopy
-.PHONY: run-splitter
+	python3 splitter.py $(FILE) --output output.csv
+.PHONY: output.csv-generic
 
 verify-splitter: check-virtual-env
-	@python3 splitter.py
-	@echo "Data is correct"
+	FILE=data.txt $(MAKE) verify-splitter-generic
 .PHONY: verify-splitter
+
+verify-splitter-generic: check-virtual-env
+	python3 splitter.py $(FILE)
+	@echo "Data is correct"
+.PHONY: verify-splitter-generic
 
 to-clipboard:
 	@cat output.csv | pbcopy

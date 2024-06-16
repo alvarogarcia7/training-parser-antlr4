@@ -75,3 +75,25 @@ class TestModel(unittest.TestCase):
                              {'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
                              {'repetitions': 6, 'weight': {'amount': 40.0, 'unit': 'kg'}}])
         self.assertEqual("name: 2x10@40.0kg, 1x6@40.0kg", exercise.__repr__())
+
+    def test_exercise_sum_total_volume(self) -> None:
+        exercise = Exercise('name',
+                            [
+                                {'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                                {'repetitions': 6, 'weight': {'amount': 40.0, 'unit': 'kg'}}
+                            ])
+
+        self.assertEqual(exercise.total_volume(), 10 * 40 + 6 * 40)
+
+    def test_cannot_build_an_exercise_mixing_units(self) -> None:
+        captured_exception = None
+        try:
+            Exercise('name',
+                     [
+                         {'repetitions': 10, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                         {'repetitions': 6, 'weight': {'amount': 40.0, 'unit': 'lb'}}
+                     ])
+        except AssertionError as e:
+            captured_exception = e
+
+        self.assertNotEqual(captured_exception, None)

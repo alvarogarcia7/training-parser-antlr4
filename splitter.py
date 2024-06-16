@@ -1,5 +1,7 @@
 import copy
 import csv
+import pprint
+import sys
 from typing import Any, TextIO, TypedDict, List
 
 from antlr4 import InputStream, CommonTokenStream
@@ -20,12 +22,12 @@ Parsing2 = TypedDict('Parsing2', {
 
 
 class Splitter:
-    def main(self) -> None:
-        lines = self._read_all_lines('data.txt')
+    def main(self, file: str) -> list[Parsing2]:
+        lines = self._read_all_lines(file)
         raw_exercises = self._group_exercises(lines)
         exercises = self._parse_exercises(raw_exercises)
         exercises = self._rename_exercises(exercises)
-        self._write_output(exercises, 'output.csv')
+        return exercises
 
     def _parse_exercises(self, jobs: list[Parsing1]) -> list[Parsing2]:
         jobs2: list[Parsing2] = []
@@ -78,6 +80,7 @@ class Splitter:
         for idx in range(len(lines)):
             if lines[idx] == '':
                 jobs.append(Splitter.build_job(current, date, notes))
+                notes = []
                 current = []
                 date = None
                 continue
@@ -121,6 +124,33 @@ class Splitter:
                 exercise.name = renamer.run(exercise.name)
         return parsing2s
 
+    @staticmethod
+    def _debug_print(workouts: list[Parsing2]) -> None:
+
+        print("Debug printing.")
+        total_volume: float = 0
+        for workout in workouts:
+            total_volume_for_workout: float = 0
+            print(f"## {workout['date']}")
+            if workout['notes']:
+                print(f"  Notes: {workout['notes']}")
+
+            for exercise in workout['parsed']:
+                print(f"  {exercise.__repr__()}; subtotal: {exercise.total_volume()}")
+                total_volume_for_workout += exercise.total_volume()
+                total_volume += exercise.total_volume()
+            print(f"  # Stats for this session")
+
+            print(f"  Total number of exercises: {len(workout['parsed'])}")
+            print(f"  Total volume this workout: {total_volume_for_workout}")
+
+        print(f"Total volume for all workouts: {total_volume}")
+
 
 if __name__ == "__main__":
-    Splitter().main()
+    splitter = Splitter()
+    exercises = splitter.main(sys.argv[1])
+    splitter._debug_print(exercises)
+
+    if len(sys.argv) >= 4 and sys.argv[2] == '--output':
+        splitter._write_output(exercises, sys.argv[3])
