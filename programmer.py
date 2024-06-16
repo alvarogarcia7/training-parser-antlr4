@@ -36,13 +36,14 @@ def parse_range_string(val: str) -> range:
     else:
         to = int(to_value)
 
-    from_ = int(from_value)
+    from__zero_based = int(from_value) - 1
+    to_value__zero_based = to - 1
 
-    return range(from_ - 1, to - 1)
+    return range(from__zero_based, to_value__zero_based + 1)  # range (a, b) = [a, b) = [a, b-1]
 
 
 if __name__ == '__main__':
-    programming = compute_programming(60.0, 100.0, 30)
+    programming = compute_programming(60.0, 100.0, 31)
     max_volume = 16000
     volumes = percentage_of_volume(programming, max_volume)
 
@@ -67,15 +68,27 @@ if __name__ == '__main__':
             print("%2d: %5.1f%% - %5.0d kg" % (day_number, programming[i], volumes[i]))
 
     if 'selection' in matched_args:
+
         if '..' in matched_args.selection:
             rangex = parse_range_string(matched_args.selection)
         else:
-            day = int(matched_args.selection)
+            day = int(matched_args.selection) - 1
             rangex = range(day, day + 1)
+
+
+        def is_superset(range1: range, range2: range) -> bool:
+            set1 = set(range1)
+            set2 = set(range2)
+            return set1.issuperset(set2)
+
+
+        if not is_superset(range(0, 30 + 1), rangex):
+            print("Wrong range.")
+            exit(1)
 
         print(f"max volume: {max_volume} kg (100%)")
         print("day: percentage - volume ")
-        total_volume : float = 0
+        total_volume: float = 0
         for i in rangex:
             day_number = i + 1
             total_volume += volumes[i]
