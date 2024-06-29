@@ -49,8 +49,12 @@ run: check-virtual-env
 archive-data:
 	touch data/$(shell date "+%Y-%m-%d").txt
 	cat data.txt >> data/$(shell date "+%Y-%m-%d").txt
+	$(MAKE) save-data
+
+save-data:
 	$(MAKE) -C ./data save
 	echo "" > data.txt
+.PHONY: save-data
 
 
 run-splitter: output.csv
