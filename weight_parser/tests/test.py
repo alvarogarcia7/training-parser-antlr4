@@ -53,13 +53,13 @@ Mi Fit"""
             "bone mass": "3,40"
         }
 
-        self.assertEquals(expected_parsed, parsed)
+        self.assertEqual(expected_parsed, parsed)
 
     def test_multiple_measurements(self) -> None:
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2023")).parse(
             (self.fit + "\n" + self.fit).splitlines())
 
-        self.assertEquals(2, len(parsed))
+        self.assertEqual(2, len(parsed))
 
 
 if __name__ == '__main__':

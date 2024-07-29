@@ -15,7 +15,7 @@ class Driver(unittest.TestCase):
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2022")).parse(file_contents)
 
-        self.assertEquals(13, len(parsed))
+        self.assertEqual(13, len(parsed))
 
         self.print_as_csv("../../data/parsed_2022.csv", parsed)
 
@@ -24,7 +24,7 @@ class Driver(unittest.TestCase):
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2023")).parse(file_contents)
 
-        self.assertEquals(7, len(parsed))
+        self.assertEqual(7, len(parsed))
 
         self.print_as_csv("../../data/parsed_2023.csv", parsed)
 

@@ -1,15 +1,6 @@
-virtualenvironment:
-	python3 -m venv venv
-.PHONY: virtualenvironment
+include makefiles/virtualenvironment.mk
 
-check-virtual-env:
-	@# Test if the variable is set
-	@if [ -z "${VIRTUAL_ENV}" ]; then                                               \
-  		echo "Need to activate virtual environment: source ./venv/bin/activate";    \
-  		false;       																\
-  	fi
-
-install: requirements install-githooks install-antlr
+install: requirements install-githooks
 .PHONY: install
 
 install-githooks: check-virtual-env
@@ -25,13 +16,6 @@ test: check-virtual-env typecheck compile-grammar test-python
 test-python: check-virtual-env
 	pytest parser tests
 .PHONY: test-python
-
-typecheck: check-virtual-env
-	mypy . --exclude venv
-.PHONY: typecheck
-
-requirements: check-virtual-env requirements.txt
-	pip3 install -r requirements.txt
 
 pre-commit: test
 .PHONY: pre-commit
