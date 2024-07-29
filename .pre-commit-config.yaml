@@ -1,21 +1,21 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
--   repo: local
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: local
     hooks:
-    -   id: mypy-typecheck
+      - id: mypy-typecheck
         name: MyPy Typecheck
         entry: make typecheck
         language: system
-    -   id: compile-grammar
+      - id: compile-grammar
         name: ANTLRv4 Compile Grammar
         entry: make compile-grammar
         language: system
-    -   id: unittest
+      - id: unittest
         name: Python Unit Tests
         entry: make test-python
         language: system
