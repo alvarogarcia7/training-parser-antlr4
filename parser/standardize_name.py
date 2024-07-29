@@ -17,6 +17,7 @@ class StandardizeName:
             {'clean': 'barbell row', 'synonyms': ['br']},
             {'clean': 'squat', 'synonyms': ['s']},
             {'clean': 'deadlift', 'synonyms': ['d']},
+            {'clean': 'machine leg extension', 'synonyms': ['mle']},
         ]
         self._check_synonym_configuration(self._synonyms)
 
