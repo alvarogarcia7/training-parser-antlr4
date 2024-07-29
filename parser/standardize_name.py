@@ -12,7 +12,11 @@ class StandardizeName:
         self._synonyms: list[Synonym] = [
             {'clean': 'overhead press', 'synonyms': ['oh', 'overhead', 'op']},
             {'clean': 'bench press', 'synonyms': ['bench', 'bp']},
-            {'clean': 'lateral pull-down', 'synonyms': ['lat pull-down', 'lat pull down']}
+            {'clean': 'lateral pull-down', 'synonyms': ['lat pull-down', 'lat pull down', 'mlpd']},
+            {'clean': 'machine row', 'synonyms': ['mr']},
+            {'clean': 'barbell row', 'synonyms': ['br']},
+            {'clean': 'squat', 'synonyms': ['s']},
+            {'clean': 'deadlift', 'synonyms': ['d']},
         ]
         self._check_synonym_configuration(self._synonyms)
 
