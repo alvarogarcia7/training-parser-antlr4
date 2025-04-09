@@ -10,15 +10,21 @@ Synonym = TypedDict('Synonym', {
 class StandardizeName:
     def __init__(self) -> None:
         self._synonyms: list[Synonym] = [
-            {'clean': 'overhead press', 'synonyms': ['oh', 'overhead', 'op']},
+            {'clean': 'overhead press', 'synonyms': ['oh', 'op']},
+            {'clean': 'inclined bench press', 'synonyms': ['ibp']},
             {'clean': 'bench press', 'synonyms': ['bench', 'bp']},
             {'clean': 'machine lateral pull-down', 'synonyms': ['lat pull-down', 'lat pull down', 'mlpd']},
+            {'clean': 'lateral pull-down', 'synonyms': ['lpd']},
             {'clean': 'machine row', 'synonyms': ['mr']},
+            {'clean': 'low row', 'synonyms': ['lr']},
+            {'clean': 'row', 'synonyms': ['r']},
             {'clean': 'barbell row', 'synonyms': ['br']},
             {'clean': 'squat', 'synonyms': ['s']},
             {'clean': 'deadlift', 'synonyms': ['d']},
-            {'clean': 'machine leg extension', 'synonyms': ['mle']},
-            {'clean': 'machine leg curl', 'synonyms': ['mlc']},
+            {'clean': 'leg extension', 'synonyms': ['le']},
+            {'clean': 'leg curl', 'synonyms': ['lc']},
+            {'clean': 'machine', 'synonyms': ['m']},
+            {'clean': 'smith machine', 'synonyms': ['sm']},
         ]
         self._check_synonym_configuration(self._synonyms)
 
@@ -27,12 +33,18 @@ class StandardizeName:
         return selected_name.title().rstrip()
 
     def _original_or_synonym(self, raw_name: str) -> str:
-        for synonym_group in self._synonyms:
-            for synonym in synonym_group['synonyms']:
-                if raw_name.strip().casefold() == synonym.casefold():
-                    selected_name = synonym_group['clean']
-                    return selected_name
-        return raw_name
+        parts = []
+        for part in raw_name.strip().casefold().split(" "):
+            appended = False
+            for synonym_group in self._synonyms:
+                for synonym in synonym_group['synonyms']:
+                    if part.strip() == synonym.casefold():
+                        parts.append(synonym_group['clean'])
+                        appended = True
+            if not appended:
+                parts.append(part)
+                appended = True
+        return " ".join(parts)
 
     def _check_synonym_configuration(self, synonyms: list[Synonym]) -> None:
         self._check_non_overlapping_synonyms(synonyms)

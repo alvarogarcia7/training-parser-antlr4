@@ -41,3 +41,9 @@ class TestStandardizeName(unittest.TestCase):
                 {'clean': 'a', 'synonyms': ['1']},
                 {'clean': 'a', 'synonyms': ['2']}
             ])
+
+    def test_multiple_synonyms(self) -> None:
+        self.assertEqual(StandardizeName().run('m bp'), 'Machine Bench Press')
+
+    def test_multiple_synonyms_when_there_is_no_synonym_for_the_second_shortcut(self) -> None:
+        self.assertEqual(StandardizeName().run('m anotherthing'), 'Machine Anotherthing')
