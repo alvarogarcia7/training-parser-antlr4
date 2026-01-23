@@ -4,31 +4,26 @@ from antlr4 import FileStream, CommonTokenStream
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
-from parser import Formatter
+from parser import Formatter, Exercise
+
+
+def parse_file(file_path: str) -> list[Exercise]:
+    input_stream = FileStream(file_path)
+    lexer = trainingLexer(input_stream)
+    token_stream = CommonTokenStream(lexer)
+    parser = trainingParser(token_stream)
+    tree = parser.sessions()
+    
+    formatter = Formatter()
+    formatter.visit(tree)
+    result: list[Exercise] = formatter.result
+    return result
 
 
 def main() -> None:
-    file_name = 'training-sample_initial.txt'
-    input_stream = FileStream(file_name)
-    print('input_stream:')
-    print(input_stream)
-    print()
-    lexer = trainingLexer(input_stream)
-    token_stream = CommonTokenStream(lexer)
-    token_stream.fill()
-    print('tokens:')
-    for tk in token_stream.tokens:
-        print(tk)
-    print()
-    parser = trainingParser(token_stream)
-    tree = parser.sessions()
-
-    print('visitor:')
-    formatter = Formatter()
-    formatter.visit(tree)
-    result = formatter.result
+    file_name: str = 'training-sample_initial.txt'
+    result: list[Exercise] = parse_file(file_name)
     pprint(result)
-    print()
 
 
 if __name__ == "__main__":
