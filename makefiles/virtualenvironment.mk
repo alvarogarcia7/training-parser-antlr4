@@ -12,9 +12,11 @@ virtualenvironment-finish: check-virtual-env
 .PHONY: virtualenvironment-finish
 
 check-virtual-env:
-	@# Test if the variable is set
+	@# Test if the variable is set (supports both venv and .venv directories)
 	@if [ -z "${VIRTUAL_ENV}" ]; then                                               \
-  		echo "Need to activate virtual environment: source ./venv/bin/activate";    \
+  		echo "Need to activate virtual environment:";                               \
+  		echo "  uv:         source .venv/bin/activate";                             \
+  		echo "  virtualenv: source venv/bin/activate";                              \
   		false;       																\
   	fi
 
@@ -26,3 +28,15 @@ freeze: requirements.txt
 
 requirements: check-virtual-env
 	pip3 install -r requirements.txt
+
+# uv-specific targets
+uv-sync:
+	uv pip sync
+	@if [ -f scripts/download_antlr.py ]; then \
+		python3 scripts/download_antlr.py; \
+	fi
+.PHONY: uv-sync
+
+uv-compile:
+	uv pip compile pyproject.toml -o requirements.txt
+.PHONY: uv-compile

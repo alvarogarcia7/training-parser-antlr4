@@ -1,14 +1,44 @@
+# Training Parser Makefile
+# ANTLR jar is automatically downloaded when needed (checks if exists first)
+# Use 'make install-uv' for uv-based setup or 'make install' for legacy pip setup
+
+ANTLR_JAR := antlr-4.9.3-complete.jar
+ANTLR_URL := https://www.antlr.org/download/antlr-4.9.3-complete.jar
+
 include makefiles/virtualenvironment.mk
 
 install: requirements install-githooks
+	${MAKE} install-antlr
 .PHONY: install
+
+install-uv:
+	uv venv
+	uv pip install -e ".[dev]"
+	${MAKE} install-githooks
+	${MAKE} install-antlr
+.PHONY: install-uv
 
 install-githooks: check-virtual-env
 	pre-commit install
 .PHONY: install-githooks
 
-install-antlr:
-	curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
+$(ANTLR_JAR):
+	@if [ ! -f $(ANTLR_JAR) ]; then \
+		echo "Downloading ANTLR 4.9.3..."; \
+		if command -v curl > /dev/null; then \
+			curl -L -O $(ANTLR_URL); \
+		elif command -v wget > /dev/null; then \
+			wget $(ANTLR_URL); \
+		else \
+			echo "Error: No download tool found (curl or wget)"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "ANTLR jar already exists: $(ANTLR_JAR)"; \
+	fi
+
+install-antlr: $(ANTLR_JAR)
+.PHONY: install-antlr
 
 test: check-virtual-env
 	${MAKE} typecheck
@@ -35,15 +65,15 @@ test-python: check-virtual-env
 .PHONY: test-python
 
 typecheck: check-virtual-env
-	mypy --strict parser --exclude venv
+	mypy --strict parser --exclude venv --exclude .venv
 .PHONY: typecheck
 
 pre-commit: test
 .PHONY: pre-commit
 
-compile-grammar: training.g4
+compile-grammar: training.g4 $(ANTLR_JAR)
 	rm -rf dist/
-	java -jar antlr*.jar -Dlanguage=Python3 training.g4 -listener -visitor -o dist
+	java -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist
 	@echo "Grammar generated"
 
 run: check-virtual-env

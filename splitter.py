@@ -147,10 +147,14 @@ class Splitter:
         print(f"Total volume for all workouts: {total_volume}")
 
 
-if __name__ == "__main__":
+def main() -> None:
     splitter = Splitter()
     exercises = splitter.main(sys.argv[1])
     splitter._debug_print(exercises)
 
     if len(sys.argv) >= 4 and sys.argv[2] == '--output':
         splitter._write_output(exercises, sys.argv[3])
+
+
+if __name__ == "__main__":
+    main()

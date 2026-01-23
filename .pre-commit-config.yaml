@@ -12,15 +12,14 @@ repos:
         name: MyPy Typecheck
         entry: make typecheck
         language: system
+        pass_filenames: false
       - id: compile-grammar
         name: ANTLRv4 Compile Grammar
         entry: make compile-grammar
         language: system
+        pass_filenames: false
       - id: unittest
         name: Python Unit Tests
         entry: make test-python
         language: system
-      - id: freeze-requirements
-        name: Freeze Requirements
-        entry: make freeze
-        language: system
+        pass_filenames: false

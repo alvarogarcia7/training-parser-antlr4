@@ -1,0 +1,107 @@
+[project]
+name = "training-parser"
+version = "0.1.0"
+description = "ANTLR4-based parser for workout training logs that converts text-based workout entries into structured data"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Training Parser Contributors" }
+]
+keywords = ["antlr4", "parser", "workout", "training", "fitness"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "antlr4-python3-runtime==4.9.3",
+    "attrs>=25.4.0",
+    "click>=8.1.7",
+    "click-default-group>=1.2.4",
+    "jsonschema>=4.23.0",
+    "logzero>=1.7.0",
+    "python-dateutil>=2.9.0",
+    "pyyaml>=6.0.1",
+    "sqlite-fts4>=1.0.3",
+    "sqlite-utils>=3.37",
+    "tabulate>=0.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.11.0",
+    "pre-commit>=3.8.0",
+    "pytest>=8.3.2",
+]
+
+[project.scripts]
+training-parser = "main:main"
+training-splitter = "splitter:main"
+validate-bench-centric = "validate_bench_centric:validate_bench_centric"
+validate-set-centric = "validate_set_centric:validate_set_centric"
+json-validator = "json_validator:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "mypy>=1.11.0",
+    "pre-commit>=3.8.0",
+    "pytest>=8.3.2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["parser", "scripts"]
+include = [
+    "*.py",
+    "training.g4",
+    "schema/*.json",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/parser",
+    "/scripts",
+    "/schema",
+    "/tests",
+    "/*.py",
+    "/training.g4",
+    "/README.md",
+    "/MIGRATION_UV.md",
+    "/AGENTS.md",
+    "/requirements.txt",
+    "/pyproject.toml",
+    "/setup-uv.sh",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+follow_imports = "skip"
+warn_unreachable = true
+strict = true
+warn_return_any = true
+disallow_untyped_calls = true
+implicit_reexport = true
+exclude = [
+    "^antlr4_Python3_examples-master",
+    "^dist",
+]
+
+[[tool.mypy.overrides]]
+module = "antlr4.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "parser.*"
+disallow_subclassing_any = false
+
+[tool.pytest.ini_options]
+testpaths = ["parser", "tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
