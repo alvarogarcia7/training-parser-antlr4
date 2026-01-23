@@ -1,34 +1,57 @@
 {
-  "workout_id": "w_2026_01_23",
-  "date": "2026-01-23T18:45:00Z",
-  "sets": [
-    {
-      "set_id": "s1",
-      "exercise": { "name": "Bench Press", "equipment": "barbell" },
-      "set_index": 1,
-      "reps": 8,
-      "weight": 80,
-      "unit": "kg",
-      "rpe": 7,
-      "superset_id": "A"
-    },
-    {
-      "set_id": "s2",
-      "exercise": { "name": "Barbell Row", "equipment": "barbell" },
-      "set_index": 1,
-      "reps": 10,
-      "weight": 70,
-      "unit": "kg",
-      "superset_id": "A"
-    },
-    {
-      "set_id": "s3",
-      "exercise": { "name": "Bench Press", "equipment": "barbell" },
-      "set_index": 2,
-      "reps": 6,
-      "weight": 85,
-      "unit": "kg",
-      "rpe": 9
-    }
-  ]
+  "workout": {
+    "date": "2024-01-20",
+    "exercises": [
+      {
+        "name": "Bench Press",
+        "sets": [
+          {
+            "setNumber": 1,
+            "repetitions": 10,
+            "weight": {
+              "amount": 60,
+              "unit": "kg"
+            }
+          },
+          {
+            "setNumber": 2,
+            "repetitions": 10,
+            "weight": {
+              "amount": 60,
+              "unit": "kg"
+            }
+          },
+          {
+            "setNumber": 3,
+            "repetitions": 8,
+            "weight": {
+              "amount": 65,
+              "unit": "kg"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Squat",
+        "sets": [
+          {
+            "setNumber": 1,
+            "repetitions": 12,
+            "weight": {
+              "amount": 80,
+              "unit": "kg"
+            }
+          },
+          {
+            "setNumber": 2,
+            "repetitions": 10,
+            "weight": {
+              "amount": 85,
+              "unit": "kg"
+            }
+          }
+        ]
+      }
+    ]
+  }
 }
