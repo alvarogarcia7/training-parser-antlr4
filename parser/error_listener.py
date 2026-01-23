@@ -43,11 +43,15 @@ class TrainingErrorListener(ErrorListener):
         if exception is None or not hasattr(exception, "getExpectedTokens"):
             return expected
 
-        expected_token_set = exception.getExpectedTokens()
-        for token_type in expected_token_set:
-            token_name = self._get_token_name(recognizer, token_type)
-            if token_name:
-                expected.append(token_name)
+        try:
+            expected_token_set = exception.getExpectedTokens()
+            for token_type in expected_token_set:
+                token_name = self._get_token_name(recognizer, token_type)
+                if token_name:
+                    expected.append(token_name)
+        except Exception:
+            # Some error types (e.g., lexer errors) may not have valid expected tokens
+            pass
 
         return expected
 
