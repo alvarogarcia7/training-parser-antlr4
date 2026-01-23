@@ -17,6 +17,10 @@ test-python: check-virtual-env
 	pytest parser tests
 .PHONY: test-python
 
+typecheck: check-virtual-env
+	mypy --strict parser
+.PHONY: typecheck
+
 pre-commit: test
 .PHONY: pre-commit
 
