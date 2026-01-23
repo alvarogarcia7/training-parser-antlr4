@@ -108,3 +108,59 @@ jobs:
     - name: Run tests
       run: |
         make test-python
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: compile-grammar
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Download compiled grammar
+      uses: actions/download-artifact@v4
+      with:
+        name: compiled-grammar
+        path: dist/
+
+    - name: Run splitter.py against data.txt.sample
+      run: |
+        python splitter.py data.txt.sample --output e2e-output-data.csv
+        echo "✓ Successfully processed data.txt.sample"
+
+    - name: Run splitter.py against training-sample.txt
+      run: |
+        python splitter.py training-sample.txt --output e2e-output-training.csv
+        echo "✓ Successfully processed training-sample.txt"
+
+    - name: Verify output files exist
+      run: |
+        test -f e2e-output-data.csv && echo "✓ e2e-output-data.csv created"
+        test -f e2e-output-training.csv && echo "✓ e2e-output-training.csv created"
+
+    - name: Display output samples
+      run: |
+        echo "=== Sample from data.txt.sample output ==="
+        head -n 5 e2e-output-data.csv || true
+        echo ""
+        echo "=== Sample from training-sample.txt output ==="
+        head -n 5 e2e-output-training.csv || true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-test-results
+        path: |
+          e2e-output-data.csv
+          e2e-output-training.csv
+        retention-days: 7
