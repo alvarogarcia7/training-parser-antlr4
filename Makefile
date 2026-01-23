@@ -10,7 +10,7 @@ install-githooks: check-virtual-env
 install-antlr:
 	curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
 
-test: check-virtual-env 
+test: check-virtual-env
 	${MAKE} typecheck
 	${MAKE} compile-grammar
 	${MAKE} test-python
@@ -35,7 +35,7 @@ test-python: check-virtual-env
 .PHONY: test-python
 
 typecheck: check-virtual-env
-	mypy --strict parser
+	mypy --strict parser --exclude venv
 .PHONY: typecheck
 
 pre-commit: test
