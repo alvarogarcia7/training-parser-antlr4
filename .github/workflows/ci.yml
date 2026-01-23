@@ -77,14 +77,10 @@ jobs:
       with:
         name: compiled-grammar
         path: dist/
-        
-    - name: Enable virtualenvironment (FAKE)
-      run: |
-        export VIRTUAL_ENV="FAKE"
 
     - name: Run type checking
       run: |
-        make typecheck
+        VIRTUAL_ENV="FAKE" make typecheck
 
   test:
     runs-on: ubuntu-latest
@@ -109,13 +105,9 @@ jobs:
         name: compiled-grammar
         path: dist/
 
-    - name: Enable virtualenvironment (FAKE)
-      run: |
-        export VIRTUAL_ENV="FAKE"
-
     - name: Run tests
       run: |
-        make test-python
+        VIRTUAL_ENV="FAKE" make test-python
 
   e2e-test:
     runs-on: ubuntu-latest
@@ -140,10 +132,6 @@ jobs:
         name: compiled-grammar
         path: dist/
         
-    - name: Enable virtualenvironment (FAKE)
-      run: |
-        export VIRTUAL_ENV="FAKE"
-
     - name: Run splitter.py against data.txt.sample
       run: |
         python splitter.py data.txt.sample --output e2e-output-data.csv
