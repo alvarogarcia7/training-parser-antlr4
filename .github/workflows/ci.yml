@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Cache ANTLR grammar compilation
+      uses: actions/cache@v4
+      with:
+        path: dist/
+        key: antlr-grammar-${{ hashFiles('training.g4') }}
+        restore-keys: |
+          antlr-grammar-
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Download ANTLR4
+      run: |
+        curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
+
+    - name: Compile grammar
+      run: |
+        make compile-grammar
+
+    - name: Run type checking
+      run: |
+        make typecheck
+
+    - name: Run tests
+      run: |
+        make test-python
