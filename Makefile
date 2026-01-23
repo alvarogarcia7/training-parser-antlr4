@@ -19,7 +19,12 @@ test: check-virtual-env
 
 validate-datasets:
 	${MAKE} validate-bench-centric
+	${MAKE} validate-set-centric
 .PHONY: validate-datasets
+
+validate-set-centric: check-virtual-env
+	python3 validate_set_centric.py
+.PHONY: validate-set-centric
 
 validate-bench-centric: check-virtual-env
 	python3 validate_bench_centric.py

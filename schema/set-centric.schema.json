@@ -1,90 +1,119 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/set-centric.schema.json",
-  "title": "Set-Centric Workout Schema",
-  "description": "Schema for workout data organized by individual sets",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/strength-workout-set-centric.json",
+  "title": "Strength Training Workout (Set-centric)",
   "type": "object",
+  "required": ["workout_id", "date", "exercises"],
+  "allOf": [
+    {
+      "$ref": "https://example.com/schemas/common-definitions.json#/$defs/workoutMetadata"
+    }
+  ],
   "properties": {
-    "workout": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string",
-          "format": "date",
-          "description": "The date of the workout in YYYY-MM-DD format"
-        },
-        "exercises": {
-          "type": "array",
-          "description": "List of exercises performed in the workout",
-          "items": {
-            "$ref": "#/definitions/exercise"
-          },
-          "minItems": 1
-        }
-      },
-      "required": ["date", "exercises"],
-      "additionalProperties": false
+    "workout_id": true,
+    "type": true,
+    "date": true,
+    "location": true,
+    "notes": true,
+    "statistics": {
+      "$ref": "https://example.com/schemas/common-definitions.json#/$defs/statistics"
+    },
+    "exercises": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/exerciseBlock"
+      }
     }
   },
-  "required": ["workout"],
-  "additionalProperties": false,
-  "definitions": {
-    "exercise": {
+  "$defs": {
+    "exerciseBlock": {
       "type": "object",
+      "required": ["name", "sets"],
       "properties": {
+        "exercise_id": {
+          "type": "string",
+          "description": "Optional stable ID for the exercise"
+        },
         "name": {
           "type": "string",
-          "description": "The name of the exercise",
-          "minLength": 1
+          "description": "Exercise name (e.g. Bench Press)"
+        },
+        "superset_id": {
+          "type": "string",
+          "description": "Exercises sharing the same ID are performed as a superset"
+        },
+        "equipment": {
+          "$ref": "https://example.com/schemas/common-definitions.json#/$defs/equipment"
         },
         "sets": {
           "type": "array",
-          "description": "List of sets performed for this exercise",
+          "minItems": 1,
           "items": {
-            "$ref": "#/definitions/set"
-          },
-          "minItems": 1
+            "$ref": "#/$defs/setWithNumber"
+          }
+        },
+        "notes": {
+          "type": "string"
         }
-      },
-      "required": ["name", "sets"],
-      "additionalProperties": false
+      }
     },
-    "set": {
+    "setWithNumber": {
       "type": "object",
+      "required": ["setNumber", "repetitions", "weight"],
       "properties": {
         "setNumber": {
           "type": "integer",
-          "description": "The sequential number of the set",
-          "minimum": 1
+          "minimum": 1,
+          "description": "The sequential number of the set"
         },
         "repetitions": {
           "type": "integer",
-          "description": "Number of repetitions performed",
-          "minimum": 1
+          "minimum": 0,
+          "description": "Number of repetitions performed"
         },
         "weight": {
-          "$ref": "#/definitions/weight"
-        }
-      },
-      "required": ["setNumber", "repetitions", "weight"],
-      "additionalProperties": false
-    },
-    "weight": {
-      "type": "object",
-      "properties": {
-        "amount": {
+          "type": "object",
+          "required": ["amount", "unit"],
+          "properties": {
+            "amount": {
+              "type": "number",
+              "minimum": 0,
+              "description": "The numeric weight value"
+            },
+            "unit": {
+              "$ref": "https://example.com/schemas/common-definitions.json#/$defs/weightUnit"
+            }
+          },
+          "additionalProperties": false
+        },
+        "rpe": {
           "type": "number",
-          "description": "The numeric weight value",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Rate of Perceived Exertion"
+        },
+        "rir": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Reps in Reserve"
+        },
+        "tempo": {
+          "type": "string",
+          "pattern": "^[0-9X]{3,4}$",
+          "description": "E.g. 31X1"
+        },
+        "rest_sec": {
+          "type": "integer",
           "minimum": 0
         },
-        "unit": {
-          "type": "string",
-          "description": "The unit of weight measurement",
-          "enum": ["kg", "lb", "lbs"]
+        "completed": {
+          "type": "boolean",
+          "default": true
         }
       },
-      "required": ["amount", "unit"],
       "additionalProperties": false
     }
-  }
+  },
+  "additionalProperties": false
 }

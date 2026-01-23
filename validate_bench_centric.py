@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, cast
 
 import jsonschema
-from jsonschema import ValidationError
+from jsonschema import RefResolver, ValidationError
 
 
 def load_json_file(file_path: Path) -> Dict[str, Any]:
@@ -22,6 +22,7 @@ def validate_bench_centric() -> int:
     """Validate the bench-centric example against its schema."""
     schema_path = Path("schema/bench-centric.schema.json")
     data_path = Path("data/bench-centric-example.json")
+    common_defs_path = Path("schema/common-definitions.schema.json")
     
     if not schema_path.exists():
         print(f"Error: Schema file not found: {schema_path}", file=sys.stderr)
@@ -34,10 +35,16 @@ def validate_bench_centric() -> int:
     try:
         schema = load_json_file(schema_path)
         data = load_json_file(data_path)
+        common_defs = load_json_file(common_defs_path)
         
         jsonschema.validators.validator_for(schema).check_schema(schema)
         
-        validator = jsonschema.validators.validator_for(schema)(schema)
+        store = {
+            common_defs["$id"]: common_defs
+        }
+        
+        resolver = RefResolver.from_schema(schema, store=store)
+        validator = jsonschema.validators.validator_for(schema)(schema, resolver=resolver)
         validator.validate(data)
         
         print(f"✓ Validation successful!")

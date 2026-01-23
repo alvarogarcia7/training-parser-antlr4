@@ -1,57 +1,73 @@
 {
-  "workout": {
-    "date": "2024-01-20",
-    "exercises": [
-      {
-        "name": "Bench Press",
-        "sets": [
-          {
-            "setNumber": 1,
-            "repetitions": 10,
-            "weight": {
-              "amount": 60,
-              "unit": "kg"
-            }
-          },
-          {
-            "setNumber": 2,
-            "repetitions": 10,
-            "weight": {
-              "amount": 60,
-              "unit": "kg"
-            }
-          },
-          {
-            "setNumber": 3,
-            "repetitions": 8,
-            "weight": {
-              "amount": 65,
-              "unit": "kg"
-            }
+  "workout_id": "w_2026_01_23",
+  "type": "set-centric",
+  "date": "2026-01-23T18:45:00Z",
+  "location": "My Gym",
+  "statistics": {
+    "tracker": "Apple Watch",
+    "duration": "00:47:48",
+    "bpm": {
+      "average": 137,
+      "min": 90,
+      "max": 165
+    },
+    "kcal": {
+      "total": 529
+    }
+  },
+  "notes": "",
+  "exercises": [
+    {
+      "name": "Bench Press",
+      "equipment": "barbell",
+      "sets": [
+        {
+          "setNumber": 1,
+          "repetitions": 10,
+          "weight": {
+            "amount": 60,
+            "unit": "kg"
           }
-        ]
-      },
-      {
-        "name": "Squat",
-        "sets": [
-          {
-            "setNumber": 1,
-            "repetitions": 12,
-            "weight": {
-              "amount": 80,
-              "unit": "kg"
-            }
-          },
-          {
-            "setNumber": 2,
-            "repetitions": 10,
-            "weight": {
-              "amount": 85,
-              "unit": "kg"
-            }
+        },
+        {
+          "setNumber": 2,
+          "repetitions": 10,
+          "weight": {
+            "amount": 60,
+            "unit": "kg"
           }
-        ]
-      }
-    ]
-  }
+        },
+        {
+          "setNumber": 3,
+          "repetitions": 8,
+          "weight": {
+            "amount": 65,
+            "unit": "kg"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Squat",
+      "equipment": "barbell",
+      "sets": [
+        {
+          "setNumber": 1,
+          "repetitions": 12,
+          "weight": {
+            "amount": 80,
+            "unit": "kg"
+          }
+        },
+        {
+          "setNumber": 2,
+          "repetitions": 10,
+          "weight": {
+            "amount": 85,
+            "unit": "kg"
+          }
+        }
+      ]
+    }
+  ]
 }
