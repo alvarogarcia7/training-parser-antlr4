@@ -7,6 +7,7 @@ from dist.trainingParser import trainingParser
 from dist.trainingVisitor import trainingVisitor
 from . import Exercise
 from .series_builder import SeriesBuilder
+from .error_listener import TrainingErrorListener, format_error_message
 
 
 class Formatter(trainingVisitor):
@@ -62,21 +63,52 @@ class Formatter(trainingVisitor):
         raise ValueError(node)
 
 
+class ParsingException(Exception):
+    """Exception raised when parsing errors are detected."""
+    pass
+
+
 class Parser:
-    def __init__(self, input_stream: InputStream):
+    def __init__(self, input_stream: InputStream, original_input: str):
         self.input_stream = input_stream
+        self.original_input = original_input
 
     @classmethod
     def from_string(cls, string: str) -> Any:
         input_stream = InputStream(string)
-        return Parser(input_stream)
+        return Parser(input_stream, string)
 
     def parse_sessions(self) -> list[Exercise]:
         lexer = trainingLexer(self.input_stream)
+
+        # Instantiate error listener
+        error_listener = TrainingErrorListener()
+
+        # Remove default error listeners and attach custom error listener to lexer
+        lexer.removeErrorListeners()
+        lexer.addErrorListener(error_listener)
+
         token_stream = CommonTokenStream(lexer)
         token_stream.fill()
         parser = trainingParser(token_stream)
+
+        # Remove default error listeners and attach custom error listener to parser
+        parser.removeErrorListeners()
+        parser.addErrorListener(error_listener)
+
         tree = parser.workout()
+
+        # Check if errors were collected
+        if error_listener.errors:
+            # Display formatted error messages with full context
+            print("Parsing errors detected:\n")
+            for error in error_listener.errors:
+                formatted_message = format_error_message(error, self.original_input)
+                print(formatted_message)
+                print()
+
+            # Raise exception to prevent invalid parse tree processing
+            raise ParsingException(f"Found {len(error_listener.errors)} parsing error(s)")
 
         formatter = Formatter()
         formatter.visit(tree)
