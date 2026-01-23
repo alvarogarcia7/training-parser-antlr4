@@ -5,27 +5,30 @@ from antlr4 import CommonTokenStream, InputStream, ErrorNode
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from dist.trainingVisitor import trainingVisitor
-from . import Exercise, Units, Weight, Set_
+from . import Exercise
+from .series_builder import SeriesBuilder
 
 
 class Formatter(trainingVisitor):
     def __init__(self) -> None:
         super().__init__()
         self.result: list[Exercise] = []
-        self.current: dict[str, Any] = {}
+        self.builder = SeriesBuilder()
 
     def visitExercise(self, ctx: trainingParser.ExerciseContext) -> None:
-        self.current = {'name': "", 'repetitions': [], 'weights': [], 'repetitions_val': []}
+        self.builder.reset()
         super().visitExercise(ctx)
-        self.result.append(Exercise(self.current['name'], self.current['repetitions']))
+        exercise = self.builder.addSeriesIfComplete()
+        if exercise is not None:
+            self.result.append(exercise)
 
     def visitExercise_name(self, ctx: trainingParser.Exercise_nameContext) -> Any:
         super().visitExercise_name(ctx)
-        self.current['name'] = ctx.EXERCISE_NAME().getText()
+        self.builder.set_exercise_name(ctx.EXERCISE_NAME().getText())
 
     def visitWeight(self, ctx: trainingParser.WeightContext) -> Any:
         super().visitWeight(ctx)
-        self.current['weights'].append(float(ctx.getText().removesuffix('k')))
+        self.builder.add_weight(float(ctx.getText().removesuffix('k')))
 
     def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
         super().visitWhole_set_(ctx)
@@ -34,38 +37,24 @@ class Formatter(trainingVisitor):
         number_of_series: int = int(chunks[0])
         number_of_repetitions: int = int(chunks[1])
         weight: float = float(chunks[2].removesuffix('k'))
-        for i in range(int(number_of_series)):
-            self.append_serie(number_of_repetitions, weight)
-        self.current['weights'] = []
+        self.builder.add_whole_set(number_of_series, number_of_repetitions, weight)
 
     def visitGroup_of_rep_set(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
         super().visitGroup_of_rep_set(ctx)
         chunks: list[str] = ctx.getText().split('x')
         number_of_series: int = int(chunks[0])
         number_of_repetitions: int = int(chunks[1])
-        weights_ = self.current['weights']
-        assert len(weights_) == 1, f"{weights_} is longer than 1"
-        for i in range(number_of_series):
-            self.append_serie(number_of_repetitions, weights_[0])
+        self.builder.add_group_of_reps(number_of_series, number_of_repetitions)
 
     def visitSingle_rep_set_(self, ctx: trainingParser.Single_rep_set_Context) -> Any:
         super().visitSingle_rep_set_(ctx)
         number_of_repetitions = int(ctx.getText())
-        for weight in self.current['weights']:
-            self.append_serie(number_of_repetitions, weight)
+        self.builder.add_single_rep_set(number_of_repetitions)
 
     def visitFixed_reps_multiple_weight(self, ctx: trainingParser.Fixed_reps_multiple_weightContext) -> Any:
         super().visitFixed_reps_multiple_weight(ctx)
         repetitions = int(ctx.getChild(0).getText())
-        for weight in self.current['weights']:
-            self.append_serie(repetitions, weight)
-        # del self.current['visitSingle_rep_set2']
-        self.current['weights'] = []
-        self.current['repetitions_val'] = []
-
-    def append_serie(self, number_of_repetitions: int, weight: float) -> None:
-        self.current['repetitions'].append(
-            Set_(repetitions=number_of_repetitions, weight=Weight(amount=weight, unit=Units.KILOGRAM)))
+        self.builder.add_fixed_reps_multiple_weights(repetitions)
 
     def visitErrorNode(self, node: ErrorNode) -> None:
         print(type(node))
