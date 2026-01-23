@@ -3,7 +3,7 @@
 # Use 'make install-uv' for uv-based setup or 'make install' for legacy pip setup
 
 ANTLR_JAR := antlr-4.9.3-complete.jar
-ANTLR_URL := https://www.antlr.org/download/antlr-4.9.3-complete.jar
+ANTLR_URL := https://www.antlr.org/download/${ANTLR_JAR}
 
 include makefiles/virtualenvironment.mk
 
