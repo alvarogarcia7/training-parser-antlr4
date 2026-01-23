@@ -28,4 +28,3 @@
 28→- Pre-commit hooks enforce formatting, type checking, and tests
 29→- Virtual environment required in `venv/` directory
 30→- Follow existing patterns in parser visitor implementations
-31→
