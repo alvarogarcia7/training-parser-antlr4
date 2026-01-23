@@ -9,9 +9,64 @@
       "type": "string",
       "description": "Unique workout identifier"
     },
+    "type": {
+      "type": "string",
+      "description": "Workout type identifier"
+    },
     "date": {
       "type": "string",
       "format": "date-time"
+    },
+    "location": {
+      "type": "string",
+      "description": "Workout location or gym name"
+    },
+    "statistics": {
+      "type": "object",
+      "description": "Workout statistics and metrics",
+      "properties": {
+        "tracker": {
+          "type": "string",
+          "description": "Device or app used to track workout (e.g., Apple Watch, Garmin)"
+        },
+        "duration": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}$",
+          "description": "Workout duration in HH:MM:SS format"
+        },
+        "bpm": {
+          "type": "object",
+          "description": "Heart rate statistics in beats per minute",
+          "properties": {
+            "average": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Average heart rate"
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum heart rate"
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum heart rate"
+            }
+          }
+        },
+        "kcal": {
+          "type": "object",
+          "description": "Calorie expenditure",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total calories burned"
+            }
+          }
+        }
+      }
     },
     "notes": {
       "type": "string"
