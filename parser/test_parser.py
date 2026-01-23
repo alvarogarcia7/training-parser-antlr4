@@ -1,6 +1,6 @@
 import unittest
 
-from parser import Exercise, Units, Set_, Parser
+from parser import Exercise, Units, Set_, Parser, Weight
 
 
 class TestParser(unittest.TestCase):
@@ -127,4 +127,4 @@ class TestParser(unittest.TestCase):
             Parser.from_string(wrong_input + "\n").parse_sessions()
 
     def serie(self, repetition: int, weight: float) -> Set_:
-        return {'repetitions': repetition, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}}
+        return Set_(repetitions=repetition, weight=Weight(amount=weight, unit=Units.KILOGRAM))

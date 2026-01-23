@@ -59,15 +59,15 @@ class Splitter:
                 row: Exercise
                 for row_group in job2['parsed']:
                     for row in row_group.flatten():
-                        repetitions_ = [i['repetitions'] for i in row.sets_]
-                        weights = [i['weight']['amount'] for i in row.sets_]
+                        repetitions_ = [i.repetitions for i in row.sets_]
+                        weights = [i.weight.amount for i in row.sets_]
                         assert weights[0] == (sum(weights) / len(weights)), f"Failed condition: Not all weights are equal in '{row}'"
                         csv_writer.writerow([
                             job2['date'],
                             row.name,
                             "{:d}".format(len(repetitions_)),
                             "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                            "{:.1f}".format(row.sets_[0]['weight']['amount']).replace('.', ',')
+                            "{:.1f}".format(row.sets_[0].weight.amount).replace('.', ',')
                         ]
                         )
 

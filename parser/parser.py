@@ -5,7 +5,7 @@ from antlr4 import CommonTokenStream, InputStream, ErrorNode
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from dist.trainingVisitor import trainingVisitor
-from . import Exercise, Units
+from . import Exercise, Units, Weight, Set_
 
 
 class Formatter(trainingVisitor):
@@ -65,7 +65,7 @@ class Formatter(trainingVisitor):
 
     def append_serie(self, number_of_repetitions: int, weight: float) -> None:
         self.current['repetitions'].append(
-            {'repetitions': number_of_repetitions, 'weight': {'amount': weight, 'unit': Units.KILOGRAM}})
+            Set_(repetitions=number_of_repetitions, weight=Weight(amount=weight, unit=Units.KILOGRAM)))
 
     def visitErrorNode(self, node: ErrorNode) -> None:
         print(type(node))
