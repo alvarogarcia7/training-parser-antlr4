@@ -10,27 +10,27 @@ from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from parser import Formatter, Exercise, StandardizeName
 
-Parsing1 = TypedDict('Parsing1', {
+RawWorkoutSession = TypedDict('RawWorkoutSession', {
     'date': str,
     'payload': str,
     'notes': str})
 
-Parsing2 = TypedDict('Parsing2', {
+ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
     'date': str,
     'parsed': list[Exercise],
     'notes': str})
 
 
 class Splitter:
-    def main(self, file: str) -> list[Parsing2]:
+    def main(self, file: str) -> list[ParsedWorkoutSession]:
         lines = self._read_all_lines(file)
         raw_exercises = self._group_exercises(lines)
         exercises = self._parse_exercises(raw_exercises)
         exercises = self._rename_exercises(exercises)
         return exercises
 
-    def _parse_exercises(self, jobs: list[Parsing1]) -> list[Parsing2]:
-        jobs2: list[Parsing2] = []
+    def _parse_exercises(self, jobs: list[RawWorkoutSession]) -> list[ParsedWorkoutSession]:
+        jobs2: list[ParsedWorkoutSession] = []
         for job in jobs:
             job_tmp: Any = copy.deepcopy(job)
             job_tmp['parsed'] = self._parse(job['payload'])
@@ -52,7 +52,7 @@ class Splitter:
         return result
 
     @staticmethod
-    def _write_output(exercises: list[Parsing2], file_path_: str) -> None:
+    def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
             for job2 in exercises:
@@ -72,8 +72,8 @@ class Splitter:
                         )
 
     @staticmethod
-    def _group_exercises(lines: list[str]) -> list[Parsing1]:
-        jobs: list[Parsing1] = []
+    def _group_exercises(lines: list[str]) -> list[RawWorkoutSession]:
+        jobs: list[RawWorkoutSession] = []
         current: list[Any] = []
         notes: list[str] = []
         date: Any = None
@@ -96,7 +96,7 @@ class Splitter:
         return jobs
 
     @staticmethod
-    def build_job(current: List[Any], date: Any, notes: list[str]) -> Parsing1:
+    def build_job(current: List[Any], date: Any, notes: list[str]) -> RawWorkoutSession:
         current.append("")
         assert date is not None, f"current={current}, date={date}, notes={notes}"
         return {'date': date,
@@ -117,7 +117,7 @@ class Splitter:
         return lines
 
     @staticmethod
-    def _rename_exercises(parsing2s: list[Parsing2]) -> list[Parsing2]:
+    def _rename_exercises(parsing2s: list[ParsedWorkoutSession]) -> list[ParsedWorkoutSession]:
         renamer = StandardizeName()
         for parsing2 in parsing2s:
             for exercise in parsing2['parsed']:
@@ -125,7 +125,7 @@ class Splitter:
         return parsing2s
 
     @staticmethod
-    def _debug_print(workouts: list[Parsing2]) -> None:
+    def _debug_print(workouts: list[ParsedWorkoutSession]) -> None:
 
         print("Debug printing.")
         total_volume: float = 0
