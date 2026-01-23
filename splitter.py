@@ -1,4 +1,3 @@
-import copy
 import csv
 import pprint
 import sys
@@ -11,15 +10,31 @@ from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
 from parser import Formatter, Exercise, StandardizeName
 
-RawWorkoutSession = TypedDict('RawWorkoutSession', {
-    'date': str,
-    'payload': str,
-    'notes': str})
 
-ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
-    'date': str,
-    'parsed': list[Exercise],
-    'notes': str})
+@dataclass
+class RawWorkoutSession:
+    date: str
+    payload: str
+    notes: str
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        setattr(self, key, value)
+
+
+@dataclass
+class ParsedWorkoutSession:
+    date: str
+    parsed: list[Exercise]
+    notes: str
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        setattr(self, key, value)
 
 @dataclass
 class ExerciseStatistics:
@@ -41,9 +56,12 @@ class Splitter:
     def _parse_exercises(self, jobs: list[RawWorkoutSession]) -> list[ParsedWorkoutSession]:
         jobs2: list[ParsedWorkoutSession] = []
         for job in jobs:
-            job_tmp: Any = copy.deepcopy(job)
-            job_tmp['parsed'] = self._parse(job['payload'])
-            jobs2.append(job_tmp)
+            parsed_session = ParsedWorkoutSession(
+                date=job.date,
+                parsed=self._parse(job.payload),
+                notes=job.notes
+            )
+            jobs2.append(parsed_session)
         return jobs2
 
     @staticmethod
@@ -130,10 +148,11 @@ class Splitter:
     def build_job(current: List[Any], date: Any, notes: list[str]) -> RawWorkoutSession:
         current.append("")
         assert date is not None, f"current={current}, date={date}, notes={notes}"
-        return {'date': date,
-                'payload': "\n".join(current.copy()),
-                'notes': "\n".join(notes.copy())
-                }
+        return RawWorkoutSession(
+            date=date,
+            payload="\n".join(current.copy()),
+            notes="\n".join(notes.copy())
+        )
 
     @staticmethod
     def _read_all_lines(file_name: str) -> list[str]:
