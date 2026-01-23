@@ -4,72 +4,19 @@
   "title": "Strength Training Workout (Bench-centric)",
   "type": "object",
   "required": ["workout_id", "date", "exercises"],
+  "allOf": [
+    {
+      "$ref": "https://example.com/schemas/common-definitions.json#/$defs/workoutMetadata"
+    }
+  ],
   "properties": {
-    "workout_id": {
-      "type": "string",
-      "description": "Unique workout identifier"
-    },
-    "type": {
-      "type": "string",
-      "description": "Workout type identifier"
-    },
-    "date": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "location": {
-      "type": "string",
-      "description": "Workout location or gym name"
-    },
+    "workout_id": true,
+    "type": true,
+    "date": true,
+    "location": true,
+    "notes": true,
     "statistics": {
-      "type": "object",
-      "description": "Workout statistics and metrics",
-      "properties": {
-        "tracker": {
-          "type": "string",
-          "description": "Device or app used to track workout (e.g., Apple Watch, Garmin)"
-        },
-        "duration": {
-          "type": "string",
-          "pattern": "^\\d{2}:\\d{2}:\\d{2}$",
-          "description": "Workout duration in HH:MM:SS format"
-        },
-        "bpm": {
-          "type": "object",
-          "description": "Heart rate statistics in beats per minute",
-          "properties": {
-            "average": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Average heart rate"
-            },
-            "min": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Minimum heart rate"
-            },
-            "max": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Maximum heart rate"
-            }
-          }
-        },
-        "kcal": {
-          "type": "object",
-          "description": "Calorie expenditure",
-          "properties": {
-            "total": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Total calories burned"
-            }
-          }
-        }
-      }
-    },
-    "notes": {
-      "type": "string"
+      "$ref": "https://example.com/schemas/common-definitions.json#/$defs/statistics"
     },
     "exercises": {
       "type": "array",
@@ -97,62 +44,19 @@
           "description": "Exercises sharing the same ID are performed as a superset"
         },
         "equipment": {
-          "type": "string",
-          "enum": ["barbell", "dumbbell", "machine", "bodyweight", "cable", "other"]
+          "$ref": "https://example.com/schemas/common-definitions.json#/$defs/equipment"
         },
         "sets": {
           "type": "array",
           "minItems": 1,
           "items": {
-            "$ref": "#/$defs/set"
+            "$ref": "https://example.com/schemas/common-definitions.json#/$defs/set"
           }
         },
         "notes": {
           "type": "string"
         }
       }
-    },
-    "set": {
-      "type": "object",
-      "required": ["reps"],
-      "properties": {
-        "reps": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "weight": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Load used (omit for bodyweight-only sets)"
-        },
-        "unit": {
-          "type": "string",
-          "enum": ["kg", "lb"]
-        },
-        "rpe": {
-          "type": "number",
-          "minimum": 1,
-          "maximum": 10
-        },
-        "rir": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "tempo": {
-          "type": "string",
-          "pattern": "^[0-9X]{3,4}$",
-          "description": "E.g. 31X1"
-        },
-        "rest_sec": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "completed": {
-          "type": "boolean",
-          "default": true
-        }
-      },
-      "additionalProperties": false
     }
   },
   "additionalProperties": false

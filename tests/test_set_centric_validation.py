@@ -1,4 +1,4 @@
-"""Tests for bench-centric validation."""
+"""Tests for set-centric validation."""
 
 import json
 from pathlib import Path
@@ -24,9 +24,9 @@ def create_validator(schema: dict[str, Any]) -> jsonschema.protocols.Validator:
     return validator_class(schema, resolver=resolver)
 
 
-def test_bench_centric_schema_is_valid() -> None:
-    """Test that the bench-centric schema itself is valid."""
-    schema_path = Path("schema/bench-centric.schema.json")
+def test_set_centric_schema_is_valid() -> None:
+    """Test that the set-centric schema itself is valid."""
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -35,10 +35,10 @@ def test_bench_centric_schema_is_valid() -> None:
     validator_class.check_schema(schema)
 
 
-def test_bench_centric_example_validates() -> None:
-    """Test that the bench-centric example validates against the schema."""
-    schema_path = Path("schema/bench-centric.schema.json")
-    data_path = Path("data/bench-centric-example.json")
+def test_set_centric_example_validates() -> None:
+    """Test that the set-centric example validates against the schema."""
+    schema_path = Path("schema/set-centric.schema.json")
+    data_path = Path("data/set-centric-example.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -50,9 +50,9 @@ def test_bench_centric_example_validates() -> None:
     validator.validate(data)
 
 
-def test_bench_centric_requires_workout_id() -> None:
+def test_set_centric_requires_workout_id() -> None:
     """Test that workout_id is required."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -62,7 +62,13 @@ def test_bench_centric_requires_workout_id() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": 8}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": 60, "unit": "kg"}
+                    }
+                ]
             }
         ]
     }
@@ -72,9 +78,9 @@ def test_bench_centric_requires_workout_id() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_requires_date() -> None:
+def test_set_centric_requires_date() -> None:
     """Test that date is required."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -84,7 +90,13 @@ def test_bench_centric_requires_date() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": 8}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": 60, "unit": "kg"}
+                    }
+                ]
             }
         ]
     }
@@ -94,9 +106,9 @@ def test_bench_centric_requires_date() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_requires_exercises() -> None:
+def test_set_centric_requires_exercises() -> None:
     """Test that exercises array is required."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -111,9 +123,9 @@ def test_bench_centric_requires_exercises() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_validates_weight_minimum() -> None:
-    """Test that weight must be >= 0."""
-    schema_path = Path("schema/bench-centric.schema.json")
+def test_set_centric_validates_weight_minimum() -> None:
+    """Test that weight amount must be >= 0."""
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -124,7 +136,13 @@ def test_bench_centric_validates_weight_minimum() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": 8, "weight": -10}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": -10, "unit": "kg"}
+                    }
+                ]
             }
         ]
     }
@@ -134,9 +152,9 @@ def test_bench_centric_validates_weight_minimum() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_validates_reps_minimum() -> None:
-    """Test that reps must be >= 0."""
-    schema_path = Path("schema/bench-centric.schema.json")
+def test_set_centric_validates_repetitions_minimum() -> None:
+    """Test that repetitions must be >= 0."""
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -147,7 +165,13 @@ def test_bench_centric_validates_reps_minimum() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": -1}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": -1,
+                        "weight": {"amount": 60, "unit": "kg"}
+                    }
+                ]
             }
         ]
     }
@@ -157,9 +181,38 @@ def test_bench_centric_validates_reps_minimum() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_validates_unit_enum() -> None:
+def test_set_centric_validates_set_number_minimum() -> None:
+    """Test that setNumber must be >= 1."""
+    schema_path = Path("schema/set-centric.schema.json")
+    
+    with open(schema_path, 'r', encoding='utf-8') as f:
+        schema = json.load(f)
+    
+    invalid_data = {
+        "workout_id": "w_2026_01_23",
+        "date": "2026-01-23T18:45:00Z",
+        "exercises": [
+            {
+                "name": "Bench Press",
+                "sets": [
+                    {
+                        "setNumber": 0,
+                        "repetitions": 8,
+                        "weight": {"amount": 60, "unit": "kg"}
+                    }
+                ]
+            }
+        ]
+    }
+    
+    validator = create_validator(schema)
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(invalid_data)
+
+
+def test_set_centric_validates_unit_enum() -> None:
     """Test that unit must be 'kg' or 'lb'."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -170,7 +223,13 @@ def test_bench_centric_validates_unit_enum() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": 8, "weight": 100, "unit": "pounds"}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": 100, "unit": "pounds"}
+                    }
+                ]
             }
         ]
     }
@@ -180,9 +239,9 @@ def test_bench_centric_validates_unit_enum() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_validates_equipment_enum() -> None:
+def test_set_centric_validates_equipment_enum() -> None:
     """Test that equipment must be valid enum value."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -194,7 +253,13 @@ def test_bench_centric_validates_equipment_enum() -> None:
             {
                 "name": "Bench Press",
                 "equipment": "invalid_equipment",
-                "sets": [{"reps": 8, "weight": 100}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": 100, "unit": "kg"}
+                    }
+                ]
             }
         ]
     }
@@ -204,9 +269,9 @@ def test_bench_centric_validates_equipment_enum() -> None:
         validator.validate(invalid_data)
 
 
-def test_bench_centric_validates_rpe_range() -> None:
+def test_set_centric_validates_rpe_range() -> None:
     """Test that RPE must be between 1 and 10."""
-    schema_path = Path("schema/bench-centric.schema.json")
+    schema_path = Path("schema/set-centric.schema.json")
     
     with open(schema_path, 'r', encoding='utf-8') as f:
         schema = json.load(f)
@@ -217,7 +282,43 @@ def test_bench_centric_validates_rpe_range() -> None:
         "exercises": [
             {
                 "name": "Bench Press",
-                "sets": [{"reps": 8, "weight": 100, "rpe": 15}]
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": {"amount": 100, "unit": "kg"},
+                        "rpe": 15
+                    }
+                ]
+            }
+        ]
+    }
+    
+    validator = create_validator(schema)
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(invalid_data)
+
+
+def test_set_centric_requires_weight_object() -> None:
+    """Test that weight must be an object with amount and unit."""
+    schema_path = Path("schema/set-centric.schema.json")
+    
+    with open(schema_path, 'r', encoding='utf-8') as f:
+        schema = json.load(f)
+    
+    invalid_data = {
+        "workout_id": "w_2026_01_23",
+        "date": "2026-01-23T18:45:00Z",
+        "exercises": [
+            {
+                "name": "Bench Press",
+                "sets": [
+                    {
+                        "setNumber": 1,
+                        "repetitions": 8,
+                        "weight": 60
+                    }
+                ]
             }
         ]
     }
