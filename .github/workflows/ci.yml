@@ -78,9 +78,9 @@ jobs:
         name: compiled-grammar
         path: dist/
         
-    - name: Enable virtualenvironment
+    - name: Enable virtualenvironment (FAKE)
       run: |
-        . .venv/bin/activate
+        export VIRTUAL_ENV="FAKE"
 
     - name: Run type checking
       run: |
@@ -109,9 +109,9 @@ jobs:
         name: compiled-grammar
         path: dist/
 
-    - name: Enable virtualenvironment
+    - name: Enable virtualenvironment (FAKE)
       run: |
-        . .venv/bin/activate
+        export VIRTUAL_ENV="FAKE"
 
     - name: Run tests
       run: |
@@ -140,9 +140,9 @@ jobs:
         name: compiled-grammar
         path: dist/
         
-    - name: Enable virtualenvironment
+    - name: Enable virtualenvironment (FAKE)
       run: |
-        . .venv/bin/activate
+        export VIRTUAL_ENV="FAKE"
 
     - name: Run splitter.py against data.txt.sample
       run: |
