@@ -10,8 +10,20 @@ install-githooks: check-virtual-env
 install-antlr:
 	curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
 
-test: check-virtual-env typecheck compile-grammar test-python
+test: check-virtual-env 
+	${MAKE} typecheck
+	${MAKE} compile-grammar
+	${MAKE} test-python
+	${MAKE} validate-datasets
 .PHONY: test
+
+validate-datasets:
+	${MAKE} validate-bench-centric
+.PHONY: validate-datasets
+
+validate-bench-centric: check-virtual-env
+	python3 validate_bench_centric.py
+.PHONY: validate-bench-centric
 
 test-python: check-virtual-env
 	pytest parser tests

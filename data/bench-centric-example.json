@@ -1,6 +1,21 @@
 {
   "workout_id": "w_2026_01_23",
+  "type": "bench-centric",
   "date": "2026-01-23T18:45:00Z",
+  "location": "My Gym",
+  "statistics": {
+	  "tracker": "Apple Watch",
+	  "duration": "00:47:48",
+	  "bpm": {
+		  "average": 137,
+		  "min": 90,
+		  "max": 165
+	  },
+	  "kcal": {
+		  "total": 529
+	  }
+  },
+  "notes": "",
   "exercises": [
     {
       "name": "Bench Press",
