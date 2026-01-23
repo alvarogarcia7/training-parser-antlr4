@@ -2,6 +2,7 @@ import copy
 import csv
 import pprint
 import sys
+from dataclasses import dataclass
 from typing import Any, TextIO, TypedDict, List
 
 from antlr4 import InputStream, CommonTokenStream
@@ -19,6 +20,14 @@ ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
     'date': str,
     'parsed': list[Exercise],
     'notes': str})
+
+@dataclass
+class ExerciseStatistics:
+    repetitions: list[int]
+    weights: list[float]
+    num_sets: int
+    avg_reps: int
+    weight_amount: float
 
 
 class Splitter:
@@ -52,24 +61,46 @@ class Splitter:
         return result
 
     @staticmethod
-    def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
+    def _calculate_exercise_statistics(row: Exercise) -> ExerciseStatistics:
+        repetitions_ = [i.repetitions for i in row.sets_]
+        weights = [i.weight.amount for i in row.sets_]
+        num_sets = len(repetitions_)
+        avg_reps = int(sum(repetitions_) / len(repetitions_))
+        weight_amount = row.sets_[0].weight.amount
+        return ExerciseStatistics(
+            repetitions=repetitions_,
+            weights=weights,
+            num_sets=num_sets,
+            avg_reps=avg_reps,
+            weight_amount=weight_amount
+        )
+
+    @staticmethod
+    def _validate_weights_equal(weights: list[float], row: Exercise) -> None:
+        assert weights[0] == (sum(weights) / len(weights)), f"Failed condition: Not all weights are equal in '{row}'"
+
+    @staticmethod
+    def _format_csv_row(date: str, row: Exercise, num_sets: int, avg_reps: int, weight_amount: float) -> list[str]:
+        return [
+            date,
+            row.name,
+            "{:d}".format(num_sets),
+            "{:d}".format(avg_reps),
+            "{:.1f}".format(weight_amount).replace('.', ',')
+        ]
+
+    @staticmethod
+    def _write_output(exercises: list[Parsing2], file_path_: str) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
             for job2 in exercises:
                 row: Exercise
                 for row_group in job2['parsed']:
                     for row in row_group.flatten():
-                        repetitions_ = [i.repetitions for i in row.sets_]
-                        weights = [i.weight.amount for i in row.sets_]
-                        assert weights[0] == (sum(weights) / len(weights)), f"Failed condition: Not all weights are equal in '{row}'"
-                        csv_writer.writerow([
-                            job2['date'],
-                            row.name,
-                            "{:d}".format(len(repetitions_)),
-                            "{:d}".format(int(sum(repetitions_) / len(repetitions_))),
-                            "{:.1f}".format(row.sets_[0].weight.amount).replace('.', ',')
-                        ]
-                        )
+                        stats = Splitter._calculate_exercise_statistics(row)
+                        Splitter._validate_weights_equal(stats.weights, row)
+                        csv_row = Splitter._format_csv_row(job2['date'], row, stats.num_sets, stats.avg_reps, stats.weight_amount)
+                        csv_writer.writerow(csv_row)
 
     @staticmethod
     def _group_exercises(lines: list[str]) -> list[RawWorkoutSession]:
