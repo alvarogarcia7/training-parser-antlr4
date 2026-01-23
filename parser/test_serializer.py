@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import json
 import jsonschema
 
-from parser import Exercise, Units, Set_
+from parser import Exercise, Units, Set_, Weight
 from parser.serializer import serialize_to_set_centric
 
 
@@ -11,8 +11,8 @@ class TestSerializer(unittest.TestCase):
     def test_single_exercise_serialization(self) -> None:
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 60.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 70.0, 'unit': 'kg'}},
+                Set_(10, Weight(60.0, 'kg')),
+                Set_(8, Weight(70.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -42,14 +42,14 @@ class TestSerializer(unittest.TestCase):
     def test_multiple_exercises_serialization(self) -> None:
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 60.0, 'unit': 'kg'}},
+                Set_(10, Weight(60.0, 'kg')),
             ]),
             Exercise('Squat', [
-                {'repetitions': 12, 'weight': {'amount': 100.0, 'unit': 'kg'}},
-                {'repetitions': 10, 'weight': {'amount': 110.0, 'unit': 'kg'}},
+                Set_(12, Weight(100.0, 'kg')),
+                Set_(10, Weight(110.0, 'kg')),
             ]),
             Exercise('Deadlift', [
-                {'repetitions': 5, 'weight': {'amount': 140.0, 'unit': 'kg'}},
+                Set_(5, Weight(140.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 2, 20, 14, 45, 30, tzinfo=timezone.utc)
@@ -70,25 +70,25 @@ class TestSerializer(unittest.TestCase):
     def test_various_set_configurations(self) -> None:
         exercises = [
             Exercise('Single Set', [
-                {'repetitions': 20, 'weight': {'amount': 30.0, 'unit': 'kg'}},
+                Set_(20, Weight(30.0, 'kg')),
             ]),
             Exercise('Three Sets', [
-                {'repetitions': 8, 'weight': {'amount': 50.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 50.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(8, Weight(50.0, 'kg')),
+                Set_(8, Weight(50.0, 'kg')),
+                Set_(8, Weight(50.0, 'kg')),
             ]),
             Exercise('Five Sets', [
-                {'repetitions': 5, 'weight': {'amount': 80.0, 'unit': 'kg'}},
-                {'repetitions': 5, 'weight': {'amount': 80.0, 'unit': 'kg'}},
-                {'repetitions': 5, 'weight': {'amount': 80.0, 'unit': 'kg'}},
-                {'repetitions': 5, 'weight': {'amount': 80.0, 'unit': 'kg'}},
-                {'repetitions': 5, 'weight': {'amount': 80.0, 'unit': 'kg'}},
+                Set_(5, Weight(80.0, 'kg')),
+                Set_(5, Weight(80.0, 'kg')),
+                Set_(5, Weight(80.0, 'kg')),
+                Set_(5, Weight(80.0, 'kg')),
+                Set_(5, Weight(80.0, 'kg')),
             ]),
             Exercise('Pyramid Sets', [
-                {'repetitions': 12, 'weight': {'amount': 40.0, 'unit': 'kg'}},
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 60.0, 'unit': 'kg'}},
-                {'repetitions': 6, 'weight': {'amount': 70.0, 'unit': 'kg'}},
+                Set_(12, Weight(40.0, 'kg')),
+                Set_(10, Weight(50.0, 'kg')),
+                Set_(8, Weight(60.0, 'kg')),
+                Set_(6, Weight(70.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 3, 10, 8, 15, 0, tzinfo=timezone.utc)
@@ -121,8 +121,8 @@ class TestSerializer(unittest.TestCase):
     def test_weight_unit_preservation_kg(self) -> None:
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 60.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 70.0, 'unit': 'kg'}},
+                Set_(10, Weight(60.0, 'kg')),
+                Set_(8, Weight(70.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -135,8 +135,8 @@ class TestSerializer(unittest.TestCase):
     def test_weight_unit_preservation_lb(self) -> None:
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 135.0, 'unit': 'lb'}},
-                {'repetitions': 8, 'weight': {'amount': 155.0, 'unit': 'lb'}},
+                Set_(10, Weight(135.0, 'lb')),
+                Set_(8, Weight(155.0, 'lb')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -149,11 +149,11 @@ class TestSerializer(unittest.TestCase):
     def test_setNumber_sequential_numbering(self) -> None:
         exercises = [
             Exercise('Exercise One', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
-                {'repetitions': 9, 'weight': {'amount': 55.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 60.0, 'unit': 'kg'}},
-                {'repetitions': 7, 'weight': {'amount': 65.0, 'unit': 'kg'}},
-                {'repetitions': 6, 'weight': {'amount': 70.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
+                Set_(9, Weight(55.0, 'kg')),
+                Set_(8, Weight(60.0, 'kg')),
+                Set_(7, Weight(65.0, 'kg')),
+                Set_(6, Weight(70.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 4, 5, 12, 0, 0, tzinfo=timezone.utc)
@@ -168,13 +168,13 @@ class TestSerializer(unittest.TestCase):
     def test_setNumber_sequential_across_exercises(self) -> None:
         exercises = [
             Exercise('Exercise One', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
+                Set_(10, Weight(50.0, 'kg')),
             ]),
             Exercise('Exercise Two', [
-                {'repetitions': 15, 'weight': {'amount': 30.0, 'unit': 'kg'}},
-                {'repetitions': 15, 'weight': {'amount': 30.0, 'unit': 'kg'}},
-                {'repetitions': 15, 'weight': {'amount': 30.0, 'unit': 'kg'}},
+                Set_(15, Weight(30.0, 'kg')),
+                Set_(15, Weight(30.0, 'kg')),
+                Set_(15, Weight(30.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 5, 1, 9, 0, 0, tzinfo=timezone.utc)
@@ -192,7 +192,7 @@ class TestSerializer(unittest.TestCase):
     def test_workout_id_generation_format(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 6, 15, 18, 45, 30, tzinfo=timezone.utc)
@@ -206,7 +206,7 @@ class TestSerializer(unittest.TestCase):
     def test_workout_id_default_timestamp(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         
@@ -223,7 +223,7 @@ class TestSerializer(unittest.TestCase):
     def test_schema_compliance_basic_structure(self) -> None:
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 60.0, 'unit': 'kg'}},
+                Set_(10, Weight(60.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -249,7 +249,7 @@ class TestSerializer(unittest.TestCase):
     def test_schema_compliance_exercise_structure(self) -> None:
         exercises = [
             Exercise('Squat', [
-                {'repetitions': 10, 'weight': {'amount': 100.0, 'unit': 'kg'}},
+                Set_(10, Weight(100.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -269,7 +269,7 @@ class TestSerializer(unittest.TestCase):
     def test_schema_compliance_set_structure(self) -> None:
         exercises = [
             Exercise('Deadlift', [
-                {'repetitions': 5, 'weight': {'amount': 140.0, 'unit': 'kg'}},
+                Set_(5, Weight(140.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -294,7 +294,7 @@ class TestSerializer(unittest.TestCase):
     def test_schema_compliance_required_fields(self) -> None:
         exercises = [
             Exercise('Overhead Press', [
-                {'repetitions': 8, 'weight': {'amount': 40.0, 'unit': 'kg'}},
+                Set_(8, Weight(40.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -328,11 +328,11 @@ class TestSerializer(unittest.TestCase):
         
         exercises = [
             Exercise('Bench Press', [
-                {'repetitions': 10, 'weight': {'amount': 60.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 70.0, 'unit': 'kg'}},
+                Set_(10, Weight(60.0, 'kg')),
+                Set_(8, Weight(70.0, 'kg')),
             ]),
             Exercise('Squat', [
-                {'repetitions': 12, 'weight': {'amount': 100.0, 'unit': 'kg'}},
+                Set_(12, Weight(100.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -344,7 +344,7 @@ class TestSerializer(unittest.TestCase):
     def test_empty_location_and_notes(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -357,7 +357,7 @@ class TestSerializer(unittest.TestCase):
     def test_empty_statistics(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -369,7 +369,7 @@ class TestSerializer(unittest.TestCase):
     def test_type_field_value(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -381,7 +381,7 @@ class TestSerializer(unittest.TestCase):
     def test_date_format_iso8601(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 7, 22, 15, 30, 45, tzinfo=timezone.utc)
@@ -395,7 +395,7 @@ class TestSerializer(unittest.TestCase):
     def test_equipment_field_default_value(self) -> None:
         exercises = [
             Exercise('Test Exercise', [
-                {'repetitions': 10, 'weight': {'amount': 50.0, 'unit': 'kg'}},
+                Set_(10, Weight(50.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -407,9 +407,9 @@ class TestSerializer(unittest.TestCase):
     def test_floating_point_weight_preservation(self) -> None:
         exercises = [
             Exercise('Dumbbell Curl', [
-                {'repetitions': 12, 'weight': {'amount': 12.5, 'unit': 'kg'}},
-                {'repetitions': 10, 'weight': {'amount': 15.0, 'unit': 'kg'}},
-                {'repetitions': 8, 'weight': {'amount': 17.5, 'unit': 'kg'}},
+                Set_(12, Weight(12.5, 'kg')),
+                Set_(10, Weight(15.0, 'kg')),
+                Set_(8, Weight(17.5, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -424,7 +424,7 @@ class TestSerializer(unittest.TestCase):
     def test_zero_weight_preservation(self) -> None:
         exercises = [
             Exercise('Bodyweight Exercise', [
-                {'repetitions': 20, 'weight': {'amount': 0, 'unit': 'kg'}},
+                Set_(20, Weight(0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
@@ -436,7 +436,7 @@ class TestSerializer(unittest.TestCase):
     def test_large_repetition_count(self) -> None:
         exercises = [
             Exercise('Calf Raise', [
-                {'repetitions': 100, 'weight': {'amount': 20.0, 'unit': 'kg'}},
+                Set_(100, Weight(20.0, 'kg')),
             ])
         ]
         timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)

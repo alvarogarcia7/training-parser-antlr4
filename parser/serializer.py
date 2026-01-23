@@ -15,10 +15,10 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
         for idx, set_ in enumerate(exercise.sets_, start=1):
             sets.append({
                 "setNumber": idx,
-                "repetitions": set_["repetitions"],
+                "repetitions": set_.repetitions,
                 "weight": {
-                    "amount": set_["weight"]["amount"],
-                    "unit": set_["weight"]["unit"]
+                    "amount": set_.weight.amount,
+                    "unit": set_.weight.unit
                 }
             })
         
