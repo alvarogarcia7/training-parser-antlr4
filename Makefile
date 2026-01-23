@@ -66,6 +66,10 @@ verify-splitter-generic: check-virtual-env
 	@echo "Data is correct"
 .PHONY: verify-splitter-generic
 
+validate-json: check-virtual-env
+	python3 json_validator.py $(SCHEMA) $(FILES)
+.PHONY: validate-json
+
 to-clipboard:
 	@cat output.csv | pbcopy
 	@echo "The output is in your copy-paste clipboard."
