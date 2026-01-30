@@ -11,7 +11,12 @@ import json
 import sys
 from pathlib import Path
 
-from main import parse_file
+try:
+    from main import parse_file
+except (ImportError, ModuleNotFoundError):
+    # Fallback to simple parser if ANTLR files are not available
+    from simple_parser import parse_file
+
 from parser.serializer import serialize_to_set_centric
 from schema_validator import validate_json_with_schema
 
