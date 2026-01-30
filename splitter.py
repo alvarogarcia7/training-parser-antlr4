@@ -5,6 +5,7 @@ import sys
 from typing import Any, TextIO, TypedDict, List
 
 # Try to use ANTLR parser, fall back to simple parser if not available
+use_antlr: bool
 try:
     from antlr4 import InputStream, CommonTokenStream
     from dist.trainingLexer import trainingLexer

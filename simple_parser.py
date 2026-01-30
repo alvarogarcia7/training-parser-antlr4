@@ -5,21 +5,21 @@ Parses the training log format and returns Exercise objects.
 """
 
 import re
-import sys
-import copy
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
-from dataclasses import dataclass, field
-from itertools import groupby
+from typing import TYPE_CHECKING, Optional
 
 # Import directly from model module to avoid circular dependencies
 # This avoids importing through parser/__init__.py which has ANTLR dependencies
 from importlib import import_module
-model_module = import_module('.model', 'parser')
-Exercise = model_module.Exercise
-Weight = model_module.Weight
-Set_ = model_module.Set_
+
+if TYPE_CHECKING:
+    from parser.model import Exercise, Weight, Set_
+else:
+    model_module = import_module('.model', 'parser')
+    Exercise = model_module.Exercise  # type: ignore
+    Weight = model_module.Weight  # type: ignore
+    Set_ = model_module.Set_  # type: ignore
 
 
 def parse_weight(weight_str: str) -> Weight:
@@ -105,13 +105,6 @@ def parse_set_notation(set_str: str) -> list[Set_]:
             reps = int(part)
             if leading_weight:
                 sets.append(Set_(repetitions=reps, weight=leading_weight))
-        else:
-            # Try as a weight
-            try:
-                weight = parse_weight(part)
-                # Weight alone doesn't create a set without reps
-            except ValueError:
-                pass
 
     return sets
 
@@ -158,7 +151,6 @@ def parse_exercise_line(line: str) -> Optional[Exercise]:
 
     if sets:
         return Exercise(name=exercise_name, sets_=sets)
-
     return None
 
 
