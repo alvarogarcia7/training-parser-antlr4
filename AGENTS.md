@@ -29,15 +29,6 @@ python3 scripts/download_antlr.py
 make install-githooks
 ```
 
-### Java Configuration (Optional but Recommended)
-```bash
-# Set Java 21 as default with SDKMAN
-sdk default java 21.0.9-tem
-
-# Or add to shell config (~/.bashrc or ~/.zshrc)
-export PATH="/home/appuser/.sdkman/candidates/java/21.0.9-tem/bin:$PATH"
-```
-
 ## Commands
 - **Compile**: `make compile-grammar` (compiles ANTLR4 grammar to Python)
 - **Type Check**: `make typecheck` (runs mypy with strict settings)
@@ -65,7 +56,6 @@ export PATH="/home/appuser/.sdkman/candidates/java/21.0.9-tem/bin:$PATH"
   - `parser.py`: ANTLR visitor pattern implementation
   - `serializer.py`: Converts Exercise objects to set-centric JSON
   - `standardize_name.py`: Exercise name normalization
-- `simple_parser.py`: Pure Python regex-based fallback parser (for environments without Java)
 - `main.py`: CLI entry point for parsing
 - `main_export.py`: CLI for JSON export with validation
 - `splitter.py`: CSV export tool
@@ -78,7 +68,6 @@ export PATH="/home/appuser/.sdkman/candidates/java/21.0.9-tem/bin:$PATH"
 - Pre-commit hooks enforce formatting, type checking, and tests
 - Virtual environment required in `.venv/` directory (created by uv)
 - Follow existing patterns in parser visitor implementations
-- Fallback mechanisms for environments without Java/ANTLR
 
 ## Development Workflow
 1. Make code changes

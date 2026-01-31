@@ -4,19 +4,11 @@ import pprint
 import sys
 from typing import Any, TextIO, TypedDict, List
 
-# Try to use ANTLR parser, fall back to simple parser if not available
-use_antlr: bool
-try:
-    from antlr4 import InputStream, CommonTokenStream
-    from dist.trainingLexer import trainingLexer
-    from dist.trainingParser import trainingParser
-    from parser import Formatter
-    use_antlr = True
-except (ImportError, ModuleNotFoundError):
-    use_antlr = False
-    from simple_parser import parse_exercise_line
+from antlr4 import InputStream, CommonTokenStream
 
-from parser import Exercise, StandardizeName
+from dist.trainingLexer import trainingLexer
+from dist.trainingParser import trainingParser
+from parser import Formatter, Exercise, StandardizeName
 
 RawWorkoutSession = TypedDict('RawWorkoutSession', {
     'date': str,
@@ -47,28 +39,17 @@ class Splitter:
 
     @staticmethod
     def _parse(param: str) -> Any:
-        if use_antlr:
-            input_stream = InputStream(param)
-            lexer = trainingLexer(input_stream)
-            token_stream = CommonTokenStream(lexer)
-            token_stream.fill()
-            parser = trainingParser(token_stream)
-            tree = parser.workout()
+        input_stream = InputStream(param)
+        lexer = trainingLexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        token_stream.fill()
+        parser = trainingParser(token_stream)
+        tree = parser.workout()
 
-            formatter = Formatter()
-            formatter.visit(tree)
-            result = formatter.result
-            return result
-        else:
-            # Fallback to simple parser
-            exercises: list[Exercise] = []
-            for line in param.strip().split('\n'):
-                line = line.strip()
-                if line:
-                    exercise = parse_exercise_line(line)
-                    if exercise:
-                        exercises.append(exercise)
-            return exercises
+        formatter = Formatter()
+        formatter.visit(tree)
+        result = formatter.result
+        return result
 
     @staticmethod
     def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
