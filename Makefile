@@ -69,7 +69,7 @@ test-python: check-virtual-env
 .PHONY: test-python
 
 typecheck: check-virtual-env
-	mypy --strict parser --exclude venv --exclude .venv
+	uv run mypy --strict parser --exclude venv --exclude .venv
 .PHONY: typecheck
 
 pre-commit: test
