@@ -67,11 +67,13 @@ jobs:
 
     - name: Run splitter.py against data.txt.sample
       run: |
+        source .venv/bin/activate
         python splitter.py data.txt.sample --output e2e-output-data.csv
         echo "✓ Successfully processed data.txt.sample"
 
     - name: Run splitter.py against training-sample.txt
       run: |
+        source .venv/bin/activate
         python splitter.py training-sample.txt --output e2e-output-training.csv
         echo "✓ Successfully processed training-sample.txt"
 
