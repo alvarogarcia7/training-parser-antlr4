@@ -65,10 +65,9 @@ test-json-export: check-virtual-env
 	@echo "Testing JSON export from training data..."
 	python3 main_export.py training-sample_initial.txt -o .test-output.json
 	@if [ -f .test-output.json ]; then \
-		echo "✓ JSON export successful"; \
 		rm .test-output.json; \
 	else \
-		echo "✗ JSON export failed"; \
+		echo "✗ JSON export or validation failed"; \
 		exit 1; \
 	fi
 .PHONY: test-json-export
