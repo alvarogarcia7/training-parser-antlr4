@@ -41,7 +41,7 @@ jobs:
         uv sync
 
     - name: Enable virtual environment
-      run: |
+      run: |-
         source .venv/bin/activate
 
     - name: Download ANTLR4
@@ -52,10 +52,12 @@ jobs:
     - name: Compile grammar
       if: steps.cache-grammar.outputs.cache-hit != 'true'
       run: |
+        source .venv/bin/activate
         make compile-grammar
 
     - name: Run type checking
       run: |
+        source .venv/bin/activate
         make typecheck
 
     - name: Run unit tests
