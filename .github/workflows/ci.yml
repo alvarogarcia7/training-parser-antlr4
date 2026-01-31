@@ -39,6 +39,7 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync
+        source .venv/bin/activate
 
     - name: Download ANTLR4
       if: steps.cache-grammar.outputs.cache-hit != 'true'
