@@ -53,11 +53,11 @@ jobs:
 
     - name: Run type checking
       run: |
-        VIRTUAL_ENV="FAKE" make typecheck
+        make typecheck
 
     - name: Run unit tests
       run: |
-        VIRTUAL_ENV="FAKE" make test-python
+        make test-python
 
     - name: Run splitter.py against data.txt.sample
       run: |
