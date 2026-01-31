@@ -1,8 +1,8 @@
 from pprint import pprint
 
-from antlr4 import FileStream, InputStream
+from antlr4 import InputStream
 
-from parser import Parser, Exercise, ParseResult
+from parser import Parser, ParseResult
 
 
 def parse_file(file_path: str) -> ParseResult:
