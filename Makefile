@@ -1,22 +1,14 @@
 # Training Parser Makefile
 # ANTLR jar is automatically downloaded when needed (checks if exists first)
-# Use 'make install-uv' for uv-based setup or 'make install' for legacy pip setup
 
 ANTLR_JAR := antlr-4.9.3-complete.jar
 ANTLR_URL := https://www.antlr.org/download/antlr-4.9.3-complete.jar
 
 include makefiles/virtualenvironment.mk
 
-install: requirements install-githooks
-	${MAKE} install-antlr
+install: install-githooks install-antlr
+	@echo "Installation complete"
 .PHONY: install
-
-install-uv:
-	uv venv
-	uv pip install -e ".[dev]"
-	${MAKE} install-githooks
-	${MAKE} install-antlr
-.PHONY: install-uv
 
 install-githooks: check-virtual-env
 	pre-commit install
@@ -77,7 +69,7 @@ test-python: check-virtual-env
 .PHONY: test-python
 
 typecheck: check-virtual-env
-	mypy --strict parser --exclude venv --exclude .venv
+	uv run mypy --strict parser --exclude venv --exclude .venv
 .PHONY: typecheck
 
 pre-commit: test
