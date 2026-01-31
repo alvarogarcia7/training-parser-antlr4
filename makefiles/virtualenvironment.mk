@@ -6,10 +6,6 @@ virtualenvironment:
 	$(PYTHON) -m venv venv
 .PHONY: virtualenvironment
 
-virtualenvironment-finish: check-virtual-env
-	$(PYTHON) -m ensurepip --upgrade
-	$(PIP) install --upgrade setuptools
-.PHONY: virtualenvironment-finish
 
 check-virtual-env:
 	@# Test if the variable is set (supports both venv and .venv directories)
@@ -20,14 +16,6 @@ check-virtual-env:
   		false;       																\
   	fi
 
-requirements.txt: check-virtual-env
-	pip3 freeze > requirements.txt
-.PHONY: requirements.txt
-
-freeze: requirements.txt
-
-requirements: check-virtual-env
-	pip3 install -r requirements.txt
 
 # uv-specific targets
 uv-sync:
