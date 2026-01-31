@@ -45,6 +45,7 @@ test: check-virtual-env
 	${MAKE} compile-grammar
 	${MAKE} test-python
 	${MAKE} validate-datasets
+	${MAKE} test-json-export
 .PHONY: test
 
 validate-datasets:
@@ -59,6 +60,17 @@ validate-set-centric: check-virtual-env
 validate-bench-centric: check-virtual-env
 	python3 validate_bench_centric.py
 .PHONY: validate-bench-centric
+
+test-json-export: check-virtual-env
+	@echo "Testing JSON export from training data..."
+	python3 main_export.py training-sample_initial.txt -o .test-output.json
+	@if [ -f .test-output.json ]; then \
+		rm .test-output.json; \
+	else \
+		echo "✗ JSON export or validation failed"; \
+		exit 1; \
+	fi
+.PHONY: test-json-export
 
 test-python: check-virtual-env
 	pytest parser tests
