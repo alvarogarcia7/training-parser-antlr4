@@ -150,9 +150,6 @@ See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentatio
 - Java (for ANTLR4 grammar compilation)
 - ANTLR4 jar file (automatically downloaded during setup, or run `make install-antlr`)
 
-## Migration from pip to uv
-
-See [MIGRATION_UV.md](MIGRATION_UV.md) for detailed migration instructions.
 
 ## Notes and TODOs
 
