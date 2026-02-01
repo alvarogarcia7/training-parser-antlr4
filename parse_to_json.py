@@ -16,6 +16,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from parser import Exercise
+from parser.display import serialize_exercise
 from splitter import Splitter
 
 
@@ -56,25 +57,6 @@ class ParseToJson:
             ))
         return result
 
-    @staticmethod
-    def _serialize_exercise(exercise: Exercise) -> dict[str, Any]:
-        """Convert an Exercise object to a JSON-serializable dict."""
-        sets = []
-        for idx, set_ in enumerate(exercise.sets_, start=1):
-            sets.append({
-                "setNumber": idx,
-                "repetitions": set_.repetitions,
-                "weight": {
-                    "amount": set_.weight.amount,
-                    "unit": set_.weight.unit
-                }
-            })
-
-        return {
-            "name": exercise.name,
-            "equipment": "other",
-            "sets": sets
-        }
 
     @staticmethod
     def _serialize_workout(workout: ParsedWorkoutSession) -> dict[str, Any]:
@@ -82,7 +64,7 @@ class ParseToJson:
         workout_id = f"w_{workout.date.replace('-', '')}_000000"
 
         exercise_blocks = [
-            ParseToJson._serialize_exercise(exercise)
+            serialize_exercise(exercise)
             for exercise in workout.parsed
         ]
 
