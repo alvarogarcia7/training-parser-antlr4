@@ -8,10 +8,12 @@ Step 1 of 2-step process:
 - Output as JSON
 """
 import json
+import os
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from parser import Exercise
 from splitter import Splitter
@@ -96,7 +98,14 @@ class ParseToJson:
 
     def to_json(self, workouts: list[ParsedWorkoutSession], output_file: str) -> None:
         """Write parsed workouts to JSON file."""
-        timestamp = datetime.now(timezone.utc)
+        # Get timezone from TZ environment variable, default to UTC
+        tz_str = os.environ.get('TZ', 'UTC')
+        try:
+            tz = ZoneInfo(tz_str)
+        except KeyError:
+            tz = timezone.utc
+
+        timestamp = datetime.now(tz)
 
         workout_list = [
             self._serialize_workout(workout)
