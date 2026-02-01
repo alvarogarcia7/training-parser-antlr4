@@ -127,3 +127,19 @@ to-clipboard:
 	@echo "Open https://docs.google.com/spreadsheets/d/1F1a95XZRIBLXj3TqpEZoIEB1-n17O8KYs65kf0s-HqA/edit#gid=1836141740"
 	@echo "Paste it in column Strength!F"
 .PHONY: to-clipboard
+
+output.json: check-virtual-env data.txt
+	FILE=data.txt $(MAKE) output.json-generic
+.PHONY: output.json
+
+output.json-generic: check-virtual-env
+	python3 parse_to_json.py $(FILE) --output output.json
+.PHONY: output.json-generic
+
+compact: check-virtual-env output.json
+	python3 compact_from_json.py output.json
+.PHONY: compact
+
+compact-generic: check-virtual-env
+	python3 compact_from_json.py $(FILE)
+.PHONY: compact-generic
