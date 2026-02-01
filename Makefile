@@ -47,11 +47,11 @@ validate-datasets:
 .PHONY: validate-datasets
 
 validate-set-centric: check-virtual-env
-	python3 validate_set_centric.py
+	uv run python3 validate_set_centric.py
 .PHONY: validate-set-centric
 
 validate-bench-centric: check-virtual-env
-	python3 validate_bench_centric.py
+	uv run python3 validate_bench_centric.py
 .PHONY: validate-bench-centric
 
 test-json-export: check-virtual-env
@@ -66,7 +66,7 @@ test-json-export: check-virtual-env
 .PHONY: test-json-export
 
 test-python: check-virtual-env
-	pytest parser tests
+	uv run pytest parser tests
 .PHONY: test-python
 
 typecheck: check-virtual-env
@@ -77,9 +77,13 @@ pre-commit: test
 .PHONY: pre-commit
 
 compile-grammar: training.g4 $(ANTLR_JAR)
-	rm -rf dist/
-	java -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist
-	@echo "Grammar generated"
+	@if [ ! -d dist ] || [ ! -f dist/trainingLexer.py ]; then \
+		rm -rf dist/; \
+		java -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist; \
+		echo "Grammar generated"; \
+	else \
+		echo "Grammar files already exist, skipping compilation"; \
+	fi
 
 run: check-virtual-env
 	FILE=data.txt $(MAKE) output.csv

@@ -85,3 +85,23 @@ To Do:
 * Cleanup the grammar, moving the "moving parts" to a builder.
   * use a 'addSeriesIfComplete'.
 * The series is like a ternary operator, in which you can vary any of the three components: weight, repetitions, amount of series
+
+2025-04-09 19:08:50 AGB
+To do:
+
+Should be compacted:
+58: 8, 10, 8, 10, 10, 12
+
+Equivalent to:
+58: 8, 8, 10, 10, 10, 12
+
+The program should reorder/compact the inputs so that there are fewer series
+
+* Make 'm' machine
+* make 'sm' smith machine
+
+This input is parsed wrong:
+
+Machine leg press: 1x20x32, 52:10,20, 66: 15
+Actual:     Machine Leg Press: 1x20@32.0kg, 1x10@52.0kg, 1x20@52.0kg, 1x15@52.0kg, 1x15@66.0kg; subtotal: 3970.0
+Expected:   Machine Leg Press: 1x20@32.0kg, 1x10@52.0kg, 1x20@52.0kg, *<NOTHING >* 1x15@66.0kg; subtotal: XXX
