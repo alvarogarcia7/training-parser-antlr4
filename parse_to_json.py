@@ -9,115 +9,50 @@ Step 1 of 2-step process:
 """
 import json
 import sys
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, TextIO, TypedDict, List
+from typing import Any
 
-from antlr4 import InputStream, CommonTokenStream
+from parser import Exercise
+from splitter import Splitter
 
-from dist.trainingLexer import trainingLexer
-from dist.trainingParser import trainingParser
-from parser import Formatter, Exercise, StandardizeName
 
-RawWorkoutSession = TypedDict('RawWorkoutSession', {
-    'date': str,
-    'payload': str,
-    'notes': str})
+@dataclass
+class ParsedWorkoutSession:
+    """Parsed workout with exercises and metadata."""
+    date: str
+    parsed: list[Exercise]
+    notes: str
 
-ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
-    'date': str,
-    'parsed': list[Exercise],
-    'notes': str})
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            'date': self.date,
+            'parsed': self.parsed,
+            'notes': self.notes
+        }
 
 
 class ParseToJson:
+    """Parse training data to JSON format using Splitter's parsing logic."""
+
+    def __init__(self) -> None:
+        self.splitter = Splitter()
+
     def main(self, file: str) -> list[ParsedWorkoutSession]:
         """Read, parse, and standardize names from a training file."""
-        lines = self._read_all_lines(file)
-        raw_exercises = self._group_exercises(lines)
-        exercises = self._parse_exercises(raw_exercises)
-        exercises = self._rename_exercises(exercises)
-        return exercises
+        # Use Splitter's main method to parse the file
+        parsed_sessions = self.splitter.main(file)
 
-    def _parse_exercises(self, jobs: list[RawWorkoutSession]) -> list[ParsedWorkoutSession]:
-        """Parse exercise payloads using ANTLR."""
-        jobs2: list[ParsedWorkoutSession] = []
-        for job in jobs:
-            job_tmp: Any = job.copy()
-            job_tmp['parsed'] = self._parse(job['payload'])
-            jobs2.append(job_tmp)
-        return jobs2
-
-    @staticmethod
-    def _parse(param: str) -> Any:
-        """Parse exercise text using ANTLR grammar."""
-        input_stream = InputStream(param)
-        lexer = trainingLexer(input_stream)
-        token_stream = CommonTokenStream(lexer)
-        token_stream.fill()
-        parser = trainingParser(token_stream)
-        tree = parser.workout()
-
-        formatter = Formatter()
-        formatter.visit(tree)
-        result = formatter.result
+        # Convert to ParsedWorkoutSession dataclass format
+        result: list[ParsedWorkoutSession] = []
+        for session in parsed_sessions:
+            result.append(ParsedWorkoutSession(
+                date=session['date'],
+                parsed=session['parsed'],
+                notes=session['notes']
+            ))
         return result
-
-    @staticmethod
-    def _group_exercises(lines: list[str]) -> list[RawWorkoutSession]:
-        """Group lines by workout session (separated by blank lines)."""
-        jobs: list[RawWorkoutSession] = []
-        current: list[Any] = []
-        notes: list[str] = []
-        date: Any = None
-        for idx in range(len(lines)):
-            if lines[idx] == '':
-                jobs.append(ParseToJson.build_job(current, date, notes))
-                notes = []
-                current = []
-                date = None
-                continue
-            if lines[idx].startswith('#'):
-                notes.append(lines[idx])
-                continue
-            if date is None:
-                date = lines[idx]
-                continue
-            current.append(lines[idx])
-
-        jobs.append(ParseToJson.build_job(current, date, notes))
-        return jobs
-
-    @staticmethod
-    def build_job(current: List[Any], date: Any, notes: list[str]) -> RawWorkoutSession:
-        """Build a workout session record."""
-        current.append("")
-        assert date is not None, f"current={current}, date={date}, notes={notes}"
-        return {'date': date,
-                'payload': "\n".join(current.copy()),
-                'notes': "\n".join(notes.copy())
-                }
-
-    @staticmethod
-    def _read_all_lines(file_name: str) -> list[str]:
-        """Read all lines from a file."""
-        lines: list[str] = []
-        file_path: TextIO
-        with open(file_name, 'r') as file_path:
-            while True:
-                line = file_path.readline()
-                if not line:
-                    break
-                lines.append(line.rstrip())
-        return lines
-
-    @staticmethod
-    def _rename_exercises(parsing2s: list[ParsedWorkoutSession]) -> list[ParsedWorkoutSession]:
-        """Standardize exercise names."""
-        renamer = StandardizeName()
-        for parsing2 in parsing2s:
-            for exercise in parsing2['parsed']:
-                exercise.name = renamer.run(exercise.name)
-        return parsing2s
 
     @staticmethod
     def _serialize_exercise(exercise: Exercise) -> dict[str, Any]:
@@ -140,21 +75,21 @@ class ParseToJson:
         }
 
     @staticmethod
-    def _serialize_workout(workout: ParsedWorkoutSession, timestamp: datetime) -> dict[str, Any]:
+    def _serialize_workout(workout: ParsedWorkoutSession) -> dict[str, Any]:
         """Convert a ParsedWorkoutSession to a JSON-serializable dict."""
-        workout_id = f"w_{workout['date'].replace('-', '')}_000000"
+        workout_id = f"w_{workout.date.replace('-', '')}_000000"
 
         exercise_blocks = [
             ParseToJson._serialize_exercise(exercise)
-            for exercise in workout['parsed']
+            for exercise in workout.parsed
         ]
 
         return {
             "workout_id": workout_id,
             "type": "set-centric",
-            "date": workout['date'],
+            "date": workout.date,
             "location": "",
-            "notes": workout['notes'],
+            "notes": workout.notes,
             "statistics": {},
             "exercises": exercise_blocks
         }
@@ -164,7 +99,7 @@ class ParseToJson:
         timestamp = datetime.now(timezone.utc)
 
         workout_list = [
-            self._serialize_workout(workout, timestamp)
+            self._serialize_workout(workout)
             for workout in workouts
         ]
 
