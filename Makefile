@@ -38,6 +38,7 @@ test: check-virtual-env
 	${MAKE} test-python
 	${MAKE} validate-datasets
 	${MAKE} test-json-export
+	${MAKE} compare-v1-v2
 .PHONY: test
 
 validate-datasets:
@@ -143,3 +144,18 @@ compact: check-virtual-env output.json
 compact-generic: check-virtual-env
 	python3 compact_from_json.py $(FILE)
 .PHONY: compact-generic
+
+compare-v1-v2: check-virtual-env
+	@echo "Comparing v1 (splitter.py) vs v2 (parse_to_json + compact_from_json)..."
+	FILE=data.txt.sample python3 splitter.py data.txt.sample > /tmp/compact-v1.log
+	python3 parse_to_json.py data.txt.sample --output /tmp/output-v2.json
+	python3 compact_from_json.py /tmp/output-v2.json > /tmp/compact-v2.log
+	@if diff -u /tmp/compact-v1.log /tmp/compact-v2.log > /dev/null; then \
+		echo "✓ v1 and v2 produce identical output"; \
+		rm -f /tmp/compact-v1.log /tmp/compact-v2.log /tmp/output-v2.json; \
+	else \
+		echo "✗ Differences found between v1 and v2:"; \
+		diff -u /tmp/compact-v1.log /tmp/compact-v2.log; \
+		exit 1; \
+	fi
+.PHONY: compare-v1-v2

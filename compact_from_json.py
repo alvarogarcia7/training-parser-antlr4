@@ -71,17 +71,14 @@ def main() -> None:
 
     workouts = data.get('workouts', [])
 
+    print("Debug printing.")
     total_volume_all = 0.0
-    total_exercises = 0
 
     for workout in workouts:
-        workout_volume, exercise_count = display_workout_compact(workout)
+        workout_volume, _ = display_workout_compact(workout)
         total_volume_all += workout_volume
-        total_exercises += exercise_count
-        print()
 
     print(f"Total volume for all workouts: {total_volume_all}")
-    print(f"Total exercises across all workouts: {total_exercises}")
 
 
 if __name__ == "__main__":
