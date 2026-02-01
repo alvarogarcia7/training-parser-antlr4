@@ -1,0 +1,1787 @@
+{
+  "export_timestamp": "2026-02-01T05:54:17.845730+00:00",
+  "workouts": [
+    {
+      "workout_id": "w_20220909_000000",
+      "type": "set-centric",
+      "date": "2022-09-09",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lateral Elevation",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 7,
+              "weight": {
+                "amount": 16.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 7,
+              "weight": {
+                "amount": 16.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Machine Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 40,
+              "weight": {
+                "amount": 27.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lateral Pull-Down",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 40,
+              "weight": {
+                "amount": 27.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Squat",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 15,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 15,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 15,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 15,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 15,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Overhead Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230323_000000",
+      "type": "set-centric",
+      "date": "2023-03-23",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 15,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Barbell Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 15,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230414_000000",
+      "type": "set-centric",
+      "date": "2023-04-14",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230503_000000",
+      "type": "set-centric",
+      "date": "2023-05-03",
+      "location": "",
+      "notes": "# Stats: 74m, 88zm, 126-161 bpm, 746 bpm",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 90.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 2,
+              "weight": {
+                "amount": 90.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 9,
+              "repetitions": 2,
+              "weight": {
+                "amount": 100.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 10,
+              "repetitions": 2,
+              "weight": {
+                "amount": 110.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 11,
+              "repetitions": 2,
+              "weight": {
+                "amount": 120.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 12,
+              "repetitions": 2,
+              "weight": {
+                "amount": 110.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 13,
+              "repetitions": 2,
+              "weight": {
+                "amount": 110.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 14,
+              "repetitions": 2,
+              "weight": {
+                "amount": 110.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 15,
+              "repetitions": 2,
+              "weight": {
+                "amount": 120.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 16,
+              "repetitions": 2,
+              "weight": {
+                "amount": 120.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 17,
+              "repetitions": 2,
+              "weight": {
+                "amount": 120.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Machine One-Arm Pull-Down",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 12,
+              "weight": {
+                "amount": 26.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 12,
+              "weight": {
+                "amount": 26.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Machine Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 12,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230504_000000",
+      "type": "set-centric",
+      "date": "2023-05-04",
+      "location": "",
+      "notes": "# Stats: 40m, 34zm, 114-139 bpm, 350 bpm",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Machine Lateral Pull-Down",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 50,
+              "weight": {
+                "amount": 14.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 50,
+              "weight": {
+                "amount": 27.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 50,
+              "weight": {
+                "amount": 27.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 54.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 54.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 3,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 6,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 6,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 9,
+              "repetitions": 6,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 10,
+              "repetitions": 6,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 50,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 25,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 25,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 4,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 8,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 8,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 8,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 9,
+              "repetitions": 5,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 10,
+              "repetitions": 3,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230419_000000",
+      "type": "set-centric",
+      "date": "2023-04-19",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Overhead Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 30.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 35.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 15,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 15,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 15,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 15,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Squat",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230420_000000",
+      "type": "set-centric",
+      "date": "2023-04-20",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Squat",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 6,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 90.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 3,
+              "weight": {
+                "amount": 100.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 3,
+              "weight": {
+                "amount": 100.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Overhead Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Barbell Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 30,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 30,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 30,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 30,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 30,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 20,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 3,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 4,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 5,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230423_000000",
+      "type": "set-centric",
+      "date": "2023-04-23",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 20,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 15,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 15,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 15,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 15,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 15,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Muscle Up To Top",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230425_000000",
+      "type": "set-centric",
+      "date": "2023-04-25",
+      "location": "",
+      "notes": "# Stats: 35 min, 28 zm, 121-154 bpm, 318 kcal",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 15,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 15,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 50.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Muscle Up To Top",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deadlift",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Machine Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 30,
+              "weight": {
+                "amount": 17.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 57.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230426_000000",
+      "type": "set-centric",
+      "date": "2023-04-26",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Squat",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 20,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 20,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 6,
+              "weight": {
+                "amount": 80.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Barbell Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 15,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 10,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 10,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Muscle Up To Top",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230427_000000",
+      "type": "set-centric",
+      "date": "2023-04-27",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Machine Row",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 30,
+              "weight": {
+                "amount": 27.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 30,
+              "weight": {
+                "amount": 27.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 30,
+              "weight": {
+                "amount": 27.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 30,
+              "weight": {
+                "amount": 27.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 47.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 47.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 10,
+              "weight": {
+                "amount": 47.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 10,
+              "weight": {
+                "amount": 47.5,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 9,
+              "repetitions": 10,
+              "weight": {
+                "amount": 47.5,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230428_000000",
+      "type": "set-centric",
+      "date": "2023-04-28",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Bench Press",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 50,
+              "weight": {
+                "amount": 20.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 15,
+              "weight": {
+                "amount": 40.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 60.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 6,
+              "weight": {
+                "amount": 70.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workout_id": "w_20230504_000000",
+      "type": "set-centric",
+      "date": "2023-05-04",
+      "location": "",
+      "notes": "",
+      "statistics": {},
+      "exercises": [
+        {
+          "name": "Machine Leg Extension",
+          "equipment": "other",
+          "sets": [
+            {
+              "setNumber": 1,
+              "repetitions": 15,
+              "weight": {
+                "amount": 14.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 2,
+              "repetitions": 10,
+              "weight": {
+                "amount": 27.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 3,
+              "repetitions": 10,
+              "weight": {
+                "amount": 32.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 4,
+              "repetitions": 10,
+              "weight": {
+                "amount": 36.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 5,
+              "repetitions": 10,
+              "weight": {
+                "amount": 41.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 6,
+              "repetitions": 10,
+              "weight": {
+                "amount": 45.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 7,
+              "repetitions": 10,
+              "weight": {
+                "amount": 55.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 8,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 9,
+              "repetitions": 10,
+              "weight": {
+                "amount": 64.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 10,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 11,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 12,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 13,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            },
+            {
+              "setNumber": 14,
+              "repetitions": 10,
+              "weight": {
+                "amount": 59.0,
+                "unit": "kg"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
