@@ -102,7 +102,11 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_structure(self) -> None:
         """Test that TSV rows have correct structure."""
+<<<<<<< HEAD
         sessions: list[ParsedWorkoutSession] = [{
+=======
+        sessions = [{
+>>>>>>> 4484a05 (Create library for accessing data + Create CLI for grouping all behavior)
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
@@ -122,7 +126,11 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_content(self) -> None:
         """Test that TSV rows contain expected exercise data."""
+<<<<<<< HEAD
         sessions: list[ParsedWorkoutSession] = [{
+=======
+        sessions = [{
+>>>>>>> 4484a05 (Create library for accessing data + Create CLI for grouping all behavior)
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
@@ -150,7 +158,11 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_multiple_sessions(self) -> None:
         """Test that TSV rows handle multiple sessions correctly."""
+<<<<<<< HEAD
         sessions: list[ParsedWorkoutSession] = [
+=======
+        sessions = [
+>>>>>>> 4484a05 (Create library for accessing data + Create CLI for grouping all behavior)
             {
                 'date': '2025-01-01',
                 'parsed': self.exercises[:2],  # Bench + Squat
