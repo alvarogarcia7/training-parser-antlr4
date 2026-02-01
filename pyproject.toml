@@ -90,6 +90,8 @@ implicit_reexport = true
 exclude = [
     "^antlr4_Python3_examples-master",
     "^dist",
+    "^venv",
+    "^\\.venv",
 ]
 
 [[tool.mypy.overrides]]
@@ -99,6 +101,10 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "parser.*"
 disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = "pytest"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["parser", "tests"]
