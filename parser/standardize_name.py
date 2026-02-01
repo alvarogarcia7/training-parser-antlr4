@@ -61,12 +61,18 @@ class StandardizeName:
         return selected_name.title().rstrip()
 
     def _original_or_synonym(self, raw_name: str) -> str:
-        for synonym_group in self._synonyms:
-            for synonym in synonym_group['synonyms']:
-                if raw_name.strip().casefold() == synonym.casefold():
-                    selected_name = synonym_group['clean']
-                    return selected_name
-        return raw_name
+        parts = []
+        for part in raw_name.strip().casefold().split(" "):
+            appended = False
+            for synonym_group in self._synonyms:
+                for synonym in synonym_group['synonyms']:
+                    if part.strip() == synonym.casefold():
+                        parts.append(synonym_group['clean'])
+                        appended = True
+            if not appended:
+                parts.append(part)
+                appended = True
+        return " ".join(parts)
 
     def _check_synonym_configuration(self, synonyms: list[Synonym]) -> None:
         self._check_non_overlapping_synonyms(synonyms)
