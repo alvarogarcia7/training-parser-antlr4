@@ -11,7 +11,7 @@ install: install-githooks install-antlr
 .PHONY: install
 
 install-githooks: check-virtual-env
-	pre-commit install
+	uv run pre-commit install
 .PHONY: install-githooks
 
 $(ANTLR_JAR):

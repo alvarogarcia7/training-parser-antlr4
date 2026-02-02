@@ -20,7 +20,7 @@ uv venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install project with dev dependencies
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 # Download ANTLR jar (required for grammar compilation)
 python3 scripts/download_antlr.py
@@ -82,7 +82,7 @@ make install-githooks
 
 ## Troubleshooting
 - **ANTLR Compilation Error**: Java JDK is available at `~/.sdkman/candidates/java/current/bin/java`. Use this path to compile the grammar if needed. Do not attempt to install Java or use antlr-ng as alternatives.
-- **Import Errors**: Run `uv pip install -e ".[dev]"` to ensure all dependencies are installed
+- **Import Errors**: Run `uv sync --all-extras` to ensure all dependencies are installed
 - **Type Errors**: Run `make typecheck` and fix issues before committing
 - **Test Failures**: Run individual test files with `pytest parser/test_*.py`
 - **Missing dist/ directory**: If `dist/trainingLexer.py` or `dist/trainingParser.py` is missing, run `make compile-grammar` to generate them from `training.g4`

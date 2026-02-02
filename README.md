@@ -16,7 +16,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Or manually:
 uv venv
 source .venv/bin/activate
-uv pip install -e ".[dev]"
+uv sync --all-extras
 python3 scripts/download_antlr.py  # Downloads ANTLR jar if not present
 make install-githooks
 ```
