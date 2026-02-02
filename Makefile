@@ -82,7 +82,7 @@ test-lsp: check-virtual-env
 .PHONY: test-lsp
 
 typecheck: check-virtual-env
-	uv run mypy --strict parser --exclude venv --exclude .venv
+	uv run mypy --strict . --exclude venv --exclude .venv
 .PHONY: typecheck
 
 examples: check-virtual-env
