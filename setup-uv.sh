@@ -22,7 +22,7 @@ uv venv
 echo ""
 echo "==> Installing dependencies..."
 source .venv/bin/activate
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 echo ""
 echo "==> Downloading ANTLR jar..."

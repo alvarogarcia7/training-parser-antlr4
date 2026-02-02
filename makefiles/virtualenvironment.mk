@@ -19,12 +19,8 @@ check-virtual-env:
 
 # uv-specific targets
 uv-sync:
-	uv pip sync
+	uv sync --all-extras
 	@if [ -f scripts/download_antlr.py ]; then \
 		python3 scripts/download_antlr.py; \
 	fi
 .PHONY: uv-sync
-
-uv-compile:
-	uv pip compile pyproject.toml -o requirements.txt
-.PHONY: uv-compile
