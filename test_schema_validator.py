@@ -17,12 +17,12 @@ from jsonschema import SchemaError, ValidationError
 from typing import Generator
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def temp_dir(tmp_path: Path) -> Path:
     return tmp_path
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def valid_schema(temp_dir: Path) -> Path:
     schema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -38,7 +38,7 @@ def valid_schema(temp_dir: Path) -> Path:
     return schema_path
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def common_definitions_schema(temp_dir: Path) -> Path:
     common_defs = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -64,7 +64,7 @@ def common_definitions_schema(temp_dir: Path) -> Path:
     return defs_path
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def schema_with_refs(temp_dir: Path) -> Path:
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",

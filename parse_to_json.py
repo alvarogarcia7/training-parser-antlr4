@@ -40,7 +40,7 @@ class ParseToJson:
     """Parse training data to JSON format using Splitter's parsing logic."""
 
     def __init__(self) -> None:
-        self.splitter = Splitter()
+        self.splitter: Splitter = Splitter()
 
     def main(self, file: str) -> list[ParsedWorkoutSession]:
         """Read, parse, and standardize names from a training file."""
@@ -83,11 +83,11 @@ class ParseToJson:
         # Get timezone from TZ environment variable, default to UTC
         tz_str = os.environ.get('TZ', 'UTC')
         try:
-            tz = ZoneInfo(tz_str)
+            tz_obj: timezone | ZoneInfo = ZoneInfo(tz_str)
         except KeyError:
-            tz = timezone.utc
+            tz_obj = timezone.utc
 
-        timestamp = datetime.now(tz)
+        timestamp = datetime.now(tz_obj)
 
         workout_list = [
             self._serialize_workout(workout)

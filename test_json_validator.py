@@ -18,7 +18,7 @@ from json_validator import (
 )
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def valid_schema() -> Dict[str, Any]:
     return {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -32,7 +32,7 @@ def valid_schema() -> Dict[str, Any]:
     }
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture  # type: ignore[untyped-decorator]
 def temp_dir(tmp_path: Path) -> Path:
     return tmp_path
 

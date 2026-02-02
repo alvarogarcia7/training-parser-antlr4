@@ -4,12 +4,18 @@ from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
 
 
 class Splitter:
-    def __init__(self):
+    def __init__(self) -> None:
         self.data_access = DataAccess()
 
     def main(self, file: str) -> list[ParsedWorkoutSession]:
         """Parse a multi-session training log file."""
         return self.data_access.parse_multi_session_file(file)
+
+    @staticmethod
+    def _read_all_lines(file_path: str) -> list[str]:
+        """Read all lines from a file."""
+        with open(file_path, 'r') as f:
+            return f.readlines()
 
     @staticmethod
     def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
