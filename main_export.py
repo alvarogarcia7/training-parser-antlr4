@@ -11,8 +11,7 @@ import json
 import sys
 from pathlib import Path
 
-from main import parse_file
-from parser.serializer import serialize_to_set_centric
+from data_access import DataAccess, DataSerializer
 from schema_validator import validate_json_with_schema
 
 
@@ -31,35 +30,36 @@ def main() -> None:
         default=None,
         help="Path to the output JSON file (optional, prints to stdout if not provided)"
     )
-    
+
     args = parser.parse_args()
-    
+
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"Error: Input file not found: {input_path}", file=sys.stderr)
         sys.exit(1)
-    
+
     try:
-        exercises = parse_file(str(input_path))
-        
-        json_data = serialize_to_set_centric(exercises)
-        
+        data_access = DataAccess()
+        exercises = data_access.parse_single_file(str(input_path))
+
+        json_data = DataSerializer.to_set_centric_json(exercises)
+
         json_output = json.dumps(json_data, indent=2)
-        
+
         if args.output:
             output_path = Path(args.output)
             output_path.write_text(json_output, encoding='utf-8')
-            
+
             schema_path = Path("schema/set-centric.schema.json")
             common_defs_path = Path("schema/common-definitions.schema.json")
-            
+
             if schema_path.exists():
                 success, message = validate_json_with_schema(
                     schema_path,
                     output_path,
                     common_defs_path if common_defs_path.exists() else None
                 )
-                
+
                 if success:
                     print(message)
                 else:
@@ -70,7 +70,7 @@ def main() -> None:
                 print(f"Output written to: {output_path}")
         else:
             print(json_output)
-            
+
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
