@@ -13,6 +13,12 @@ class Splitter:
         return self.data_access.parse_multi_session_file(file)
 
     @staticmethod
+    def _read_all_lines(file_path: str) -> list[str]:
+        """Read all lines from a file."""
+        with open(file_path, 'r') as f:
+            return f.readlines()
+
+    @staticmethod
     def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
         """Write parsed sessions to TSV file."""
         rows = DataSerializer.to_tsv_rows(exercises)
