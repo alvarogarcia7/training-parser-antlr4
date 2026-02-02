@@ -131,12 +131,22 @@ class TestDataSerializer(unittest.TestCase):
         rows = DataSerializer.to_tsv_rows(sessions)
 
         # Skip header, check first exercise (Bench press)
-        bench_row = rows[1]
-        self.assertEqual(bench_row[0], '2025-01-01')  # date
-        self.assertEqual(bench_row[1], 'Bench press')  # exercise name
-        self.assertEqual(bench_row[2], '4')  # number of sets
-        self.assertEqual(bench_row[3], '4')  # avg reps = (4+5+5+5)/4 = 4
-        self.assertEqual(bench_row[4], '75,0')  # weight with comma decimal
+        # Note: flatten() groups by (weight, repetitions), so we get multiple rows
+        # First group should be the single 4-rep set at 75kg
+        bench_row_1 = rows[1]
+        self.assertEqual(bench_row_1[0], '2025-01-01')  # date
+        self.assertEqual(bench_row_1[1], 'Bench press')  # exercise name
+        self.assertEqual(bench_row_1[2], '1')  # 1 set of 4 reps at 75kg
+        self.assertEqual(bench_row_1[3], '4')  # avg reps = 4
+        self.assertEqual(bench_row_1[4], '75,0')  # weight with comma decimal
+
+        # Second group should be the three 5-rep sets at 75kg
+        bench_row_2 = rows[2]
+        self.assertEqual(bench_row_2[0], '2025-01-01')  # date
+        self.assertEqual(bench_row_2[1], 'Bench press')  # exercise name
+        self.assertEqual(bench_row_2[2], '3')  # 3 sets of 5 reps at 75kg
+        self.assertEqual(bench_row_2[3], '5')  # avg reps = 5
+        self.assertEqual(bench_row_2[4], '75,0')  # weight with comma decimal
 
     def test_tsv_rows_multiple_sessions(self) -> None:
         """Test that TSV rows handle multiple sessions correctly."""
@@ -271,13 +281,22 @@ class TestCLIIntegration(unittest.TestCase):
         # Verify TSV structure
         self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight'])
 
-        # Verify data row
-        data_row = rows[1]
-        self.assertEqual(data_row[0], '2025-01-01')
-        self.assertEqual(data_row[1], 'Bench press')
-        self.assertEqual(data_row[2], '4')
-        self.assertEqual(data_row[3], '4')
-        self.assertEqual(data_row[4], '75,0')
+        # Verify data rows (flatten() groups by weight/reps, so we get 2 rows)
+        # First row: single 4-rep set at 75kg (standardized name is title-cased)
+        data_row_1 = rows[1]
+        self.assertEqual(data_row_1[0], '2025-01-01')
+        self.assertEqual(data_row_1[1], 'Bench Press')  # StandardizeName applies .title()
+        self.assertEqual(data_row_1[2], '1')  # 1 set of 4 reps
+        self.assertEqual(data_row_1[3], '4')  # avg reps = 4
+        self.assertEqual(data_row_1[4], '75,0')
+
+        # Second row: four 5-rep sets at 75kg (from "4x5" = 4 times 5 reps)
+        data_row_2 = rows[2]
+        self.assertEqual(data_row_2[0], '2025-01-01')
+        self.assertEqual(data_row_2[1], 'Bench Press')
+        self.assertEqual(data_row_2[2], '4')  # 4 sets of 5 reps
+        self.assertEqual(data_row_2[3], '5')  # avg reps = 5
+        self.assertEqual(data_row_2[4], '75,0')
 
 
 if __name__ == '__main__':
