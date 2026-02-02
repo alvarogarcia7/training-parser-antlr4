@@ -83,11 +83,19 @@ class ParseToJson:
         # Get timezone from TZ environment variable, default to UTC
         tz_str = os.environ.get('TZ', 'UTC')
         try:
+<<<<<<< HEAD
             tz_obj: timezone | ZoneInfo = ZoneInfo(tz_str)
         except KeyError:
             tz_obj = timezone.utc
 
         timestamp = datetime.now(tz_obj)
+=======
+            tz = ZoneInfo(tz_str)
+        except KeyError:
+            tz = timezone.utc
+
+        timestamp = datetime.now(tz)
+>>>>>>> b11029b (Parse into JSON then compact form (#6))
 
         workout_list = [
             self._serialize_workout(workout)
