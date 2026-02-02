@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from data_access import DataAccess
+from src.data_access import DataAccess
 from parser import Exercise
 
 

@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from data_access import DataAccess, DataSerializer, ParsedWorkoutSession
+from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
 from schema_validator import validate_json_with_schema
 
 

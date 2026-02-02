@@ -11,7 +11,7 @@ import json
 import sys
 from pathlib import Path
 
-from data_access import DataAccess, DataSerializer
+from src.data_access import DataAccess, DataSerializer
 from schema_validator import validate_json_with_schema
 
 

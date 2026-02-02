@@ -1,6 +1,6 @@
 import csv
 import sys
-from data_access import DataAccess, DataSerializer, ParsedWorkoutSession
+from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
 
 
 class Splitter:

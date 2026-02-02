@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timezone
 
 from parser import Exercise, Set_, Weight
-from data_access import DataSerializer
+from src.data_access import DataSerializer
 
 
 class TestDataSerializer(unittest.TestCase):
@@ -196,7 +196,7 @@ class TestCLIIntegration(unittest.TestCase):
         sample_file = self.temp_path / "training.txt"
         sample_file.write_text("Bench press 75k: 4, 4x5\nSquat 70k: 5x10\n")
 
-        from data_access import DataAccess
+        from src.data_access import DataAccess
         data = DataAccess()
         exercises = data.parse_single_file(str(sample_file))
 
@@ -222,7 +222,7 @@ class TestCLIIntegration(unittest.TestCase):
             "\n"
         )
 
-        from data_access import DataAccess
+        from src.data_access import DataAccess
         data = DataAccess()
         sessions = data.parse_multi_session_file(str(sample_file))
 
@@ -246,7 +246,7 @@ class TestCLIIntegration(unittest.TestCase):
             "\n"
         )
 
-        from data_access import DataAccess
+        from src.data_access import DataAccess
         data = DataAccess()
         sessions = data.parse_multi_session_file(str(sample_file))
 
@@ -263,7 +263,7 @@ class TestCLIIntegration(unittest.TestCase):
             "\n"
         )
 
-        from data_access import DataAccess
+        from src.data_access import DataAccess
         data = DataAccess()
         sessions = data.parse_multi_session_file(str(sample_file))
         rows = DataSerializer.to_tsv_rows(sessions)
