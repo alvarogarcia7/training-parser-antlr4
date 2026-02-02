@@ -36,6 +36,8 @@ make install-githooks
 - **Export JSON**: `make test-json-export` (tests conversion to set-centric JSON format)
 - **Run Parser**: `python main.py` (parses sample training data)
 - **Run Splitter**: `python splitter.py <file>` (exports to CSV format)
+- **Parse to JSON**: `python parse_to_json.py <input.txt> --output <output.json>` (step 1: parse and standardize)
+- **Compact Display**: `python compact_from_json.py <input.json>` (step 2: display JSON in compact form with totals)
 - **Export to JSON**: `python main_export.py <input.txt> -o <output.json>` (full export pipeline)
 - **Validate**: `make validate-set-centric` (validates JSON against schema)
 
@@ -59,6 +61,8 @@ make install-githooks
 - `main.py`: CLI entry point for parsing
 - `main_export.py`: CLI for JSON export with validation
 - `splitter.py`: CSV export tool
+- `parse_to_json.py`: Step 1 of 2-step process (parse text to JSON with standardized names)
+- `compact_from_json.py`: Step 2 of 2-step process (display JSON in compact form with totals)
 - `schema/`: JSON schema definitions (set-centric, bench-centric, common-definitions)
 - `tests/`: Unit tests and validation tests
 - `pyproject.toml`: PEP 621 compliant project metadata and dependencies
@@ -77,7 +81,8 @@ make install-githooks
 5. Push to feature branch
 
 ## Troubleshooting
-- **ANTLR Compilation Error**: Ensure Java is installed and in PATH
+- **ANTLR Compilation Error**: Java JDK is available at `~/.sdkman/candidates/java/current/bin/java`. Use this path to compile the grammar if needed. Do not attempt to install Java or use antlr-ng as alternatives.
 - **Import Errors**: Run `uv pip install -e ".[dev]"` to ensure all dependencies are installed
 - **Type Errors**: Run `make typecheck` and fix issues before committing
 - **Test Failures**: Run individual test files with `pytest parser/test_*.py`
+- **Missing dist/ directory**: If `dist/trainingLexer.py` or `dist/trainingParser.py` is missing, run `make compile-grammar` to generate them from `training.g4`
