@@ -1,22 +1,20 @@
 # Stage 1: Builder
 FROM python:3.14-slim AS builder
 
-# Install dependencies: curl for uv, default-jre-headless for ANTLR, make for build
+# Install dependencies: wget for downloads, default-jre-headless for ANTLR, make for build
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    wget \
     default-jre-headless \
     make \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.local/bin:$PATH"
+# Install uv via pip (already available in Python base image)
+RUN python -m pip install --no-cache-dir uv
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
-COPY pyproject.toml uv.lock training.g4 Makefile ./
+# Copy project files (build needs README.md)
 COPY . .
 
 # Create virtual environment and install dependencies
@@ -27,6 +25,9 @@ RUN make compile-grammar
 
 # Stage 2: Runtime
 FROM python:3.14-slim
+
+# Create non-root user for running application
+RUN useradd -m -u 1000 appuser
 
 # Set working directory
 WORKDIR /app
@@ -44,6 +45,12 @@ COPY . .
 
 # Copy compiled grammar from builder
 COPY --from=builder /app/dist /app/dist
+
+# Change ownership to non-root user
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
 
 # Run tests
 RUN pytest -v parser tests
