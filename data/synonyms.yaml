@@ -1,0 +1,45 @@
+# Exercise name synonym configuration
+# This file defines mappings from short/alternative names to standardized exercise names
+# Each entry has a 'clean' name (the standardized form) and a list of 'synonyms' (alternative forms)
+
+synonyms:
+  - clean: overhead press
+    synonyms:
+      - oh
+      - overhead
+      - op
+
+  - clean: bench press
+    synonyms:
+      - bench
+      - bp
+
+  - clean: machine lateral pull-down
+    synonyms:
+      - lat pull-down
+      - lat pull down
+      - mlpd
+
+  - clean: machine row
+    synonyms:
+      - mr
+
+  - clean: barbell row
+    synonyms:
+      - br
+
+  - clean: squat
+    synonyms:
+      - s
+
+  - clean: deadlift
+    synonyms:
+      - d
+
+  - clean: machine leg extension
+    synonyms:
+      - mle
+
+  - clean: machine leg curl
+    synonyms:
+      - mlc

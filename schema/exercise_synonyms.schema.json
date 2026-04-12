@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/synonyms.schema.json",
+  "title": "Exercise Name Synonyms Configuration",
+  "description": "Schema for validating exercise name synonym configuration files",
+  "type": "object",
+  "required": ["synonyms"],
+  "properties": {
+    "synonyms": {
+      "type": "array",
+      "description": "List of synonym mappings",
+      "items": {
+        "type": "object",
+        "required": ["clean", "synonyms"],
+        "properties": {
+          "clean": {
+            "type": "string",
+            "description": "The standardized exercise name",
+            "minLength": 1
+          },
+          "synonyms": {
+            "type": "array",
+            "description": "List of alternative names that map to the clean name",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -45,6 +45,32 @@ After installation, the following commands are available:
 
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
+## Features
+
+### Configurable Exercise Name Synonyms
+
+The parser supports loading custom exercise name mappings from YAML or JSON files, enabling:
+
+- **Customization without code changes**: Define your own exercise name synonyms
+- **Internationalization**: Create language-specific synonym files
+- **Easy maintenance**: Version control and share synonym configurations
+
+**Quick Example:**
+
+```python
+from parser import StandardizeName
+
+# Use default synonyms
+standardizer = StandardizeName()
+standardizer.run("bench")  # Returns "Bench Press"
+
+# Load custom synonyms from file
+standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
+```
+
+See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation and [examples/](examples/) for usage examples.
+
 ## Project Structure
 
 ```
@@ -54,6 +80,10 @@ After installation, the following commands are available:
 │   ├── model.py            # Data models
 │   ├── parser.py           # Parser and visitor
 │   └── standardize_name.py # Exercise name standardization
+├── data/                    # Configuration files
+│   ├── synonyms.yaml       # Default synonyms (YAML)
+│   └── SYNONYMS_README.md  # Synonyms documentation
+├── examples/                # Example scripts
 ├── dist/                    # Generated ANTLR4 code (auto-generated)
 ├── schema/                  # JSON schema definitions
 ├── tests/                   # Test files

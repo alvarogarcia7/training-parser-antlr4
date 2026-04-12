@@ -45,6 +45,7 @@ test: check-virtual-env
 	${MAKE} compile-grammar
 	${MAKE} test-python
 	${MAKE} validate-datasets
+	${MAKE} examples
 .PHONY: test
 
 validate-datasets:
@@ -67,6 +68,11 @@ test-python: check-virtual-env
 typecheck: check-virtual-env
 	mypy --strict parser --exclude venv --exclude .venv
 .PHONY: typecheck
+
+examples: check-virtual-env
+	@python3 examples/custom_synonyms_example.py > /dev/null 2>&1
+	@echo "Examples executed successfully"
+.PHONY: examples
 
 pre-commit: test
 .PHONY: pre-commit
