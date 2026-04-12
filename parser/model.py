@@ -11,11 +11,13 @@ def _validate_weight(amount: float, unit: str) -> None:
         raise ValueError("Weight unit cannot be empty")
 
 
-def _validate_set(repetitions: int, weight: Any) -> None:
+def _validate_set(repetitions: int, weight: Any, rir: int | None) -> None:
     if repetitions <= 0:
         raise ValueError(f"Repetitions must be positive, got {repetitions}")
     if not isinstance(weight, Weight):
         raise TypeError(f"Weight must be a Weight instance, got {type(weight)}")
+    if rir is not None and rir < 0:
+        raise ValueError(f"RIR must be non-negative, got {rir}")
     weight.validate()
 
 
@@ -35,12 +37,13 @@ class Weight:
 class Set_:
     repetitions: int
     weight: Weight
+    rir: int | None = None
 
     def __post_init__(self) -> None:
-        _validate_set(self.repetitions, self.weight)
+        _validate_set(self.repetitions, self.weight, self.rir)
 
     def validate(self) -> None:
-        _validate_set(self.repetitions, self.weight)
+        _validate_set(self.repetitions, self.weight, self.rir)
 
 
 class Units:

@@ -32,12 +32,23 @@ class Formatter(trainingVisitor):
 
     def visitWhole_set_(self, ctx: trainingParser.Whole_set_Context) -> Any:
         super().visitWhole_set_(ctx)
-        text: str = ctx.getText()
-        chunks = text.split('x')
-        number_of_series: int = int(chunks[0])
-        number_of_repetitions: int = int(chunks[1])
-        weight: float = float(chunks[2].removesuffix('k'))
-        self.builder.add_whole_set(number_of_series, number_of_repetitions, weight)
+
+        # Get the INT tokens which are number_of_series and number_of_repetitions
+        int_tokens = ctx.INT()
+        number_of_series: int = int(int_tokens[0].getText())
+        number_of_repetitions: int = int(int_tokens[1].getText())
+
+        # Get weight from the weight context
+        weight_ctx = ctx.weight()
+        weight: float = float(weight_ctx.getText().removesuffix('k'))
+
+        # Check if there's a RIR value
+        rir: int | None = None
+        rir_ctx = ctx.rir()
+        if rir_ctx is not None:
+            rir = int(rir_ctx.getText())
+
+        self.builder.add_whole_set(number_of_series, number_of_repetitions, weight, rir)
 
     def visitGroup_of_rep_set(self, ctx: trainingParser.Group_of_rep_setContext) -> Any:
         super().visitGroup_of_rep_set(ctx)

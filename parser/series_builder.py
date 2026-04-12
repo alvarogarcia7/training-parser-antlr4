@@ -16,12 +16,12 @@ class SeriesBuilder:
     def add_weight(self, weight: float) -> None:
         self.pending_weights.append(weight)
 
-    def add_series(self, repetitions: int, weight: float) -> None:
-        self.sets.append(Set_(repetitions=repetitions, weight=Weight(amount=weight, unit=Units.KILOGRAM)))
+    def add_series(self, repetitions: int, weight: float, rir: int | None = None) -> None:
+        self.sets.append(Set_(repetitions=repetitions, weight=Weight(amount=weight, unit=Units.KILOGRAM), rir=rir))
 
-    def add_whole_set(self, number_of_series: int, number_of_repetitions: int, weight: float) -> None:
+    def add_whole_set(self, number_of_series: int, number_of_repetitions: int, weight: float, rir: int | None = None) -> None:
         for _ in range(number_of_series):
-            self.add_series(number_of_repetitions, weight)
+            self.add_series(number_of_repetitions, weight, rir)
         self.pending_weights.clear()
 
     def add_group_of_reps(self, number_of_series: int, number_of_repetitions: int) -> None:

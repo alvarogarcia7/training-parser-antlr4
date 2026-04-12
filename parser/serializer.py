@@ -6,28 +6,31 @@ from parser.model import Exercise
 def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[datetime] = None) -> dict[str, Any]:
     if timestamp is None:
         timestamp = datetime.now(timezone.utc)
-    
+
     workout_id = f"w_{timestamp.strftime('%Y%m%d_%H%M%S')}"
-    
+
     exercise_blocks = []
     for exercise in exercises:
         sets = []
         for idx, set_ in enumerate(exercise.sets_, start=1):
-            sets.append({
+            set_dict: dict[str, Any] = {
                 "setNumber": idx,
                 "repetitions": set_.repetitions,
                 "weight": {
                     "amount": set_.weight.amount,
                     "unit": set_.weight.unit
                 }
-            })
-        
+            }
+            if set_.rir is not None:
+                set_dict["rir"] = set_.rir
+            sets.append(set_dict)
+
         exercise_blocks.append({
             "name": exercise.name,
             "equipment": "other",
             "sets": sets
         })
-    
+
     return {
         "workout_id": workout_id,
         "type": "set-centric",
