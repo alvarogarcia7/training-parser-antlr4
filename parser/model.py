@@ -4,6 +4,50 @@ from itertools import groupby
 from typing import Any
 
 
+@dataclass
+class ParseError:
+    line: int
+    column: int
+    message: str
+    offending_symbol: str | None = None
+
+    def __str__(self) -> str:
+        if self.offending_symbol:
+            return f"Line {self.line}:{self.column} - {self.message} (at '{self.offending_symbol}')"
+        return f"Line {self.line}:{self.column} - {self.message}"
+
+
+@dataclass
+class ParseResult:
+    exercises: list['Exercise']
+    errors: list[ParseError] = field(default_factory=list)
+
+    @property
+    def has_errors(self) -> bool:
+        return len(self.errors) > 0
+
+    @property
+    def is_valid(self) -> bool:
+        return not self.has_errors
+
+    def get_error_summary(self) -> str:
+        """Get a formatted summary of all errors."""
+        if not self.has_errors:
+            return "No errors"
+
+        lines = [f"Found {len(self.errors)} error(s):"]
+        for error in self.errors:
+            lines.append(f"  - {error}")
+        return "\n".join(lines)
+
+    def print_errors(self) -> None:
+        """Print all errors to stdout."""
+        if self.has_errors:
+            print(self.get_error_summary())
+        else:
+            print("✓ No parsing errors")
+
+
 def _validate_weight(amount: float, unit: str) -> None:
     if amount < 0:
         raise ValueError(f"Weight amount must be non-negative, got {amount}")

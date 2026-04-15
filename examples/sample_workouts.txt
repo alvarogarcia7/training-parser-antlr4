@@ -1,0 +1,161 @@
+# Sample Workout Sessions
+# This file contains various workout session examples for testing
+
+# ============================================================
+# POWERLIFTING - Competition Prep
+# ============================================================
+Squat 140k: 3, 3, 3
+Bench press 100k: 3, 3, 3
+Deadlift 180k: 1, 1, 1
+Squat 100k: 5, 5, 5
+
+# ============================================================
+# BODYBUILDING - Push Day
+# ============================================================
+Bench press 80k: 10, 10, 10, 10
+Incline dumbbell press: 12xx25, 27.5, 30
+Cable flyes 20k: 15, 15, 15
+Overhead press 50k: 8, 8, 8
+Lateral raises 12k: 15, 15, 15
+Tricep pushdown 30k: 12, 12, 12
+
+# ============================================================
+# BODYBUILDING - Pull Day
+# ============================================================
+Deadlift 100k: 5, 5, 5
+Pull-ups 20k: 10, 8, 6
+Barbell row 70k: 8, 8, 8
+Lat pulldown 50k: 12, 10, 8
+Face pulls 15k: 15, 15, 15
+Bicep curls: 12xx15, 17.5, 20
+
+# ============================================================
+# BODYBUILDING - Leg Day
+# ============================================================
+Squat 100k: 10, 10, 10
+Romanian deadlift 80k: 12, 12, 12
+Leg press 150k: 15, 15, 15
+Leg curl 40k: 12, 12, 12
+Leg extension 50k: 15, 15, 15
+Calf raises 60k: 20, 20, 20
+
+# ============================================================
+# CROSSFIT - WOD (21-15-9)
+# ============================================================
+Deadlift 100k: 21, 15, 9
+Front squat 60k: 21, 15, 9
+Power clean 50k: 21, 15, 9
+Thrusters 40k: 21, 15, 9
+
+# ============================================================
+# STRENGTH - 5/3/1 Week 1
+# ============================================================
+Squat 3x5x100k 3
+Squat 3x3x110k 2
+Squat 3x1x120k 1
+Squat 5x5x85k
+Front squat 3x8x70k
+
+# ============================================================
+# OLYMPIC WEIGHTLIFTING - Technical Session
+# ============================================================
+Snatch 60k: 3, 3, 3
+Snatch 70k: 2, 2, 2
+Snatch 75k: 1, 1, 1
+Clean and jerk 80k: 3, 3
+Clean and jerk 90k: 2, 2
+Clean and jerk 95k: 1, 1
+Front squat 100k: 3, 3, 3
+
+# ============================================================
+# DELOAD WEEK - Recovery
+# ============================================================
+Bench press 60k: 8, 8, 8
+Squat 80k: 8, 8, 8
+Deadlift 100k: 5, 5
+Overhead press 40k: 10, 10
+Row 50k: 10, 10
+
+# ============================================================
+# BEGINNER - Full Body A
+# ============================================================
+Squat 60k: 5x5
+Bench press 50k: 5x5
+Barbell row 40k: 5x5
+Overhead press 30k: 3x8
+Plank holds 0k: 3x60
+
+# ============================================================
+# BEGINNER - Full Body B
+# ============================================================
+Deadlift 80k: 1x5
+Overhead press 35k: 5x5
+Lat pulldown 40k: 3x10
+Dumbbell bench: 3x10x20k
+Cable row 30k: 3x12
+
+# ============================================================
+# UPPER/LOWER - Upper A
+# ============================================================
+Bench press 75k: 4, 4, 4, 4
+Barbell row 65k: 4, 4, 4, 4
+Overhead press 50k: 3, 3, 3
+Lat pulldown 50k: 3, 3, 3
+Dips 20k: 8, 8, 8
+Bicep curls 15k: 10, 10
+
+# ============================================================
+# UPPER/LOWER - Lower A
+# ============================================================
+Squat 90k: 4, 4, 4, 4
+Romanian deadlift 70k: 3, 3, 3
+Leg press 120k: 3, 3, 3
+Leg curl 35k: 3, 3, 3
+Calf raises 50k: 4, 4, 4
+
+# ============================================================
+# ADVANCED - Volume Block
+# ============================================================
+Squat 100k: 8, 8, 8, 8
+Squat 90k: 10, 10, 10
+Front squat 70k: 8, 8, 8
+Bulgarian split squat 30k: 12, 12
+Leg press 140k: 15, 15
+Leg curl 40k: 12, 12, 12
+
+# ============================================================
+# ADVANCED - Intensity Block
+# ============================================================
+Squat 140k: 3, 3, 3
+Squat 150k: 2, 2
+Squat 160k: 1, 1
+Pause squat 120k: 3, 3, 3
+Front squat 100k: 3, 3
+
+# ============================================================
+# SPORT SPECIFIC - Rugby
+# ============================================================
+Power clean 70k: 5, 5, 5
+Front squat 100k: 5, 5, 5
+Bench press 90k: 5, 5, 5
+Deadlift 130k: 5, 5
+Overhead press 60k: 5, 5
+
+# ============================================================
+# SESSION WITH ERRORS (for testing error handling)
+# ============================================================
+Bench press 75k: 4, 4x5
+Squat: 5x
+Overhead press: 5x5x40k
+Deadlift: 10x
+Row en maquina 41k: 15, 8
+Pull-up: 12x
+Dips 20k: 10, 8, 6
+
+# ============================================================
+# MIXED FORMATS (for testing parsing flexibility)
+# ============================================================
+Bench press 3x50x10k 60: 12, 11
+Squat: 15xx40, 50, 60
+Deadlift 1x1x60k 1x2x40k
+Overhead press 5x6x40k
