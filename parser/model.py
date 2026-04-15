@@ -45,6 +45,30 @@ class Set_:
     def validate(self) -> None:
         _validate_set(self.repetitions, self.weight, self.rir)
 
+    def to_dict(self, set_number: int = 1) -> dict[str, Any]:
+        """
+        Convert Set_ to a dictionary representation.
+
+        Args:
+            set_number: The sequential number of the set (default: 1)
+
+        Returns:
+            Dictionary representation of the set
+        """
+        result: dict[str, Any] = {
+            "setNumber": set_number,
+            "repetitions": self.repetitions,
+            "weight": {
+                "amount": self.weight.amount,
+                "unit": self.weight.unit
+            }
+        }
+
+        if self.rir is not None:
+            result["rir"] = self.rir
+
+        return result
+
 
 class Units:
     KILOGRAM: str = 'kg'
