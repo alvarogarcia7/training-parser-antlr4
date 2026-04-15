@@ -46,6 +46,7 @@ test: check-virtual-env
 	${MAKE} test-python
 	${MAKE} validate-datasets
 	${MAKE} examples
+	${MAKE} test-lsp
 .PHONY: test
 
 validate-datasets:
@@ -64,6 +65,10 @@ validate-bench-centric: check-virtual-env
 test-python: check-virtual-env
 	pytest parser tests
 .PHONY: test-python
+
+test-lsp: check-virtual-env
+	pytest lsp
+.PHONY: test-lsp
 
 typecheck: check-virtual-env
 	mypy --strict parser --exclude venv --exclude .venv

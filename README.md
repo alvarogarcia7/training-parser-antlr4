@@ -33,6 +33,8 @@ After installation, the following commands are available:
 - `validate-set-centric` - Validate set-centric schema
 - `json-validator <schema> <files...>` - Validate JSON files against schema
 - `download-antlr` - Download ANTLR jar file if not present
+- `training-lsp` - Start the Language Server Protocol server
+- `training-lsp-cli` - CLI tool for testing LSP features
 
 ### Development Commands
 
@@ -46,6 +48,34 @@ After installation, the following commands are available:
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
 ## Features
+
+### 🚀 Language Server Protocol (LSP)
+
+The training-parser now includes a full-featured Language Server Protocol implementation, bringing IDE-like features to your training log editor!
+
+**Key Features:**
+- ✅ Real-time syntax validation and error highlighting
+- ✅ Intelligent auto-completion for exercises and notation patterns
+- ✅ Hover information with exercise statistics and syntax help
+- ✅ Code formatting and quick fixes
+- ✅ Semantic syntax highlighting
+
+**Quick Start:**
+```bash
+# Install with LSP support
+uv pip install -e ".[dev]"
+
+# Start the LSP server (for editor integration)
+training-lsp
+
+# Or use the CLI tool for quick checks
+training-lsp-cli check workout.txt
+training-lsp-cli format workout.txt
+```
+
+**Editor Support:** VS Code, Neovim, Emacs, Vim, Sublime Text, and any LSP-compatible editor.
+
+📖 **See [LSP_GUIDE.md](LSP_GUIDE.md) for complete setup and usage instructions.**
 
 ### Configurable Exercise Name Synonyms
 
@@ -80,6 +110,15 @@ See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentatio
 │   ├── model.py            # Data models
 │   ├── parser.py           # Parser and visitor
 │   └── standardize_name.py # Exercise name standardization
+├── lsp/                     # Language Server Protocol implementation
+│   ├── server.py           # LSP server
+│   ├── diagnostics.py      # Error detection
+│   ├── completion.py       # Auto-completion
+│   ├── hover.py            # Hover information
+│   ├── formatting.py       # Code formatting
+│   ├── semantic_tokens.py  # Syntax highlighting
+│   ├── code_actions.py     # Quick fixes
+│   └── vscode-extension/   # VS Code extension
 ├── data/                    # Configuration files
 │   ├── synonyms.yaml       # Default synonyms (YAML)
 │   └── SYNONYMS_README.md  # Synonyms documentation

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Training",
+  "scopeName": "source.training",
+  "patterns": [
+    {
+      "include": "#exercise"
+    }
+  ],
+  "repository": {
+    "exercise": {
+      "patterns": [
+        {
+          "match": "^([a-zA-Záéíóúñ][\\w\\s\\-áéíóúñ]*)(:)?",
+          "captures": {
+            "1": {
+              "name": "entity.name.class.training"
+            },
+            "2": {
+              "name": "keyword.operator.training"
+            }
+          }
+        },
+        {
+          "include": "#notation"
+        }
+      ]
+    },
+    "notation": {
+      "patterns": [
+        {
+          "match": "\\b\\d+(\\.\\d+)?\\b",
+          "name": "constant.numeric.training"
+        },
+        {
+          "match": "\\bk\\b",
+          "name": "storage.type.training"
+        },
+        {
+          "match": "xx|x|:",
+          "name": "keyword.operator.training"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.training"
+        }
+      ]
+    }
+  }
+}

@@ -84,3 +84,8 @@ antlr4_Python3_examples-master.zip
 # Data
 data.txt
 output.csv
+
+# VSCode extension build artifacts
+lsp/vscode-extension/node_modules/
+lsp/vscode-extension/out/
+lsp/vscode-extension/*.vsix
