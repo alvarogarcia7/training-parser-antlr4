@@ -27,7 +27,8 @@ make install-githooks
 ## Commands
 - **Build**: `make compile-grammar` (compiles ANTLR4 grammar to Python)
 - **Lint**: `make typecheck` (runs mypy with strict settings)
-- **Test**: `make test` (runs typecheck, compile-grammar, and pytest)
+- **Test**: `make test` (runs typecheck, compile-grammar, pytest, grammar-format tests, validation, examples, and lsp tests)
+- **Test Grammar Formats**: `make test-grammar-formats` (runs e2e grammar format tests)
 - **Dev server**: N/A (parser library, use `python main.py` for sample)
 
 ## Tech Stack

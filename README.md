@@ -47,6 +47,21 @@ After installation, the following commands are available:
 
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
+## Documentation
+
+📚 **[GRAMMAR_DOCUMENTATION_INDEX.md](GRAMMAR_DOCUMENTATION_INDEX.md)** - Complete documentation index and navigation guide
+
+### Quick Start
+- **[QUICK_START_GRAMMAR.md](QUICK_START_GRAMMAR.md)** - 5-minute introduction to grammar formats with examples
+
+### Grammar & Syntax
+- **[GRAMMAR_FORMATS.md](GRAMMAR_FORMATS.md)** - Complete reference guide to all supported input formats with examples and tests
+- **[SYNTAX.md](SYNTAX.md)** - Detailed syntax documentation with use cases and best practices
+
+### Features
+- **[LSP_GUIDE.md](LSP_GUIDE.md)** - Language Server Protocol setup and usage
+- **[data/SYNONYMS_README.md](data/SYNONYMS_README.md)** - Exercise name synonym configuration
+
 ## Features
 
 ### 🚀 Language Server Protocol (LSP)

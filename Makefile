@@ -44,6 +44,7 @@ test: check-virtual-env
 	${MAKE} typecheck
 	${MAKE} compile-grammar
 	${MAKE} test-python
+	${MAKE} test-grammar-formats
 	${MAKE} validate-datasets
 	${MAKE} examples
 	${MAKE} test-lsp
@@ -65,6 +66,11 @@ validate-bench-centric: check-virtual-env
 test-python: check-virtual-env
 	pytest parser tests
 .PHONY: test-python
+
+test-grammar-formats: check-virtual-env
+	@echo "Running grammar format e2e tests..."
+	pytest parser/test_grammar_formats_e2e.py -v
+.PHONY: test-grammar-formats
 
 test-lsp: check-virtual-env
 	pytest lsp
