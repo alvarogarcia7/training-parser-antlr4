@@ -1,5 +1,7 @@
 """Command-line interface for testing LSP features without an editor."""
 
+import asyncio
+import json
 import sys
 from typing import Any, Optional
 
@@ -9,6 +11,7 @@ from lsp.diagnostics import get_diagnostics
 from lsp.completion import get_completions
 from lsp.hover import get_hover_info
 from lsp.formatting import format_document
+from lsp.client import LSPClient, LSPClientConfig
 
 
 @click.group()  # type: ignore
@@ -136,6 +139,191 @@ def stats(file: Any) -> None:
         click.echo(click.style(f"  Errors: {len(diagnostics)}", fg="red"))
     else:
         click.echo(click.style("  Errors: 0", fg="green"))
+
+
+@cli.command()  # type: ignore
+@click.option("--timeout", "-t", type=float, default=5.0, help="Connection timeout in seconds")  # type: ignore
+def test_connection(timeout: float) -> None:
+    """Test connection to the LSP server."""
+    async def _test() -> None:
+        try:
+            config = LSPClientConfig(timeout=timeout)
+            async with LSPClient(config) as client:
+                click.echo("Starting LSP server...")
+                connected = await client.verify_connection()
+
+                if connected:
+                    click.echo(click.style("✓ Connection successful!", fg="green"))
+                    click.echo(f"Server capabilities: {len(client.server_capabilities or {})} features")
+
+                    if client.server_capabilities:
+                        click.echo("\nSupported features:")
+                        for key in sorted(client.server_capabilities.keys()):
+                            if client.server_capabilities[key]:
+                                click.echo(f"  • {key}")
+                else:
+                    click.echo(click.style("✗ Connection failed", fg="red"))
+                    sys.exit(1)
+        except Exception as e:
+            click.echo(click.style(f"✗ Error: {e}", fg="red"))
+            sys.exit(1)
+
+    asyncio.run(_test())
+
+
+@cli.command()  # type: ignore
+@click.argument("file", type=click.File("r"))  # type: ignore
+@click.option("--json-output", "-j", is_flag=True, help="Output as JSON")  # type: ignore
+def verify(file: Any, json_output: bool) -> None:
+    """Verify source code using the LSP server."""
+    async def _verify() -> None:
+        text = file.read()
+
+        try:
+            async with LSPClient() as client:
+                await client.initialize()
+                result = await client.verify_source_parsing(text)
+
+                if json_output:
+                    click.echo(json.dumps(result, indent=2))
+                else:
+                    if result["has_errors"]:
+                        click.echo(click.style(f"✗ Found {result['error_count']} error(s):", fg="red"))
+                        for diag in result["diagnostics"]:
+                            line = diag["range"]["start"]["line"] + 1
+                            col = diag["range"]["start"]["character"] + 1
+                            click.echo(f"  Line {line}, Col {col}: {diag['message']}")
+                        sys.exit(1)
+                    else:
+                        click.echo(click.style("✓ No errors found!", fg="green"))
+        except Exception as e:
+            click.echo(click.style(f"✗ Error: {e}", fg="red"))
+            sys.exit(1)
+
+    asyncio.run(_verify())
+
+
+@cli.command()  # type: ignore
+@click.argument("file", type=click.File("r"))  # type: ignore
+@click.option("--json-output", "-j", is_flag=True, help="Output as JSON")  # type: ignore
+def test_all(file: Any, json_output: bool) -> None:
+    """Test all LSP features with a source file."""
+    async def _test() -> None:
+        text = file.read()
+
+        try:
+            async with LSPClient() as client:
+                await client.initialize()
+                result = await client.verify_all_features(text)
+
+                if json_output:
+                    click.echo(json.dumps(result, indent=2))
+                else:
+                    click.echo(click.style("LSP Feature Test Results:", bold=True))
+                    click.echo()
+
+                    for feature_name, feature_data in result["features"].items():
+                        if feature_data.get("supported"):
+                            status = click.style("✓", fg="green")
+                        else:
+                            status = click.style("✗", fg="red")
+
+                        click.echo(f"{status} {feature_name}")
+
+                        if "count" in feature_data:
+                            click.echo(f"    Items: {feature_data['count']}")
+
+                        if "error" in feature_data:
+                            click.echo(f"    Error: {feature_data['error']}")
+
+                    click.echo()
+
+                    # Summary
+                    total = len(result["features"])
+                    supported = sum(1 for f in result["features"].values() if f.get("supported"))
+
+                    if supported == total:
+                        click.echo(click.style(f"All {total} features supported!", fg="green"))
+                    else:
+                        click.echo(
+                            click.style(f"{supported}/{total} features supported", fg="yellow")
+                        )
+        except Exception as e:
+            click.echo(click.style(f"✗ Error: {e}", fg="red"))
+            sys.exit(1)
+
+    asyncio.run(_test())
+
+
+@cli.command()  # type: ignore
+@click.argument("source")  # type: ignore
+@click.option("--line", "-l", type=int, default=0, help="Line number (0-based)")  # type: ignore
+@click.option("--char", "-c", type=int, default=0, help="Character position (0-based)")  # type: ignore
+def test_completion(source: str, line: int, char: int) -> None:
+    """Test completion feature with LSP server."""
+    async def _test() -> None:
+        try:
+            async with LSPClient() as client:
+                await client.initialize()
+
+                uri = "file:///test/completion.training"
+                await client.open_document(uri, "training", 1, source + "\n")
+
+                completions = await client.completion(uri, line, char)
+
+                if completions:
+                    click.echo(f"Found {len(completions)} completion(s):")
+                    for i, comp in enumerate(completions[:20], 1):
+                        label = comp.get("label", "")
+                        detail = comp.get("detail", "")
+                        click.echo(f"  {i}. {label}")
+                        if detail:
+                            click.echo(f"      {detail}")
+                else:
+                    click.echo("No completions found.")
+
+                await client.close_document(uri)
+        except Exception as e:
+            click.echo(click.style(f"✗ Error: {e}", fg="red"))
+            sys.exit(1)
+
+    asyncio.run(_test())
+
+
+@cli.command()  # type: ignore
+@click.argument("source")  # type: ignore
+@click.option("--line", "-l", type=int, default=0, help="Line number (0-based)")  # type: ignore
+@click.option("--char", "-c", type=int, default=0, help="Character position (0-based)")  # type: ignore
+def test_hover(source: str, line: int, char: int) -> None:
+    """Test hover feature with LSP server."""
+    async def _test() -> None:
+        try:
+            async with LSPClient() as client:
+                await client.initialize()
+
+                uri = "file:///test/hover.training"
+                await client.open_document(uri, "training", 1, source + "\n")
+
+                hover = await client.hover(uri, line, char)
+
+                if hover and hover.get("contents"):
+                    contents = hover["contents"]
+                    if isinstance(contents, dict):
+                        value = contents.get("value", str(contents))
+                    else:
+                        value = str(contents)
+
+                    click.echo("Hover information:")
+                    click.echo(value)
+                else:
+                    click.echo("No hover information available.")
+
+                await client.close_document(uri)
+        except Exception as e:
+            click.echo(click.style(f"✗ Error: {e}", fg="red"))
+            sys.exit(1)
+
+    asyncio.run(_test())
 
 
 def main() -> None:
