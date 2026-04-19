@@ -108,7 +108,7 @@ class Splitter:
         ]
 
     @staticmethod
-    def _write_output(exercises: list[Parsing2], file_path_: str) -> None:
+    def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
             for job2 in exercises:
