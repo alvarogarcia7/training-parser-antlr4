@@ -6,11 +6,11 @@ Usage: python examples/parse_with_errors.py <filename>
 
 import sys
 from pathlib import Path
-from parser import Parser
+from parser import Parser, ParseError
 from antlr4 import InputStream
 
 
-def display_error_with_context(error, lines):
+def display_error_with_context(error: ParseError, lines: list[str]) -> None:
     """Display an error with surrounding context from the input."""
     print(f"\n{'=' * 60}")
     print(f"Error at Line {error.line}, Column {error.column}")
@@ -39,7 +39,7 @@ def display_error_with_context(error, lines):
         print(f"Offending symbol: '{error.offending_symbol}'")
 
 
-def parse_file_with_error_report(filename):
+def parse_file_with_error_report(filename: str) -> int:
     """Parse a file and display detailed error report."""
 
     # Read the file
@@ -88,7 +88,7 @@ def parse_file_with_error_report(filename):
     return 0 if result.is_valid else 1
 
 
-def main():
+def main() -> int:
     """Main entry point."""
     if len(sys.argv) != 2:
         print("Usage: python examples/parse_with_errors.py <filename>")

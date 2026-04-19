@@ -216,7 +216,7 @@ Deadlift 125k: 5, 5, 5
     print("\nProgression Tracking:")
     print_separator()
 
-    progression_data = {}
+    progression_data: dict[str, list[float]] = {}
 
     for week_name, workout in weeks:
         result = Parser.from_string(workout).parse()

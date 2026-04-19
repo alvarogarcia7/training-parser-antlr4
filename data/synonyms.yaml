@@ -6,8 +6,11 @@ synonyms:
   - clean: overhead press
     synonyms:
       - oh
-      - overhead
       - op
+
+  - clean: inclined bench press
+    synonyms:
+      - ibp
 
   - clean: bench press
     synonyms:
@@ -20,9 +23,21 @@ synonyms:
       - lat pull down
       - mlpd
 
+  - clean: lateral pull-down
+    synonyms:
+      - lpd
+
   - clean: machine row
     synonyms:
       - mr
+
+  - clean: low row
+    synonyms:
+      - lr
+
+  - clean: row
+    synonyms:
+      - r
 
   - clean: barbell row
     synonyms:
@@ -36,10 +51,18 @@ synonyms:
     synonyms:
       - d
 
-  - clean: machine leg extension
+  - clean: leg extension
     synonyms:
-      - mle
+      - le
 
-  - clean: machine leg curl
+  - clean: leg curl
     synonyms:
-      - mlc
+      - lc
+
+  - clean: machine
+    synonyms:
+      - m
+
+  - clean: smith machine
+    synonyms:
+      - sm

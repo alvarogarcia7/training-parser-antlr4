@@ -77,7 +77,7 @@ class TestLSPClient:
         assert len(handler_called) == 1
         assert handler_called[0] == {"test": "data"}
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_handle_diagnostics_notification(self) -> None:
         """Test handling of diagnostics notifications."""
         client = LSPClient()
@@ -95,7 +95,7 @@ class TestLSPClient:
         assert "file:///test.txt" in client.diagnostics_cache
         assert client.diagnostics_cache["file:///test.txt"] == [{"message": "error"}]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_handle_response_message(self) -> None:
         """Test handling of response messages."""
         client = LSPClient()
@@ -118,7 +118,7 @@ class TestLSPClient:
         assert response.result == {"key": "value"}
         assert response.error is None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_handle_error_response(self) -> None:
         """Test handling of error responses."""
         client = LSPClient()
@@ -141,7 +141,7 @@ class TestLSPClient:
         assert response.error == {"code": -32600, "message": "Invalid request"}
         assert response.result is None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_send_notification(self) -> None:
         """Test sending notifications."""
         client = LSPClient()
@@ -158,7 +158,7 @@ class TestLSPClient:
         assert client.process.stdin.write.called
         assert client.process.stdin.flush.called
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_invalid_server_command(self) -> None:
         """Test error handling with invalid server command."""
         config = LSPClientConfig(server_command=["nonexistent-command"])
@@ -167,7 +167,7 @@ class TestLSPClient:
         with pytest.raises(LSPConnectionError):
             await client.start()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_send_message_without_process(self) -> None:
         """Test sending message without started process."""
         client = LSPClient()
@@ -175,7 +175,7 @@ class TestLSPClient:
         with pytest.raises(LSPConnectionError):
             await client._send_message({"test": "message"})
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_stop_without_process(self) -> None:
         """Test stopping client without started process."""
         client = LSPClient()
@@ -200,7 +200,7 @@ class TestLSPClient:
         response = LSPResponse(id=1, result={})
         assert response.is_notification is False
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_start_already_started(self) -> None:
         """Test starting client that's already started."""
         client = LSPClient()
@@ -209,7 +209,7 @@ class TestLSPClient:
         with pytest.raises(LSPClientError, match="Server already started"):
             await client.start()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio  # type: ignore[untyped-decorator]
     async def test_send_request_creates_future(self) -> None:
         """Test that send_request creates and tracks futures."""
         client = LSPClient()

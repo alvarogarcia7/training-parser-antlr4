@@ -61,17 +61,28 @@ class StandardizeName:
         return selected_name.title().rstrip()
 
     def _original_or_synonym(self, raw_name: str) -> str:
+        normalized_input = raw_name.strip().casefold()
+
+        # First, try to match the entire input as a synonym
+        for synonym_group in self._synonyms:
+            for synonym in synonym_group['synonyms']:
+                if normalized_input == synonym.casefold():
+                    return synonym_group['clean']
+
+        # If no full match, process word by word
         parts = []
-        for part in raw_name.strip().casefold().split(" "):
+        for part in normalized_input.split(" "):
             appended = False
             for synonym_group in self._synonyms:
                 for synonym in synonym_group['synonyms']:
                     if part.strip() == synonym.casefold():
                         parts.append(synonym_group['clean'])
                         appended = True
+                        break
+                if appended:
+                    break
             if not appended:
                 parts.append(part)
-                appended = True
         return " ".join(parts)
 
     def _check_synonym_configuration(self, synonyms: list[Synonym]) -> None:
