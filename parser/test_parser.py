@@ -1,6 +1,7 @@
 import unittest
 
 from parser import Exercise, Units, Set_, Parser, Weight
+from parser.parser import ParsingException
 
 
 class TestParser(unittest.TestCase):
@@ -123,7 +124,7 @@ class TestParser(unittest.TestCase):
     def test_raise_error_on_wrong_input(self) -> None:
         valid_input = 'Deadlift: 1x20x20k'
         wrong_input = valid_input.removesuffix("k") + "l"
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ParsingException):
             Parser.from_string(wrong_input + "\n").parse_sessions()
 
     def serie(self, repetition: int, weight: float) -> Set_:

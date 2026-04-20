@@ -11,7 +11,7 @@ def parse_file(file_path: str) -> ParseResult:
         content = f.read()
 
     input_stream = InputStream(content)
-    parser = Parser(input_stream)
+    parser = Parser(input_stream, content)
     return parser.parse()
 
 
