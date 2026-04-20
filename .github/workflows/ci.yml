@@ -55,6 +55,11 @@ jobs:
         source .venv/bin/activate
         make compile-grammar
 
+    - name: Validate StrictDoc requirements
+      run: |
+        source .venv/bin/activate
+        make strictdoc-validate
+
     - name: Run type checking
       run: |
         source .venv/bin/activate
