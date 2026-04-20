@@ -1,0 +1,49 @@
+name: Publish Documentation to GitHub Pages
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Install dependencies
+      run: |
+        uv sync
+
+    - name: Export StrictDoc to HTML
+      run: |
+        source .venv/bin/activate
+        make strictdoc-export
+
+    - name: Upload artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'requirements/output'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Print deployment URL
+      run: |
+        echo "✓ Documentation published to GitHub Pages"
+        echo "URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/requirements/"

@@ -5,6 +5,7 @@ ANTLR_JAR := antlr-4.9.3-complete.jar
 ANTLR_URL := https://www.antlr.org/download/${ANTLR_JAR}
 
 include makefiles/virtualenvironment.mk
+include makefiles/strictdocs.mk
 
 install: install-githooks install-antlr
 	@echo "Installation complete"
