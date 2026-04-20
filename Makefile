@@ -93,10 +93,13 @@ examples: check-virtual-env
 pre-commit: test
 .PHONY: pre-commit
 
+JAVA?=$(shell which java)
+
 compile-grammar: training.g4 $(ANTLR_JAR)
+	${JAVA} --version >/dev/null # Assert it works
 	@if [ ! -d dist ] || [ ! -f dist/trainingLexer.py ]; then \
 		rm -rf dist/; \
-		java -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist; \
+		${JAVA} -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist; \
 		echo "Grammar generated"; \
 	else \
 		echo "Grammar files already exist, skipping compilation"; \
