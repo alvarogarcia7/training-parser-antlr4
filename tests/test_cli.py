@@ -7,7 +7,6 @@ from pathlib import Path
 from io import StringIO
 import sys
 from datetime import datetime, timezone
-from typing import cast
 
 from parser import Exercise, Set_, Weight
 from src.data_access import DataSerializer, ParsedWorkoutSession
@@ -103,11 +102,11 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_structure(self) -> None:
         """Test that TSV rows have correct structure."""
-        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [{
+        sessions: list[ParsedWorkoutSession] = [{
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
-        }])
+        }]
 
         rows = DataSerializer.to_tsv_rows(sessions)
 
@@ -123,11 +122,11 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_content(self) -> None:
         """Test that TSV rows contain expected exercise data."""
-        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [{
+        sessions: list[ParsedWorkoutSession] = [{
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
-        }])
+        }]
 
         rows = DataSerializer.to_tsv_rows(sessions)
 
@@ -151,7 +150,7 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_multiple_sessions(self) -> None:
         """Test that TSV rows handle multiple sessions correctly."""
-        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [
+        sessions: list[ParsedWorkoutSession] = [
             {
                 'date': '2025-01-01',
                 'parsed': self.exercises[:2],  # Bench + Squat
@@ -162,7 +161,7 @@ class TestDataSerializer(unittest.TestCase):
                 'parsed': self.exercises[2:4],  # Overhead press + Deadlift
                 'notes': ''
             }
-        ])
+        ]
 
         rows = DataSerializer.to_tsv_rows(sessions)
 

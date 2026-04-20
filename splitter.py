@@ -1,182 +1,28 @@
 import csv
-import pprint
 import sys
-from dataclasses import dataclass
-from typing import Any, TextIO, TypedDict, List
 
-from antlr4 import InputStream, CommonTokenStream
-
-from dist.trainingLexer import trainingLexer
-from dist.trainingParser import trainingParser
-from parser import Formatter, Exercise, StandardizeName
-
-
-@dataclass
-class RawWorkoutSession:
-    date: str
-    payload: str
-    notes: str
-
-    def __getitem__(self, key: str) -> Any:
-        return getattr(self, key)
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        setattr(self, key, value)
-
-
-@dataclass
-class ParsedWorkoutSession:
-    date: str
-    parsed: list[Exercise]
-    notes: str
-
-    def __getitem__(self, key: str) -> Any:
-        return getattr(self, key)
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        setattr(self, key, value)
-
-@dataclass
-class ExerciseStatistics:
-    repetitions: list[int]
-    weights: list[float]
-    num_sets: int
-    avg_reps: int
-    weight_amount: float
+from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
 
 
 class Splitter:
+    def __init__(self) -> None:
+        self.data_access = DataAccess()
+
     def main(self, file: str) -> list[ParsedWorkoutSession]:
-        lines = self._read_all_lines(file)
-        raw_exercises = self._group_exercises(lines)
-        exercises = self._parse_exercises(raw_exercises)
-        exercises = self._rename_exercises(exercises)
-        return exercises
-
-    def _parse_exercises(self, jobs: list[RawWorkoutSession]) -> list[ParsedWorkoutSession]:
-        jobs2: list[ParsedWorkoutSession] = []
-        for job in jobs:
-            parsed_session = ParsedWorkoutSession(
-                date=job.date,
-                parsed=self._parse(job.payload),
-                notes=job.notes
-            )
-            jobs2.append(parsed_session)
-        return jobs2
-
-    @staticmethod
-    def _parse(param: str) -> Any:
-        input_stream = InputStream(param)
-        lexer = trainingLexer(input_stream)
-        token_stream = CommonTokenStream(lexer)
-        token_stream.fill()
-        parser = trainingParser(token_stream)
-        tree = parser.workout()
-
-        formatter = Formatter()
-        formatter.visit(tree)
-        result = formatter.result
-        return result
-
-    @staticmethod
-    def _calculate_exercise_statistics(row: Exercise) -> ExerciseStatistics:
-        repetitions_ = [i.repetitions for i in row.sets_]
-        weights = [i.weight.amount for i in row.sets_]
-        num_sets = len(repetitions_)
-        avg_reps = int(sum(repetitions_) / len(repetitions_))
-        weight_amount = row.sets_[0].weight.amount
-        return ExerciseStatistics(
-            repetitions=repetitions_,
-            weights=weights,
-            num_sets=num_sets,
-            avg_reps=avg_reps,
-            weight_amount=weight_amount
-        )
-
-    @staticmethod
-    def _validate_weights_equal(weights: list[float], row: Exercise) -> None:
-        assert weights[0] == (sum(weights) / len(weights)), f"Failed condition: Not all weights are equal in '{row}'"
-
-    @staticmethod
-    def _format_csv_row(date: str, row: Exercise, num_sets: int, avg_reps: int, weight_amount: float) -> list[str]:
-        return [
-            date,
-            row.name,
-            "{:d}".format(num_sets),
-            "{:d}".format(avg_reps),
-            "{:.1f}".format(weight_amount).replace('.', ',')
-        ]
+        """Parse a multi-session training log file."""
+        return self.data_access.parse_multi_session_file(file)
 
     @staticmethod
     def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
+        """Write parsed sessions to TSV file."""
+        rows = DataSerializer.to_tsv_rows(exercises)
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter='\t', quotechar='"')
-            for job2 in exercises:
-                row: Exercise
-                for row_group in job2['parsed']:
-                    for row in row_group.flatten():
-                        stats = Splitter._calculate_exercise_statistics(row)
-                        Splitter._validate_weights_equal(stats.weights, row)
-                        csv_row = Splitter._format_csv_row(job2['date'], row, stats.num_sets, stats.avg_reps, stats.weight_amount)
-                        csv_writer.writerow(csv_row)
-
-    @staticmethod
-    def _group_exercises(lines: list[str]) -> list[RawWorkoutSession]:
-        jobs: list[RawWorkoutSession] = []
-        current: list[Any] = []
-        notes: list[str] = []
-        date: Any = None
-        for idx in range(len(lines)):
-            if lines[idx] == '':
-                jobs.append(Splitter.build_job(current, date, notes))
-                notes = []
-                current = []
-                date = None
-                continue
-            if lines[idx].startswith('#'):
-                notes.append(lines[idx])
-                continue
-            if date is None:
-                date = lines[idx]
-                continue
-            current.append(lines[idx])
-
-        jobs.append(Splitter.build_job(current, date, notes))
-        return jobs
-
-    @staticmethod
-    def build_job(current: List[Any], date: Any, notes: list[str]) -> RawWorkoutSession:
-        current.append("")
-        assert date is not None, f"current={current}, date={date}, notes={notes}"
-        return RawWorkoutSession(
-            date=date,
-            payload="\n".join(current.copy()),
-            notes="\n".join(notes.copy())
-        )
-
-    @staticmethod
-    def _read_all_lines(file_name: str) -> list[str]:
-        lines: list[str] = []
-        file_path: TextIO
-        with open(file_name, 'r') as file_path:
-            while True:
-                line = file_path.readline()
-                if not line:
-                    break
-                lines.append(line.rstrip())
-        return lines
-
-    @staticmethod
-    def _rename_exercises(parsing2s: list[ParsedWorkoutSession]) -> list[ParsedWorkoutSession]:
-        renamer = StandardizeName()
-        for parsing2 in parsing2s:
-            for exercise in parsing2['parsed']:
-                exercise.name = renamer.run(exercise.name)
-        return parsing2s
+            csv_writer.writerows(rows)
 
     @staticmethod
     def _debug_print(workouts: list[ParsedWorkoutSession]) -> None:
-
+        """Print detailed stats for parsed workout sessions."""
         print("Debug printing.")
         total_volume: float = 0
         for workout in workouts:

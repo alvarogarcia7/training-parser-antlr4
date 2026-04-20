@@ -4,14 +4,14 @@ import csv
 import unittest
 from typing import Any
 
-from splitter import Splitter
+from src.data_access import DataReader
 from weight_parser.program import SingleMeasurementWeightParser, WeightParser
 
 
 class Driver(unittest.TestCase):
 
     def test_from_file_2022(self) -> None:
-        file_contents = Splitter._read_all_lines("../../data/weight_2022.txt")
+        file_contents = DataReader.read_lines("../../data/weight_2022.txt")
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2022")).parse(file_contents)
 
@@ -20,7 +20,7 @@ class Driver(unittest.TestCase):
         self.print_as_csv("../../data/parsed_2022.csv", parsed)
 
     def test_from_file_2023(self) -> None:
-        file_contents = Splitter._read_all_lines("../../data/weight_2023.txt")
+        file_contents = DataReader.read_lines("../../data/weight_2023.txt")
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2023")).parse(file_contents)
 

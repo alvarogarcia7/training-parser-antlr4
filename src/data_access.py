@@ -132,6 +132,7 @@ class SessionGrouper:
         for line in lines:
             if line == '':
                 if date is not None:
+
                     sessions.append(SessionGrouper._build_session(current_payload, date, notes))
                 notes = []
                 current_payload = []

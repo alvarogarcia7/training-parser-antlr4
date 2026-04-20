@@ -65,6 +65,7 @@ make install-githooks
 - `splitter.py`: CSV export tool
 - `parse_to_json.py`: Step 1 of 2-step process (parse text to JSON with standardized names)
 - `compact_from_json.py`: Step 2 of 2-step process (display JSON in compact form with totals)
+- `src/data_access.py`: Unified data access library for reading, parsing, and serializing
 - `schema/`: JSON schema definitions (set-centric, bench-centric, common-definitions)
 - `tests/`: Unit tests and validation tests
 - `pyproject.toml`: PEP 621 compliant project metadata and dependencies
