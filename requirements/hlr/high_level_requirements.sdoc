@@ -66,3 +66,38 @@ TITLE: Documentation Generation
 STATEMENT: The system shall support generation of structured documentation from parsed data.
 RATIONALE: Auto-generated documentation ensures consistency and reduces manual effort.
 PRIORITY: Medium
+
+[REQUIREMENT]
+UID: HLR-007
+TITLE: Configurable Synonym Loading
+STATEMENT: The system shall allow users to configure exercise name synonyms via external configuration files, enabling customization of name mappings without modifying source code.
+RATIONALE: External configuration decouples synonym data from application logic, allowing non-developers to maintain and extend name mappings independently.
+PRIORITY: High
+
+[REQUIREMENT]
+UID: HLR-008
+TITLE: Multiple Synonym Configuration Formats
+STATEMENT: The system shall support YAML and JSON file formats for synonym configuration files.
+RATIONALE: Supporting industry-standard formats (YAML for readability, JSON for programmatic generation) gives users flexibility in tooling and workflow integration.
+PRIORITY: Medium
+
+[REQUIREMENT]
+UID: HLR-009
+TITLE: Synonym Configuration Validation
+STATEMENT: The system shall validate synonym configuration files at load time and report descriptive errors for any structural or semantic violations.
+RATIONALE: Fail-fast validation at initialization prevents silent misconfiguration and provides actionable feedback to users when configurations are malformed.
+PRIORITY: High
+
+[REQUIREMENT]
+UID: HLR-010
+TITLE: Backward-Compatible Default Synonyms
+STATEMENT: The system shall provide built-in default synonym mappings and operate fully without any user-supplied configuration file.
+RATIONALE: Backward compatibility ensures existing integrations and users are unaffected by the introduction of external configuration support.
+PRIORITY: High
+
+[REQUIREMENT]
+UID: HLR-011
+TITLE: Synonym-Based Internationalization
+STATEMENT: The system shall support internationalization of exercise names by allowing language-specific synonym configuration files to be provided independently per use case.
+RATIONALE: Internationalization through configurable synonyms enables adoption across different linguistic communities without requiring code-level changes.
+PRIORITY: Medium

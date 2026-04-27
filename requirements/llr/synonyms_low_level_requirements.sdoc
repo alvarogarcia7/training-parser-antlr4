@@ -1,0 +1,160 @@
+[DOCUMENT]
+TITLE: Training Parser - Synonyms Feature Low-Level Requirements
+UID: LLR-SYN-DOC
+VERSION: 1.0
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: REQUIREMENT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: PRIORITY
+    TYPE: String
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+
+[REQUIREMENT]
+UID: LLR-SYN-001
+TITLE: Optional config_path Constructor Parameter
+STATEMENT: The StandardizeName class shall accept an optional config_path parameter of type Path | str | None in its constructor. When the parameter is None (default), built-in default synonyms shall be used.
+RATIONALE: A single optional parameter preserves the existing call signature and enables opt-in configuration without forcing changes on existing callers.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-007
+
+[REQUIREMENT]
+UID: LLR-SYN-002
+TITLE: YAML Synonym File Loading
+STATEMENT: The system shall load synonym configurations from files with .yaml or .yml extensions by parsing them as YAML documents using a standards-compliant YAML parser.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-008
+
+[REQUIREMENT]
+UID: LLR-SYN-003
+TITLE: JSON Synonym File Loading
+STATEMENT: The system shall load synonym configurations from files with .json extension by parsing them as JSON documents using a standards-compliant JSON parser.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-008
+
+[REQUIREMENT]
+UID: LLR-SYN-004
+TITLE: Unsupported Format Error
+STATEMENT: The system shall raise a ValueError with a descriptive message when the config_path refers to a file whose extension is neither .yaml, .yml, nor .json.
+RATIONALE: An explicit error on unsupported formats prevents silent failures and guides users toward supported alternatives.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-008
+
+[REQUIREMENT]
+UID: LLR-SYN-005
+TITLE: Root Key Validation
+STATEMENT: The system shall validate that the parsed configuration document contains a top-level synonyms key whose value is a list. A missing key or non-list value shall raise a ValueError with a descriptive message.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
+
+[REQUIREMENT]
+UID: LLR-SYN-006
+TITLE: Synonym Entry Structure Validation
+STATEMENT: The system shall validate that each entry in the synonyms list contains exactly a clean key (string) and a synonyms key (list of strings). Missing or incorrectly typed fields shall raise a ValueError.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
+
+[REQUIREMENT]
+UID: LLR-SYN-007
+TITLE: Overlapping Synonym Detection
+STATEMENT: The system shall detect and reject configurations in which the same synonym string appears in more than one entry. Such overlap shall raise an AssertionError or ValueError identifying the conflicting synonym.
+RATIONALE: Overlapping synonyms produce non-deterministic normalization results; rejecting them at load time enforces correctness.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
+
+[REQUIREMENT]
+UID: LLR-SYN-008
+TITLE: Duplicate Clean Name Detection
+STATEMENT: The system shall detect and reject configurations in which the same clean name appears in more than one entry. Such duplication shall raise a ValueError identifying the duplicate clean name.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
+
+[REQUIREMENT]
+UID: LLR-SYN-009
+TITLE: Missing File Error
+STATEMENT: The system shall raise a FileNotFoundError with a descriptive message when the specified config_path does not refer to an existing file.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
+
+[REQUIREMENT]
+UID: LLR-SYN-010
+TITLE: Default Built-in Synonyms
+STATEMENT: When no config_path is provided, the system shall use the built-in default synonym set returned by _get_default_synonyms(). The resulting behavior shall be identical to previous releases.
+RATIONALE: This requirement guarantees that the no-argument construction path is never broken, protecting all existing users.
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-010
+
+[REQUIREMENT]
+UID: LLR-SYN-011
+TITLE: Case-Insensitive Synonym Matching
+STATEMENT: The system shall match exercise name inputs to synonyms in a case-insensitive manner, converting the input to a canonical form before lookup.
+RATIONALE: Users enter exercise names in varying capitalization; case-insensitive matching reduces friction and avoids missed normalization.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-007
+
+[REQUIREMENT]
+UID: LLR-SYN-012
+TITLE: Path Object and String Path Acceptance
+STATEMENT: The config_path parameter shall accept both pathlib.Path objects and plain string paths interchangeably, converting strings to Path internally as needed.
+RATIONALE: Supporting both types matches Python idioms and avoids forcing callers to convert their path representations.
+PRIORITY: Low
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-007
+
+[REQUIREMENT]
+UID: LLR-SYN-013
+TITLE: Per-Instance Independent Configuration
+STATEMENT: Each StandardizeName instance shall maintain its own synonym mapping independently, so that multiple instances with different config_path values may coexist in the same process without interference.
+RATIONALE: Independent instances are required to enable simultaneous parsing with different synonym sets (e.g., per-language parsers).
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-011
+
+[REQUIREMENT]
+UID: LLR-SYN-014
+TITLE: Eager Load at Initialization
+STATEMENT: The system shall load and validate the synonym configuration during __init__ (eagerly), not deferred to the first use of the run() method.
+RATIONALE: Eager loading ensures that configuration errors surface immediately at construction time rather than mid-parse, simplifying error handling for callers.
+PRIORITY: Medium
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-009
