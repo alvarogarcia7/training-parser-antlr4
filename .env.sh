@@ -8,7 +8,7 @@ if [[ ! $? -eq 0 ]]; then
   export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 fi
 
-if ! command uv ; then
+if ! command uv > /dev/null ; then
   echo "uv not found or not working. Overriding uv"
   export PATH="$PATH:$HOME/.local/bin"
 fi
