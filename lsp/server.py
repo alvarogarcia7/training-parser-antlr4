@@ -25,6 +25,7 @@ from lsprotocol.types import (
     HoverParams,
     InitializeParams,
     InitializeResult,
+    PublishDiagnosticsParams,
     SemanticTokens,
     SemanticTokensLegend,
     SemanticTokensParams,
@@ -58,7 +59,7 @@ async def did_open(ls: TrainingLanguageServer, params: DidOpenTextDocumentParams
     """Handle document open events."""
     text_doc = ls.workspace.get_text_document(params.text_document.uri)
     diagnostics = get_diagnostics(text_doc.source)
-    ls.text_document_publish_diagnostics(text_doc.uri, diagnostics)
+    ls.text_document_publish_diagnostics(PublishDiagnosticsParams(uri=text_doc.uri, diagnostics=diagnostics))
 
 
 @server.feature(TEXT_DOCUMENT_DID_CHANGE)  # type: ignore
@@ -68,7 +69,7 @@ async def did_change(
     """Handle document change events."""
     text_doc = ls.workspace.get_text_document(params.text_document.uri)
     diagnostics = get_diagnostics(text_doc.source)
-    ls.text_document_publish_diagnostics(text_doc.uri, diagnostics)
+    ls.text_document_publish_diagnostics(PublishDiagnosticsParams(uri=text_doc.uri, diagnostics=diagnostics))
 
 
 @server.feature(TEXT_DOCUMENT_DID_SAVE)  # type: ignore
@@ -76,7 +77,7 @@ async def did_save(ls: TrainingLanguageServer, params: DidSaveTextDocumentParams
     """Handle document save events."""
     text_doc = ls.workspace.get_text_document(params.text_document.uri)
     diagnostics = get_diagnostics(text_doc.source)
-    ls.text_document_publish_diagnostics(text_doc.uri, diagnostics)
+    ls.text_document_publish_diagnostics(PublishDiagnosticsParams(uri=text_doc.uri, diagnostics=diagnostics))
 
 
 @server.feature(  # type: ignore
