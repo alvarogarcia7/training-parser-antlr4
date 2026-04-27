@@ -56,6 +56,22 @@ Press: 5..40.5/42.5/45    → 5 reps at 40.5kg, 42.5kg, and 45kg
 - Pattern for weight: `INT ('.' INT)? 'k'?`
 - Examples of valid weights: `23`, `23k`, `23.5`, `23.5k`, `62.5`, `100.25k`
 
+
+### 4. Single Series: `N.weight`
+**Requirement**: Support a single series: `reps.weight`, default to kg
+
+**Specifications**:
+- Pattern for weight: `INT '.' weight`
+- Examples of valid weights: `10.20`, `10.23k`, `10.23.5`, `10.23.5k`, `1.62.5`, `10.100.25k`
+- Examples of invalid:
+  - `0.20`: the repetitions cannot be 0
+  - `1.0`: the weight cannot be 0
+  - `1.1fg`: if present, the unit suffix must be k, kg, or lb
+- First number = number of repetitions per set
+- Second number = weight (supports both integer and decimal)
+- The `k` suffix is optional (defaults to kilograms)
+- Must support decimal weights (e.g., `10.23.5k` for 23.5kg)
+
 ## Grammar Changes Required
 
 ### Current Grammar (Relevant Sections)
@@ -71,39 +87,6 @@ set_:
     ;
 ```
 
-### Proposed Grammar Changes
-```antlr4
-weight: INT ('.' INT)? 'k'? ;
-set_:
-    set_ ','? set_ #multiple_set_
-    | INT #single_rep_set_
-    | INT 'x' INT #group_of_rep_set
-    | INT 'x' INT 'x' weight rir? #whole_set_
-    | INT '.' INT '.' weight rir? #whole_set_dots_
-    | weight ':'? set_? #weight_
-    | INT 'xx' weight (',' weight)* #fixed_reps_multiple_weight
-    | INT '..' weight ('/' weight)* #range_reps_multiple_weight
-    ;
-```
-
-**Key Additions**:
-1. `INT '.' INT '.' weight rir?` → `#whole_set_dots_` - Whole set with dot notation
-2. `INT '..' weight ('/' weight)*` → `#range_reps_multiple_weight` - Range notation with slash-separated weights
-
-## Implementation Requirements
-
-### Parser Changes (`parser/parser.py`)
-1. Add `visitWhole_set_dots_` method to handle `N.N.weight` pattern
-   - Extract: number_of_sets, number_of_reps, weight
-   - Support optional RIR (Reps in Reserve)
-   - Call `builder.add_whole_set(...)` similar to `visitWhole_set_`
-
-2. Add `visitRange_reps_multiple_weight` method to handle `N..weight/weight` pattern
-   - Extract: repetitions and list of weights
-   - Call `builder.add_fixed_reps_multiple_weights(...)` similar to `visitFixed_reps_multiple_weight`
-
-### SeriesBuilder Changes (`parser/series_builder.py`)
-- **No changes required** - Existing methods `add_whole_set()` and `add_fixed_reps_multiple_weights()` can be reused
 
 ### Test Requirements
 Add comprehensive tests to `parser/test_parser.py` and `parser/test_grammar_formats_e2e.py`:
@@ -148,24 +131,3 @@ Add comprehensive tests to `parser/test_parser.py` and `parser/test_grammar_form
 - Changing existing notation syntax
 - Adding other separator characters beyond `.` and `/`
 - Supporting ranges with notation other than `/` (e.g., `-` for ranges like `10..23-30`)
-
-## Example Usage
-
-### Complete Workout with New Notation
-```
-Squat: 1.10.23 1.10.23.5 1.8.25k
-Bench press: 10..60/70/80k
-Deadlift: 3.5.100k 2
-Overhead press: 5..40.5/42.5/45
-```
-
-### Mixed with Existing Notation
-```
-Squat: 5xx60k,70k,80k 1.8.100k
-Bench press: 3x8x75k 10..80/85/90
-```
-
-## Notes
-- The dot in `N.N.weight` could conflict with decimal notation (e.g., `1.10.23.5` for weight 23.5kg), but context makes it unambiguous: the pattern requires exactly 3 components before any decimal in the weight
-- Grammar precedence should ensure `1.5.62.5k` is parsed as `1 . 5 . 62.5k` not `1.5 . 62.5k`
-- The range notation `..` is distinct from single `.` to avoid ambiguity
