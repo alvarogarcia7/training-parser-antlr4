@@ -81,7 +81,7 @@ class TestParser(unittest.TestCase):
                                                + [self.serie(1, 60)]
                                                + [self.serie(2, 40)])])
 
-    def disabled_test_dots_visit_sessions_support_mixed_formats__singles_then_multi_series(self) -> None:
+    def test_dots_visit_sessions_support_mixed_formats__singles_then_multi_series(self) -> None:
         result = Parser.from_string('Bench 60k: 2,3, 1.1.60k, 1.2.40k\n').parse_sessions()
 
         self.assertListEqual(result, [Exercise('Bench',
@@ -127,5 +127,77 @@ class TestParser(unittest.TestCase):
         with self.assertRaises(ParsingException):
             Parser.from_string(wrong_input + "\n").parse_sessions()
 
-    def serie(self, repetition: int, weight: float) -> Set_:
-        return Set_(repetitions=repetition, weight=Weight(amount=weight, unit=Units.KILOGRAM))
+    def test_dot_notation_basic(self) -> None:
+        result = Parser.from_string('Bench press: 1.10.23\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench press', [self.serie(10, 23)])])
+
+    def test_dot_notation_with_k_suffix(self) -> None:
+        result = Parser.from_string('Bench press: 1.10.23k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench press', [self.serie(10, 23)])])
+
+    def test_dot_notation_multiple_sets(self) -> None:
+        result = Parser.from_string('Squat: 3.8.100k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Squat', [self.serie(8, 100) for _ in range(3)])])
+
+    def test_dot_notation_decimal_weight(self) -> None:
+        result = Parser.from_string('Deadlift: 1.5.62.5k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Deadlift', [self.serie(5, 62.5)])])
+
+    def test_dot_notation_decimal_weight_no_k(self) -> None:
+        result = Parser.from_string('Bench: 2.8.75.5\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench', [self.serie(8, 75.5) for _ in range(2)])])
+
+    def test_dot_notation_with_rir(self) -> None:
+        result = Parser.from_string('Squat: 3.8.100k 2\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Squat', [Set_(repetitions=8, weight=Weight(amount=100, unit=Units.KILOGRAM), rir=2) for _ in range(3)])])
+
+    def test_range_notation_basic(self) -> None:
+        result = Parser.from_string('Squat: 10..23/24\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Squat', [self.serie(10, 23), self.serie(10, 24)])])
+
+    def test_range_notation_three_weights(self) -> None:
+        result = Parser.from_string('Bench: 8..60/70/80\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench', [self.serie(8, weight) for weight in [60, 70, 80]])])
+
+    def test_range_notation_with_k_suffix(self) -> None:
+        result = Parser.from_string('Press: 10..23k/24k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Press', [self.serie(10, 23), self.serie(10, 24)])])
+
+    def test_range_notation_decimal_weights(self) -> None:
+        result = Parser.from_string('Squat: 5..40.5/42.5/45\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Squat', [self.serie(5, weight) for weight in [40.5, 42.5, 45]])])
+
+    def test_range_notation_single_weight(self) -> None:
+        result = Parser.from_string('Bench: 10..50\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Bench', [self.serie(10, 50)])])
+
+    def test_mixed_dot_and_x_notation(self) -> None:
+        result = Parser.from_string('Squat: 5xx60k,70k,80k 1.8.100k\n').parse_sessions()
+
+        self.assertListEqual(result, [Exercise('Squat', [self.serie(5, 60), self.serie(5, 70), self.serie(5, 80), self.serie(8, 100)])])
+
+    def test_mixed_range_and_whole_set(self) -> None:
+        result = Parser.from_string('Bench: 3x8x75k 10..80/85/90\n').parse_sessions()
+
+        expected = [self.serie(8, 75) for _ in range(3)] + [self.serie(10, weight) for weight in [80, 85, 90]]
+        self.assertListEqual(result, [Exercise('Bench', expected)])
+
+    def test_mixed_dot_and_range_notation(self) -> None:
+        result = Parser.from_string('Squat: 1.10.23 1.10.23.5 10..25/27.5/30\n').parse_sessions()
+
+        expected = [self.serie(10, 23), self.serie(10, 23.5)] + [self.serie(10, weight) for weight in [25, 27.5, 30]]
+        self.assertListEqual(result, [Exercise('Squat', expected)])
+
+    def serie(self, repetition: int, weight: float, rir: int | None = None) -> Set_:
+        return Set_(repetitions=repetition, weight=Weight(amount=weight, unit=Units.KILOGRAM), rir=rir)

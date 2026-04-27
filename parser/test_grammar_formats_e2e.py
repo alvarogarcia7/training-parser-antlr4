@@ -466,6 +466,150 @@ class TestGrammarFormatsE2E(unittest.TestCase):
         self.assertEqual(result, [Exercise('Bench press', expected)])
 
     # =============================================================================
+    # Dot Notation for Whole Sets (N.N.weight)
+    # =============================================================================
+
+    def test_dot_notation_basic(self) -> None:
+        """Test basic dot notation: 1.10.23"""
+        result = self.parse('Bench press: 1.10.23')
+        self.assertEqual(result, [Exercise('Bench press', [self.serie(10, 23)])])
+
+    def test_dot_notation_with_k_suffix(self) -> None:
+        """Test dot notation with k suffix: 1.10.23k"""
+        result = self.parse('Bench press: 1.10.23k')
+        self.assertEqual(result, [Exercise('Bench press', [self.serie(10, 23)])])
+
+    def test_dot_notation_multiple_sets(self) -> None:
+        """Test dot notation with multiple sets: 3.8.100k"""
+        result = self.parse('Squat: 3.8.100k')
+        expected = [self.serie(8, 100) for _ in range(3)]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_dot_notation_decimal_weight(self) -> None:
+        """Test dot notation with decimal weight: 1.5.62.5k"""
+        result = self.parse('Deadlift: 1.5.62.5k')
+        self.assertEqual(result, [Exercise('Deadlift', [self.serie(5, 62.5)])])
+
+    def test_dot_notation_decimal_weight_no_k(self) -> None:
+        """Test dot notation with decimal weight without k suffix"""
+        result = self.parse('Bench: 2.8.75.5')
+        expected = [self.serie(8, 75.5) for _ in range(2)]
+        self.assertEqual(result, [Exercise('Bench', expected)])
+
+    def test_dot_notation_with_rir(self) -> None:
+        """Test dot notation with RIR: 3.8.100k 2"""
+        result = self.parse('Squat: 3.8.100k 2')
+        expected = [self.serie(8, 100, rir=2) for _ in range(3)]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_dot_notation_five_sets(self) -> None:
+        """Test dot notation with five sets"""
+        result = self.parse('Bench press: 5.6.80k')
+        expected = [self.serie(6, 80) for _ in range(5)]
+        self.assertEqual(result, [Exercise('Bench press', expected)])
+
+    # =============================================================================
+    # Range Notation for Fixed Reps (N..weight/weight)
+    # =============================================================================
+
+    def test_range_notation_basic(self) -> None:
+        """Test basic range notation: 10..23/24"""
+        result = self.parse('Squat: 10..23/24')
+        expected = [self.serie(10, 23), self.serie(10, 24)]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_range_notation_three_weights(self) -> None:
+        """Test range notation with three weights: 8..60/70/80"""
+        result = self.parse('Bench: 8..60/70/80')
+        expected = [self.serie(8, w) for w in [60, 70, 80]]
+        self.assertEqual(result, [Exercise('Bench', expected)])
+
+    def test_range_notation_with_k_suffix(self) -> None:
+        """Test range notation with k suffix on weights"""
+        result = self.parse('Press: 10..23k/24k')
+        expected = [self.serie(10, 23), self.serie(10, 24)]
+        self.assertEqual(result, [Exercise('Press', expected)])
+
+    def test_range_notation_decimal_weights(self) -> None:
+        """Test range notation with decimal weights: 5..40.5/42.5/45"""
+        result = self.parse('Squat: 5..40.5/42.5/45')
+        expected = [self.serie(5, w) for w in [40.5, 42.5, 45]]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_range_notation_single_weight(self) -> None:
+        """Test range notation with single weight: 10..50"""
+        result = self.parse('Bench: 10..50')
+        self.assertEqual(result, [Exercise('Bench', [self.serie(10, 50)])])
+
+    def test_range_notation_four_weights(self) -> None:
+        """Test range notation with four weights (progressive overload)"""
+        result = self.parse('Squat: 5..60/70/80/90')
+        expected = [self.serie(5, w) for w in [60, 70, 80, 90]]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_range_notation_warmup_progression(self) -> None:
+        """Test range notation for warmup progression"""
+        result = self.parse('Deadlift: 5..100/110/120/130/140')
+        expected = [self.serie(5, w) for w in [100, 110, 120, 130, 140]]
+        self.assertEqual(result, [Exercise('Deadlift', expected)])
+
+    # =============================================================================
+    # Mixed Dot and Range Notation
+    # =============================================================================
+
+    def test_mixed_dot_and_x_notation(self) -> None:
+        """Test mixing dot notation with x notation"""
+        result = self.parse('Squat: 5xx60k,70k,80k 1.8.100k')
+        expected = [self.serie(5, 60), self.serie(5, 70), self.serie(5, 80), self.serie(8, 100)]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_mixed_range_and_whole_set(self) -> None:
+        """Test mixing range notation with whole set notation"""
+        result = self.parse('Bench: 3x8x75k 10..80/85/90')
+        expected = [self.serie(8, 75) for _ in range(3)] + [self.serie(10, w) for w in [80, 85, 90]]
+        self.assertEqual(result, [Exercise('Bench', expected)])
+
+    def test_mixed_dot_and_range_notation(self) -> None:
+        """Test mixing dot notation with range notation"""
+        result = self.parse('Squat: 1.10.23 1.10.23.5 10..25/27.5/30')
+        expected = [self.serie(10, 23), self.serie(10, 23.5)] + [self.serie(10, w) for w in [25, 27.5, 30]]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_mixed_all_notations(self) -> None:
+        """Test complex mixing of all notation types"""
+        result = self.parse('Squat: 60k: 10, 3.8.80k, 5xx100k,110k, 8..120/130')
+        expected = [
+            self.serie(10, 60),
+            self.serie(8, 80),
+            self.serie(8, 80),
+            self.serie(8, 80),
+            self.serie(5, 100),
+            self.serie(5, 110),
+            self.serie(8, 120),
+            self.serie(8, 130)
+        ]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    def test_dot_notation_multiple_sequences(self) -> None:
+        """Test multiple dot notation sequences in one exercise"""
+        result = self.parse('Bench press: 1.10.60k 1.8.70k 1.6.80k')
+        expected = [self.serie(10, 60), self.serie(8, 70), self.serie(6, 80)]
+        self.assertEqual(result, [Exercise('Bench press', expected)])
+
+    def test_range_notation_multiple_sequences(self) -> None:
+        """Test multiple range notation sequences in one exercise"""
+        result = self.parse('Squat: 10..60/70 8..80/90 5..100/110')
+        expected = [
+            self.serie(10, 60),
+            self.serie(10, 70),
+            self.serie(8, 80),
+            self.serie(8, 90),
+            self.serie(5, 100),
+            self.serie(5, 110)
+        ]
+        self.assertEqual(result, [Exercise('Squat', expected)])
+
+    # =============================================================================
     # Error Cases
     # =============================================================================
 

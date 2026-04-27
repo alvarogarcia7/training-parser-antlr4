@@ -15,8 +15,10 @@ set_:
     | INT #single_rep_set_
     | INT 'x' INT #group_of_rep_set
     | INT 'x' INT 'x' weight rir? #whole_set_
+    | INT '.' INT '.' weight rir? #whole_set_dots_
     | weight ':'? set_? #weight_
     | INT 'xx' weight (',' weight)* #fixed_reps_multiple_weight
+    | INT '..' weight ('/' weight)* #range_reps_multiple_weight
     ;
 
 rir: INT;

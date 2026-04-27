@@ -53,7 +53,7 @@ make install-githooks
 - **Purpose**: Converts text-based workout training logs into structured set-centric JSON format
 
 ## Architecture
-- `training.g4`: ANTLR4 grammar defining workout syntax
+- `training.g4`: ANTLR4 grammar defining workout syntax (supports x and dot notations)
 - `dist/`: Generated ANTLR4 lexer and parser (auto-generated, excluded from git)
 - `parser/`: Core parser implementation
   - `model.py`: Data structures (Exercise, Set_, Weight)

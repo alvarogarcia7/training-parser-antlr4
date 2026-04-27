@@ -112,6 +112,47 @@ class Formatter(trainingVisitor):
             # Skip malformed fixed reps sets
             pass
 
+    def visitWhole_set_dots_(self, ctx: trainingParser.Whole_set_dots_Context) -> Any:
+        try:
+            super().visitWhole_set_dots_(ctx)
+
+            # Get the INT tokens which are number_of_series and number_of_repetitions
+            int_tokens = ctx.INT()
+            if len(int_tokens) < 2:
+                return
+
+            number_of_series: int = int(int_tokens[0].getText())
+            number_of_repetitions: int = int(int_tokens[1].getText())
+
+            # Get weight from the weight context
+            weight_ctx = ctx.weight()
+            if weight_ctx is None:
+                return
+
+            weight: float = float(weight_ctx.getText().removesuffix('k'))
+
+            # Check if there's a RIR value
+            rir: int | None = None
+            rir_ctx = ctx.rir()
+            if rir_ctx is not None:
+                rir = int(rir_ctx.getText())
+
+            self.builder.add_whole_set(number_of_series, number_of_repetitions, weight, rir)
+        except (ValueError, AttributeError, IndexError):
+            # Skip malformed sets
+            pass
+
+    def visitRange_reps_multiple_weight(self, ctx: trainingParser.Range_reps_multiple_weightContext) -> Any:
+        try:
+            super().visitRange_reps_multiple_weight(ctx)
+            first_child = ctx.getChild(0)
+            if first_child is not None:
+                repetitions = int(first_child.getText())
+                self.builder.add_fixed_reps_multiple_weights(repetitions)
+        except (ValueError, AttributeError):
+            # Skip malformed range reps sets
+            pass
+
     def visitErrorNode(self, node: ErrorNode) -> None:
         # Don't raise exception, just skip the error node to continue parsing
         super().visitErrorNode(node)
