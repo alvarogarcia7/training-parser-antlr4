@@ -46,6 +46,7 @@ def main() -> None:
 
         json_output = json.dumps(json_data, indent=2)
 
+        # TODO E255BB19-DE9D-41B3-AD2F-EB58D1CE247B: Whether there is output or not, the output should be validated against its schema
         if args.output:
             output_path = Path(args.output)
             output_path.write_text(json_output, encoding='utf-8')
@@ -58,6 +59,7 @@ def main() -> None:
                     schema_path,
                     output_path,
                     common_defs_path if common_defs_path.exists() else None
+                # TODO 74840431-FDC1-422F-83D2-62BB171619BB: common_defs_path must exist. otherwise, produce an error.
                 )
 
                 if success:

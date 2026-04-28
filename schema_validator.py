@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional, Tuple, Union, cast
 import jsonschema
 from jsonschema import RefResolver, ValidationError
 
-
+# TODO 69FBD963-BB29-47D8-B386-26F85AA8C5ED: Turn this into a class
 def validate_json_with_schema(
     schema_path: Union[str, Path],
     data_path: Union[str, Path],
