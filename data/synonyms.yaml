@@ -12,6 +12,10 @@ synonyms:
     synonyms:
       - ibp
 
+  - clean: machine bench press
+    synonyms:
+      - mbp
+
   - clean: bench press
     synonyms:
       - bench
