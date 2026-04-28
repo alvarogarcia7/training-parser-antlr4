@@ -67,14 +67,14 @@ class TestModel(unittest.TestCase):
         exercise = Exercise('name',
                             [Set_(repetitions=10, weight=Weight(amount=40.0, unit='kg')),
                              Set_(repetitions=6, weight=Weight(amount=40.0, unit='kg'))])
-        self.assertEqual(exercise.__repr__(), "name: 1x10@40.0kg, 1x6@40.0kg")
+        self.assertEqual(exercise.__repr__(), "name: 1x10@40kg, 1x6@40kg")
 
     def test_unflattened_exercise__should_repr_for_object(self) -> None:
         exercise = Exercise('name',
                             [Set_(repetitions=10, weight=Weight(amount=40.0, unit='kg')),
                              Set_(repetitions=10, weight=Weight(amount=40.0, unit='kg')),
                              Set_(repetitions=6, weight=Weight(amount=40.0, unit='kg'))])
-        self.assertEqual("name: 2x10@40.0kg, 1x6@40.0kg", exercise.__repr__())
+        self.assertEqual("name: 2x10@40kg, 1x6@40kg", exercise.__repr__())
 
     def test_exercise_sum_total_volume(self) -> None:
         exercise = Exercise('name',

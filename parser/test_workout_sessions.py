@@ -140,9 +140,9 @@ Pull-up 20k: 10
 
     def test_workout_session_with_rir(self) -> None:
         """Test workout session with RIR (Reps In Reserve) values."""
-        workout = """Bench press 3x8x80k 2
-Squat 4x5x100k 1
-Deadlift 5x3x120k 0
+        workout = """Bench press 3x8x80k-2
+Squat 4x5x100k-1
+Deadlift 5x3x120k-0
 """
         result = Parser.from_string(workout).parse()
 

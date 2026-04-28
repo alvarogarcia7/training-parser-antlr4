@@ -58,11 +58,15 @@ def print_workout(workout: dict[str, Any]) -> float:
         exercise = reconstruct_exercise(exercise_data)
         exercise_volume = exercise.total_volume()
         total_volume += exercise_volume
-        print(f"  {exercise.__repr__()}; subtotal: {exercise_volume}")
+        # Format volume as int if it's a whole number, otherwise as float
+        volume_display = int(exercise_volume) if exercise_volume == int(exercise_volume) else exercise_volume
+        print(f"  {exercise.__repr__()}; subtotal: {volume_display}")
 
     exercise_count = len(workout['exercises'])
     print(f"  # Stats for this session")
     print(f"  Total number of exercises: {exercise_count}")
-    print(f"  Total volume this workout: {total_volume}")
+    # Format total volume as int if it's a whole number, otherwise as float
+    total_volume_display = int(total_volume) if total_volume == int(total_volume) else total_volume
+    print(f"  Total volume this workout: {total_volume_display}")
 
     return total_volume

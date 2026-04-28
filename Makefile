@@ -26,9 +26,8 @@ $(ANTLR_JAR):
 			echo "Error: No download tool found (curl or wget)"; \
 			exit 1; \
 		fi; \
-	else \
-		echo "ANTLR jar already exists: $(ANTLR_JAR)"; \
 	fi
+#		echo "ANTLR jar already exists: $(ANTLR_JAR)"; \
 
 install-antlr: $(ANTLR_JAR)
 .PHONY: install-antlr
@@ -101,12 +100,11 @@ grammar-clean:
 .PHONY: grammar-clean
 
 dist/trainingLexer.py: training.g4 $(ANTLR_JAR)
-	${JAVA} --version >/dev/null # Assert it works
+	@${JAVA} --version >/dev/null # Assert it works
 	${JAVA} -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist
-	@echo "Grammar generated"; \
+	@echo "Grammar generated";
 
 compile-grammar: training.g4 $(ANTLR_JAR) dist/trainingLexer.py dist/trainingListener.py dist/trainingParser.py dist/trainingVisitor.py
-	${MAKE} dist/trainingLexer.py
 
 run: check-virtual-env
 	FILE=data.txt $(MAKE) output.csv

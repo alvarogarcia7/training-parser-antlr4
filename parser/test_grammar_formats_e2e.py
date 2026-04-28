@@ -49,7 +49,8 @@ class TestGrammarFormatsE2E(unittest.TestCase):
         if not text.endswith('\n'):
             text += '\n'
         parser = Parser.from_string(text)
-        return parser.parse_sessions()  # type: ignore[no-any-return]
+        exercises: list[Exercise] = parser.parse_sessions()
+        return exercises
 
     # =============================================================================
     # Exercise Names
@@ -154,7 +155,7 @@ class TestGrammarFormatsE2E(unittest.TestCase):
 
     def test_whole_set_with_rir(self) -> None:
         """Test whole set notation with RIR (Reps in Reserve)"""
-        result = self.parse('Squat: 3x5x100k 2')
+        result = self.parse('Squat: 3x5x100k-2')
         expected = [self.serie(5, 100, rir=2) for _ in range(3)]
         self.assertEqual(result, [Exercise('Squat', expected)])
 

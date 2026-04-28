@@ -116,6 +116,28 @@ standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
 
 See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation and [examples/](examples/) for usage examples.
 
+## Phase 2: iOS-Friendly Keyboard Syntax
+
+The parser now supports Phase 2 iOS-friendly alternatives to standard notation:
+
+- **Dot separator** (`.` = `x`): `5.5.39` instead of `5x5x39`
+- **Double-dot separator** (`..` = `xx`): `1..24` instead of `1xx24`
+- **Slash weight separator** (`/` = `,`): `20xx40/50/60` instead of `20xx40,50,60`
+- **Comma-decimal weights** (`,` as decimal in slash contexts): `27,5` = 27.5kg
+- **RIR dash notation** (`-N` instead of space-N): `5.5.39-8` for RIR 8
+
+### Migration from Phase 1
+
+If you have existing logs using Phase 1 space-based RIR syntax, migrate them using:
+
+```bash
+# Convert space-RIR to dash-RIR
+# Example: "3x5x100k 2" becomes "3x5x100k-2"
+sed -E 's/([0-9]+[xX][0-9]+[xX][0-9]+(\.[0-9]+)?k?)\s+([0-9]+)(\s*[,$\n])/\1-\3\4/g' old-log.txt > new-log.txt
+```
+
+See [SYNTAX.md](SYNTAX.md) for detailed Phase 2 documentation and examples.
+
 ## Project Structure
 
 ```

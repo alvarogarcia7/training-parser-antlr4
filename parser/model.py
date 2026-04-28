@@ -71,6 +71,10 @@ class Weight:
     unit: str
 
     def __post_init__(self) -> None:
+        # Normalize integer floats (24.0 -> 24) for consistent comparison
+        # Using object.__setattr__ because frozen=True prevents normal assignment
+        if isinstance(self.amount, float) and self.amount == int(self.amount):
+            object.__setattr__(self, 'amount', int(self.amount))
         _validate_weight(self.amount, self.unit)
 
     def validate(self) -> None:

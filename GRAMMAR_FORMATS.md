@@ -15,10 +15,13 @@ This document provides a comprehensive reference of all supported input formats 
    - [Fixed Reps Multiple Weights](#fixed-reps-multiple-weights-nxxweightweight)
    - [Single Rep Notation](#single-rep-notation-weight-nnn)
 5. [Combining Formats](#combining-formats)
-6. [Complete Examples](#complete-examples)
-7. [Running Tests](#running-tests)
+6. [Phase 2: iOS-Friendly Syntax](#phase-2-ios-friendly-syntax)
+7. [Complete Examples](#complete-examples)
+8. [Running Tests](#running-tests)
 
 ## Quick Reference
+
+### Phase 1 (Classic Syntax)
 
 | Format | Syntax | Example | Use Case |
 |--------|--------|---------|----------|
@@ -26,7 +29,16 @@ This document provides a comprehensive reference of all supported input formats 
 | **Group of Reps** | `weight NxN` | `70k: 5x10` | 5 sets of 10 reps at 70kg |
 | **Fixed Reps Multiple Weights** | `Nxxweight,weight,...` | `15xx40k,50k` | 15 reps at 40kg, then 15 reps at 50kg |
 | **Single Rep** | `weight: N,N,N` | `60k: 20,15,8` | Different reps at same weight |
-| **With RIR** | `NxNxweight RIR` | `3x5x100k 2` | With 2 Reps In Reserve |
+
+### Phase 2 (iOS-Friendly Alternatives)
+
+| Format | Syntax | Example | Use Case |
+|--------|--------|---------|----------|
+| **Dot Separator** | `N.N.weight` | `5.5.40k` | Same as `5x5x40k` (mobile-friendly) |
+| **Double-Dot Sep** | `N..weight` | `1..24` | Same as `1xx24` |
+| **Slash Weights** | `Nxx weight/weight/...` | `20xx40/50/60` | Same as `20xx40,50,60` |
+| **Comma Decimal** | `N weight,D` | `62,5` | 62.5kg weight |
+| **RIR Dash** | `set-RIR` | `5.5.40k-2` | With 2 Reps In Reserve (replaces space-RIR) |
 
 ## Exercise Names
 
@@ -339,6 +351,77 @@ Multiple set notations can be combined in a single exercise entry. They are sepa
 # test_complex_mixed_format
 'Squat 60k: 10, 3x8x80k, 5xx100k,110k,120k'
 # Result: Complex combination of all formats
+```
+
+## Phase 2: iOS-Friendly Syntax
+
+Phase 2 introduces alternative separators and notation that are more convenient on mobile keyboards, while maintaining full backwards compatibility with Phase 1.
+
+### Dot Separator (.)
+
+Equivalent to 'x'. Useful on iOS keyboards where 'x' requires extra taps.
+
+**Quick Reference:**
+
+| Format | Phase 1 Equivalent | Example | Use Case |
+|--------|------------------|---------|----------|
+| **Dot Single Sep** | `NxN` | `15.18` | 15 sets of 18 reps |
+| **Dot Double Sep** | `Nxx` | `1..24` | 1 rep at 24kg (fixed reps) |
+| **Dot Triple Sep** | `NxNxweight` | `5.5.39` | 5 sets of 5 reps at 39kg |
+
+**Examples:**
+```
+# test_dot_separator_group
+'Ms: 15.18'          ≡ 'Ms: 15x18'
+
+# test_dot_separator_whole_set
+'Ms: 5.5.39'         ≡ 'Ms: 5x5x39'
+
+# test_double_dot_separator
+'Ms: 1..24'          ≡ 'Ms: 1xx24'
+```
+
+### Slash-Delimited Weight Lists (/)
+
+Alternative to comma-separated weights. Allows comma as decimal separator.
+
+**Examples:**
+```
+# test_slash_weights_integers
+'Ms: 20xx40/50/60'   ≡ 'Ms: 20xx40,50,60'
+
+# test_slash_weights_decimals
+'Ms: 1.20.24/27,5/28,1'  # 1x20x24, then 27.5, then 28.1kg
+```
+
+### RIR Dash Notation (-N)
+
+RIR (Reps In Reserve) using dash instead of space. Applies to all set types.
+
+**Examples:**
+```
+# test_rir_single_rep
+'Ms: 39-4'           # 39 reps with RIR 4
+
+# test_rir_group_reps
+'Ms: 15.18-3'        # 15 sets of 18 reps with RIR 3
+
+# test_rir_whole_set
+'Ms: 5.5.39-8'       # 5 sets of 5 reps at 39kg with RIR 8
+
+# test_rir_fixed_reps
+'Ms: 5xx80,90,100-3' # Fixed 5 reps with weights, RIR 3 all
+```
+
+### Combined Phase 2 Examples
+
+```
+# Mixed dot and traditional notation
+'Squat: 5x5x100, 5.5.95-2'
+# Dash-based RIR with slash weights
+'Ms: 20xx40/50/60-2'
+# Complex Phase 2 syntax
+'Deadlift: 1.20.24/27,5/28,1-3'
 ```
 
 ## Complete Examples

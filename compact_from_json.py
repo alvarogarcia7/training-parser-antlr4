@@ -33,7 +33,9 @@ def main() -> None:
         workout_volume = print_workout(workout)
         total_volume_all += workout_volume
 
-    print(f"Total volume for all workouts: {total_volume_all}")
+    # Format total volume as int if it's a whole number, otherwise as float
+    total_volume_display = int(total_volume_all) if total_volume_all == int(total_volume_all) else total_volume_all
+    print(f"Total volume for all workouts: {total_volume_display}")
 
 
 if __name__ == "__main__":

@@ -24,19 +24,26 @@ class SeriesBuilder:
             self.add_series(number_of_repetitions, weight, rir)
         self.pending_weights.clear()
 
-    def add_group_of_reps(self, number_of_series: int, number_of_repetitions: int) -> None:
-        assert len(self.pending_weights) == 1, f"{self.pending_weights} is longer than 1"
-        weight = self.pending_weights[0]
+    def add_group_of_reps(self, number_of_series: int, number_of_repetitions: int, rir: int | None = None) -> None:
+        if self.pending_weights:
+            assert len(self.pending_weights) == 1, f"{self.pending_weights} is longer than 1"
+            weight = self.pending_weights[0]
+        else:
+            weight = 0  # Default weight when not specified
         for _ in range(number_of_series):
-            self.add_series(number_of_repetitions, weight)
+            self.add_series(number_of_repetitions, weight, rir)
 
-    def add_single_rep_set(self, number_of_repetitions: int) -> None:
-        for weight in self.pending_weights:
-            self.add_series(number_of_repetitions, weight)
+    def add_single_rep_set(self, number_of_repetitions: int, rir: int | None = None) -> None:
+        if self.pending_weights:
+            for weight in self.pending_weights:
+                self.add_series(number_of_repetitions, weight, rir)
+        else:
+            # If no weight is specified, use 0 (bodyweight or unspecified)
+            self.add_series(number_of_repetitions, 0, rir)
 
-    def add_fixed_reps_multiple_weights(self, repetitions: int) -> None:
+    def add_fixed_reps_multiple_weights(self, repetitions: int, rir: int | None = None) -> None:
         for weight in self.pending_weights:
-            self.add_series(repetitions, weight)
+            self.add_series(repetitions, weight, rir)
         self.pending_weights.clear()
         self.pending_repetitions.clear()
 
