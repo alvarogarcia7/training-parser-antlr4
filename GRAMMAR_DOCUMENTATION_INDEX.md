@@ -43,6 +43,16 @@ Complete guide to the training log parser grammar, formats, and testing.
 
 **Use this when:** You want to understand "how and when to use each format?"
 
+#### [PRD_DOT_NOTATION.md](PRD_DOT_NOTATION.md)
+**Dot notation format specification**
+- Whole Set Notation with dots: `N.N.weight`
+- Range Notation: `N..weight/weight`
+- Single Series notation: `N.weight`
+- Decimal weight support
+- Complete example mappings
+
+**Use this when:** You want a cleaner, more compact alternative to standard notation
+
 ### Developer Documentation
 
 #### [parser/test_grammar_formats_e2e.py](parser/test_grammar_formats_e2e.py)
@@ -87,6 +97,13 @@ Complete guide to the training log parser grammar, formats, and testing.
 - [Combining Formats](GRAMMAR_FORMATS.md#combining-formats) - Mix multiple notations in one exercise
 - [RIR (Reps in Reserve)](GRAMMAR_FORMATS.md#whole-set-notation-nxnxweight) - Add RIR value to sets
 - [Complete Examples](GRAMMAR_FORMATS.md#complete-examples) - Full workout sessions
+
+### Alternative Notations
+- [Dot Notation](PRD_DOT_NOTATION.md) - Cleaner format using periods and slashes
+  - Whole Set: `N.N.weight` (replaces `NxNxweight`)
+  - Range: `N..weight/weight` (replaces `Nxxweight,weight`)
+  - Single Series: `N.weight`
+  - Supports decimal weights naturally
 
 ## Testing
 
@@ -136,6 +153,9 @@ The E2E test suite covers:
 
 ### "I want to add a new format to the grammar"
 → See [parser/test_grammar_formats_e2e_README.md - Adding New Tests](parser/test_grammar_formats_e2e_README.md#adding-new-tests)
+
+### "I want a cleaner, more compact notation"
+→ See [PRD_DOT_NOTATION.md](PRD_DOT_NOTATION.md) for dot notation format (`1.10.23k` instead of `1x10x23k`)
 
 ## Integration with Build Pipeline
 
