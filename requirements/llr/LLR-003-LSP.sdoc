@@ -1,0 +1,36 @@
+[DOCUMENT]
+TITLE: Training Parser - LSP
+UID: LLR-LSP-DOC
+VERSION: 0.1
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: REQUIREMENT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: PRIORITY
+    TYPE: String
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+
+[REQUIREMENT]
+UID: LLR-LSP-001
+TITLE: Reporting of incorrect input in the training data
+STATEMENT: TODO
+RATIONALE: TODO
+PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-012

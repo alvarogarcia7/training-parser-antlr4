@@ -101,3 +101,10 @@ TITLE: Synonym-Based Internationalization
 STATEMENT: The system shall support internationalization of exercise names by allowing language-specific synonym configuration files to be provided independently per use case.
 RATIONALE: Internationalization through configurable synonyms enables adoption across different linguistic communities without requiring code-level changes.
 PRIORITY: Medium
+
+[REQUIREMENT]
+UID: HLR-012
+TITLE: Use the Training Parser via a Language Server Protocol (LSP)
+STATEMENT: The system shall support the use of the Training Parser via a Language Server Protocol (LSP) to provide language-specific features and enhancements. User shall be able to use the Training Parser in any IDE that supports LSP
+RATIONALE: Do not force users to use a specific IDE for Training Parser. Do not force users to use a program for the Training Parser.
+PRIORITY: Medium

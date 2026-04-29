@@ -95,3 +95,6 @@ lsp/vscode-extension/node_modules/
 lsp/vscode-extension/out/
 lsp/vscode-extension/*.vsix
 trainingLexer.interp
+
+# StrictDoc
+/output/

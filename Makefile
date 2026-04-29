@@ -50,11 +50,11 @@ validate-datasets:
 .PHONY: validate-datasets
 
 validate-set-centric: check-virtual-env
-	uv run python3 validate_envelope_set_centric.py
+	uv run python3 validate_set_centric.py
 .PHONY: validate-set-centric
 
 validate-bench-centric: check-virtual-env
-	uv run python3 validate_envelope_bench_centric.py
+	uv run python3 validate_bench_centric.py
 .PHONY: validate-bench-centric
 
 test-json-export: check-virtual-env
@@ -82,7 +82,7 @@ test-lsp: check-virtual-env
 .PHONY: test-lsp
 
 typecheck: check-virtual-env
-	uv run mypy --strict . --exclude venv --exclude .venv
+	uv run mypy --strict . --exclude venv --exclude .venv --exclude output
 .PHONY: typecheck
 
 examples: check-virtual-env
