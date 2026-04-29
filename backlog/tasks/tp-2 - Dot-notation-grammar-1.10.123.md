@@ -1,18 +1,31 @@
 ---
 id: TP-2
-title: Dot notation grammar documentation
-status: In Progress
+title: Dot notation grammar (1.10.123)
+status: Done
 assignee: []
 created_date: '2026-04-27 12:53'
+updated_date: '2026-04-29 10:41'
 labels: []
-dependencies:
+dependencies: []
+references:
   - PRD_DOT_NOTATION.md
 ---
 
-## Overview
+## Description
 
+<!-- SECTION:DESCRIPTION:BEGIN -->
 Complete documentation of dot notation formats for the training log parser. Dot notation provides a cleaner, more compact alternative to standard notation using periods (`.`) and forward slashes (`/`) as separators.
+<!-- SECTION:DESCRIPTION:END -->
 
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [x] #1 The previous notation is still passing
+- [x] #2 The new notation is also passing
+<!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
 ## Documentation
 
 See **[PRD_DOT_NOTATION.md](../../PRD_DOT_NOTATION.md)** for complete product requirements.
@@ -71,13 +84,13 @@ Dips: 12.0                → 12 reps bodyweight
 
 ## Key Advantages Over Standard Notation
 
-| Aspect | Standard | Dot Notation |
-|--------|----------|--------------|
-| **Whole Set** | `1x10x23k` | `1.10.23k` |
-| **Range** | `10xx23,24` | `10..23/24` |
-| **Single** | `23` (implicit) | `10.23` (explicit) |
-| **Clarity** | Symbols vary | Consistent separators |
-| **Compactness** | Good | Better |
+| Aspect          | Standard        | Dot Notation          |
+|-----------------|-----------------|-----------------------|
+| **Whole Set**   | `1x10x23k`      | `1.10.23k`            |
+| **Range**       | `10xx23,24`     | `10..23/24`           |
+| **Single**      | `23` (implicit) | `10.23` (explicit)    |
+| **Clarity**     | Symbols vary    | Consistent separators |
+| **Compactness** | Good            | Better                |
 
 ## Decimal Weight Support
 
@@ -121,3 +134,6 @@ Run tests with:
 ```bash
 make test-grammar-formats
 ```
+<!-- SECTION:PLAN:END -->
+
+## Definition of Done
