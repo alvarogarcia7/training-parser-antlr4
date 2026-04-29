@@ -178,10 +178,10 @@ Run the validation scripts to test the implementation:
 
 ```bash
 # Validate bench-centric envelope
-python validate_envelope_bench_centric.py
+python validate_bench_centric.py
 
 # Validate set-centric envelope
-python validate_envelope_set_centric.py
+python validate_set_centric.py
 ```
 
 Both should output:

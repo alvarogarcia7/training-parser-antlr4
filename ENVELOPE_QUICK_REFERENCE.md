@@ -88,10 +88,10 @@ Run pre-configured validations:
 
 ```bash
 # Validate bench-centric example with envelope
-python validate_envelope_bench_centric.py
+python validate_bench_centric.py
 
 # Validate set-centric example with envelope
-python validate_envelope_set_centric.py
+python validate_set_centric.py
 ```
 
 ## Key Files
