@@ -50,11 +50,11 @@ validate-datasets:
 .PHONY: validate-datasets
 
 validate-set-centric: check-virtual-env
-	uv run python3 validate_set_centric.py
+	uv run python3 validate_envelope_set_centric.py
 .PHONY: validate-set-centric
 
 validate-bench-centric: check-virtual-env
-	uv run python3 validate_bench_centric.py
+	uv run python3 validate_envelope_bench_centric.py
 .PHONY: validate-bench-centric
 
 test-json-export: check-virtual-env
