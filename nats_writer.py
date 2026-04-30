@@ -11,7 +11,7 @@ import sys
 
 import nats
 
-NATS_URL = os.environ.get("NATS_URL", "nats://localhost:4222")
+NATS_URL = os.environ.get("NATS_URL", "nats://docker:4222")
 INPUT_TOPIC = "messages.30.type.training.10.parsed"
 OUTPUT_DIR = "/tmp/training"
 
