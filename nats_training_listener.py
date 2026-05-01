@@ -7,6 +7,7 @@ Subscribes to training messages, parses them with ANTLR4, and publishes sessions
 import asyncio
 import json
 import os
+import ssl
 import sys
 import uuid
 from datetime import datetime
@@ -16,7 +17,19 @@ import nats
 from src.data_access import SessionGrouper, ExerciseParser
 from parser.display import serialize_exercise
 
-NATS_URL = os.environ.get("NATS_URL", "nats://docker:4222")
+NATS_URL = os.environ.get("NATS_URL", "tls://docker:4222")
+CERTS_DIR = os.environ.get("CERTS_DIR", "/tmp/nats-certs")
+
+
+def _make_ssl_ctx() -> ssl.SSLContext:
+    """Create SSL context with client certificate for mTLS."""
+    ctx = ssl.create_default_context()
+    ctx.load_verify_locations(cafile=f"{CERTS_DIR}/rootCA.pem")
+    ctx.load_cert_chain(
+        certfile=f"{CERTS_DIR}/client.pem",
+        keyfile=f"{CERTS_DIR}/client.key"
+    )
+    return ctx
 INPUT_TOPIC = "messages.20.type.training"
 OUTPUT_TOPIC = "messages.30.type.training.10.parsed"
 
@@ -75,9 +88,10 @@ async def parse_and_publish(message_data: dict, nc):
 async def main():
     """Subscribe to training messages and parse them."""
     nc = None
+    ssl_ctx = _make_ssl_ctx()
     for attempt in range(5):
         try:
-            nc = await nats.connect(NATS_URL, connect_timeout=2)
+            nc = await nats.connect(NATS_URL, tls=ssl_ctx, connect_timeout=2)
             break
         except Exception as e:
             if attempt < 4:
