@@ -17,7 +17,10 @@ import nats
 from src.data_access import SessionGrouper, ExerciseParser
 from parser.display import serialize_exercise
 
-NATS_URL = os.environ.get("NATS_URL", "tls://docker:4222")
+NATS_URL = os.environ.get("NATS_URL")
+if not NATS_URL:
+    print("Error: NATS_URL environment variable not set")
+    sys.exit(1)
 CERTS_DIR = os.environ.get("CERTS_DIR", "/tmp/nats-certs")
 
 
