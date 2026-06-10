@@ -112,12 +112,12 @@ run: check-virtual-env
 .PHONY: run
 
 archive-data:
-	touch data/$(shell date "+%Y-%m-%d").txt
-	cat data.txt >> data/$(shell date "+%Y-%m-%d").txt
+	touch data/workdir/$(shell date "+%Y-%m-%d").txt
+	cat data.txt >> data/workdir/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) save-data
 
 save-data:
-	$(MAKE) -C ./data save
+	$(MAKE) -C ./data/workdir save
 	echo "" > data.txt
 .PHONY: save-data
 
