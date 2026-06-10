@@ -1,13 +1,31 @@
 [DOCUMENT]
-TITLE: Training Parser - LSP
+MID: a1a032bb15644a62a2447058b3b5685f
+TITLE: Training Parser - Language Server Provider (LSP)
 UID: LLR-LSP-DOC
 VERSION: 0.1
+PREFIX: LLR-LSP-
+OPTIONS:
+  ENABLE_MID: True
 
 [GRAMMAR]
 ELEMENTS:
+- TAG: TEXT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: MID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
 - TAG: REQUIREMENT
   FIELDS:
   - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: MID
     TYPE: String
     REQUIRED: True
   - TITLE: TITLE
@@ -26,11 +44,46 @@ ELEMENTS:
   - TYPE: Parent
 
 [REQUIREMENT]
-UID: LLR-LSP-001
+UID: LLR-LSP-1
+MID: bb94d9cbf58148ae8e86b54d51ebc165
 TITLE: Reporting of incorrect input in the training data
 STATEMENT: TODO
 RATIONALE: TODO
 PRIORITY: High
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-012
+
+[REQUIREMENT]
+UID: LLR-LSP-2
+MID: 289f45662e054b26a4bae548a91008b3
+TITLE: Commenting of lines via LSP
+STATEMENT: >>>
+TODO
+<<<
+RATIONALE: >>>
+TODO
+<<<
+PRIORITY: >>>
+High
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: HLR-012
+
+[REQUIREMENT]
+UID: LLR-LSP-3
+MID: 316eb59b5b3c460d9783bae6ea41b2a0
+TITLE: Computing the subtotal of volume, series
+STATEMENT: >>>
+TODO
+<<<
+RATIONALE: >>>
+TODO
+<<<
+PRIORITY: >>>
+High
+<<<
 RELATIONS:
 - TYPE: Parent
   VALUE: HLR-012

@@ -1,13 +1,31 @@
 [DOCUMENT]
+MID: c5f8a62ed5e9470f908584dd5d02826d
 TITLE: Training Parser - Parser Requirements
 UID: LLR-PARSER-DOC
 VERSION: 0.1
+PREFIX: LLR-PARSER-
+OPTIONS:
+  ENABLE_MID: True
 
 [GRAMMAR]
 ELEMENTS:
+- TAG: TEXT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: MID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
 - TAG: REQUIREMENT
   FIELDS:
   - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: MID
     TYPE: String
     REQUIRED: True
   - TITLE: TITLE
@@ -27,6 +45,7 @@ ELEMENTS:
 
 [REQUIREMENT]
 UID: LLR-PARSER-001
+MID: 1404e3bf581f4353ac24060f2d0603d1
 TITLE: Reporting of incorrect input in the training data
 STATEMENT: Any incorrect input in the training data should be reported.
 RATIONALE: The user should be alerted when the input is incorrect, to able to correct the input. It is at the input time that the user should be alerted, not at later stages.

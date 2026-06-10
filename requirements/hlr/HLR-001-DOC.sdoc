@@ -1,13 +1,31 @@
 [DOCUMENT]
+MID: 263dd9f05e454a059c67a9040252165f
 TITLE: Training Parser - High-Level Requirements
 UID: HLR-DOC
 VERSION: 1.0
+PREFIX: HLR-
+OPTIONS:
+  ENABLE_MID: True
 
 [GRAMMAR]
 ELEMENTS:
+- TAG: TEXT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: MID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
 - TAG: REQUIREMENT
   FIELDS:
   - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: MID
     TYPE: String
     REQUIRED: True
   - TITLE: TITLE
@@ -27,6 +45,7 @@ ELEMENTS:
 
 [REQUIREMENT]
 UID: HLR-001
+MID: b03f3864b2aa4ef09d0d6136e458e47e
 TITLE: ANTLR Grammar Parsing
 STATEMENT: The system shall parse training data using ANTLR-based grammars.
 RATIONALE: ANTLR provides robust grammar-based parsing with support for complex language structures.
@@ -34,6 +53,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-002
+MID: b7ccd5d077f645438273e75d9fbf07ce
 TITLE: Multiple Input Formats
 STATEMENT: The system shall support parsing multiple input data formats (JSON, CSV, text).
 RATIONALE: Flexibility in input formats enables integration with various data sources.
@@ -41,6 +61,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-003
+MID: 1a82e4d84bd9499dba744c87f69df736
 TITLE: Data Validation
 STATEMENT: The system shall validate parsed data against defined schemas.
 RATIONALE: Schema validation ensures data integrity and consistency.
@@ -48,6 +69,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-004
+MID: ba7111610282467996b54dc43bc2a0e9
 TITLE: Error Handling
 STATEMENT: The system shall provide detailed error messages for malformed input.
 RATIONALE: Clear error reporting improves user experience and debugging.
@@ -55,6 +77,7 @@ PRIORITY: Medium
 
 [REQUIREMENT]
 UID: HLR-005
+MID: 2f269d43cd8044b28be393a11b5a9178
 TITLE: Type Safety
 STATEMENT: The system shall enforce strict type checking throughout the codebase.
 RATIONALE: Static type checking prevents runtime errors and improves code maintainability.
@@ -62,6 +85,7 @@ PRIORITY: Medium
 
 [REQUIREMENT]
 UID: HLR-006
+MID: 5c3dbdbced654e90bd99418139ad9657
 TITLE: Documentation Generation
 STATEMENT: The system shall support generation of structured documentation from parsed data.
 RATIONALE: Auto-generated documentation ensures consistency and reduces manual effort.
@@ -69,6 +93,7 @@ PRIORITY: Medium
 
 [REQUIREMENT]
 UID: HLR-007
+MID: a1b4df457cb44ab5a8a1687e9a8af00e
 TITLE: Configurable Synonym Loading
 STATEMENT: The system shall allow users to configure exercise name synonyms via external configuration files, enabling customization of name mappings without modifying source code.
 RATIONALE: External configuration decouples synonym data from application logic, allowing non-developers to maintain and extend name mappings independently.
@@ -76,6 +101,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-008
+MID: d066832bd3de443b9c587be246be9558
 TITLE: Multiple Synonym Configuration Formats
 STATEMENT: The system shall support YAML and JSON file formats for synonym configuration files.
 RATIONALE: Supporting industry-standard formats (YAML for readability, JSON for programmatic generation) gives users flexibility in tooling and workflow integration.
@@ -83,6 +109,7 @@ PRIORITY: Medium
 
 [REQUIREMENT]
 UID: HLR-009
+MID: 8e1d8ba58bcc445ca2d0b43eb3a54b36
 TITLE: Synonym Configuration Validation
 STATEMENT: The system shall validate synonym configuration files at load time and report descriptive errors for any structural or semantic violations.
 RATIONALE: Fail-fast validation at initialization prevents silent misconfiguration and provides actionable feedback to users when configurations are malformed.
@@ -90,6 +117,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-010
+MID: be37f6bd8716403aabc6e44b003b4829
 TITLE: Backward-Compatible Default Synonyms
 STATEMENT: The system shall provide built-in default synonym mappings and operate fully without any user-supplied configuration file.
 RATIONALE: Backward compatibility ensures existing integrations and users are unaffected by the introduction of external configuration support.
@@ -97,6 +125,7 @@ PRIORITY: High
 
 [REQUIREMENT]
 UID: HLR-011
+MID: 2e3937c5f59548478a8522dcfb8ca20d
 TITLE: Synonym-Based Internationalization
 STATEMENT: The system shall support internationalization of exercise names by allowing language-specific synonym configuration files to be provided independently per use case.
 RATIONALE: Internationalization through configurable synonyms enables adoption across different linguistic communities without requiring code-level changes.
@@ -104,7 +133,21 @@ PRIORITY: Medium
 
 [REQUIREMENT]
 UID: HLR-012
+MID: d0cda3d07891414db4f013bed6c97310
 TITLE: Use the Training Parser via a Language Server Protocol (LSP)
 STATEMENT: The system shall support the use of the Training Parser via a Language Server Protocol (LSP) to provide language-specific features and enhancements. User shall be able to use the Training Parser in any IDE that supports LSP
 RATIONALE: Do not force users to use a specific IDE for Training Parser. Do not force users to use a program for the Training Parser.
 PRIORITY: Medium
+
+[REQUIREMENT]
+UID: HLR-13
+MID: 2ed6488e96884ca4824ab2738e271dd7
+TITLE: Tracking statistics in the Input File
+STATEMENT: >>>
+Track the statistics for a workout session
+<<<
+RATIONALE: >>>
+A single place for the user to input their statistics, rather than manually when processing the file.
+
+When: doing, not when reviewing
+<<<
