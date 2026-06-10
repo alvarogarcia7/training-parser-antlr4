@@ -392,5 +392,135 @@ class TestParser(unittest.TestCase):
         expected = [self.serie(10, 23), self.serie(10, 23.5)] + [self.serie(10, weight) for weight in [25, 27.5, 30]]
         self.assertListEqual(result, [Exercise('Squat', expected)])
 
+    # ===== Single-letter exercises =====
+
+    def test_single_letter_exercise_lowercase(self) -> None:
+        """Single letter exercise name (lowercase)"""
+        result = Parser.from_string('a: 5\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('a', [self.serie(5, 0)])])
+
+    def test_single_letter_exercise_uppercase(self) -> None:
+        """Single letter exercise name (uppercase)"""
+        result = Parser.from_string('A: 5\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('A', [self.serie(5, 0)])])
+
+    def test_single_letter_exercise_with_weight(self) -> None:
+        """Single letter exercise name with weight"""
+        result = Parser.from_string('z: 10k: 5\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('z', [self.serie(5, 10)])])
+
+    def test_single_letter_exercise_with_multiple_sets(self) -> None:
+        """Single letter exercise with multiple sets"""
+        result = Parser.from_string('b: 3x5x60k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('b', [self.serie(5, 60) for _ in range(3)])])
+
+    def test_single_accented_letter_exercise(self) -> None:
+        """Single accented letter exercise name"""
+        result = Parser.from_string('á: 8\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('á', [self.serie(8, 0)])])
+
+    def test_single_accented_letter_uppercase(self) -> None:
+        """Single accented uppercase letter (if supported in grammar)"""
+        result = Parser.from_string('é: 6\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('é', [self.serie(6, 0)])])
+
+    # ===== Exercises with hyphens =====
+
+    def test_hyphenated_name_basic(self) -> None:
+        """Hyphenated exercise name"""
+        result = Parser.from_string('leg-press: 5x10x100k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('leg-press', [self.serie(10, 100) for _ in range(5)])])
+
+    def test_hyphenated_name_single_letter_sides(self) -> None:
+        """Hyphenated with single letters on both sides"""
+        result = Parser.from_string('a-b: 5\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('a-b', [self.serie(5, 0)])])
+
+    def test_hyphenated_name_accented_letters(self) -> None:
+        """Hyphenated name with accented letters"""
+        result = Parser.from_string('á-é: 5x5x40k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('á-é', [self.serie(5, 40) for _ in range(5)])])
+
+    def test_hyphenated_name_with_longer_suffix(self) -> None:
+        """Hyphenated name with multi-letter prefix and suffix"""
+        result = Parser.from_string('leg-presses: 4x8x80k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('leg-presses', [self.serie(8, 80) for _ in range(4)])])
+
+    def test_hyphenated_name_with_uppercase(self) -> None:
+        """Hyphenated name with uppercase letters"""
+        result = Parser.from_string('Leg-Press: 5x10x100k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('Leg-Press', [self.serie(10, 100) for _ in range(5)])])
+
+    # ===== Exercises with accents =====
+
+    def test_exercise_with_multiple_accents(self) -> None:
+        """Exercise name with multiple accented characters"""
+        result = Parser.from_string('máquina légal: 5x8x50k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('máquina légal', [self.serie(8, 50) for _ in range(5)])])
+
+    def test_exercise_all_accented_vowels(self) -> None:
+        """Exercise with all accented vowels"""
+        result = Parser.from_string('áéíóú: 3x5x60k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('áéíóú', [self.serie(5, 60) for _ in range(3)])])
+
+    def test_exercise_with_tilde_n(self) -> None:
+        """Exercise name with ñ"""
+        result = Parser.from_string('niño: 5x10x40k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('niño', [self.serie(10, 40) for _ in range(5)])])
+
+    def test_exercise_starting_with_accent(self) -> None:
+        """Exercise name starting with accented letter"""
+        result = Parser.from_string('útil: 6\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('útil', [self.serie(6, 0)])])
+
+    # ===== Case variations =====
+
+    def test_exercise_all_uppercase(self) -> None:
+        """Exercise name in all uppercase"""
+        result = Parser.from_string('DEADLIFT: 1x5x140k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('DEADLIFT', [self.serie(5, 140)])])
+
+    def test_exercise_all_lowercase(self) -> None:
+        """Exercise name in all lowercase"""
+        result = Parser.from_string('squat: 3x5x100k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('squat', [self.serie(5, 100) for _ in range(3)])])
+
+    def test_exercise_mixed_case(self) -> None:
+        """Exercise name with mixed case"""
+        result = Parser.from_string('BenCh PrEsS: 5x8x60k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('BenCh PrEsS', [self.serie(8, 60) for _ in range(5)])])
+
+    def test_exercise_single_uppercase_letter_with_weight(self) -> None:
+        """Single uppercase letter exercise with weight"""
+        result = Parser.from_string('X: 20k: 6\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('X', [self.serie(6, 20)])])
+
+    def test_exercise_single_lowercase_letter_with_complex_set(self) -> None:
+        """Single lowercase letter exercise with complex set notation"""
+        result = Parser.from_string('z: 3.5.75k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('z', [self.serie(5, 75) for _ in range(3)])])
+
+    # ===== Combined variations =====
+
+    def test_hyphenated_with_single_accented_letters(self) -> None:
+        """Hyphenated exercise with accented single letters"""
+        result = Parser.from_string('á-ó: 4x6x50k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('á-ó', [self.serie(6, 50) for _ in range(4)])])
+
+    def test_hyphenated_all_caps(self) -> None:
+        """Hyphenated exercise name in all caps"""
+        result = Parser.from_string('LEG-PRESS: 5x10x100k\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('LEG-PRESS', [self.serie(10, 100) for _ in range(5)])])
+
+    def test_single_letter_with_complex_multiple_sets(self) -> None:
+        """Single letter with complex multi-set notation"""
+        result = Parser.from_string('m: 5x10-2, 3x15-1\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('m', [self.serie(10, 0, rir=2) for _ in range(5)] + [self.serie(15, 0, rir=1) for _ in range(3)])])
+
+    def test_accented_name_with_hyphen_and_weight(self) -> None:
+        """Accented hyphenated name with weight"""
+        result = Parser.from_string('máquina-légal: 50k: 8\n').parse_sessions()
+        self.assertListEqual(result, [Exercise('máquina-légal', [self.serie(8, 50)])])
+
     def serie(self, repetition: int, weight: float, rir: int | None = None) -> Set_:
         return Set_(repetitions=repetition, weight=Weight(amount=weight, unit=Units.KILOGRAM), rir=rir)

@@ -13,8 +13,8 @@ COMMA  : ','  ;
 SLASH  : '/'  ;
 DASH   : '-'  ;  // must precede NAME for '-4' to tokenize as DASH INT
 K_UNIT : 'k'  ;  // must precede NAME so 'k' in weights is matched as token
-ALPHABET: [a-zA-Z] | [áéíóúñ] ;
-HYPHENATED_NAME: [a-zA-Záéíóúñ] ALPHABET* '-' ALPHABET+ ;
+fragment ALPHABET: [a-zA-Z] | [áéíóúñ] ;
+HYPHENATED_NAME: ALPHABET* '-' ALPHABET+ ;
 NAME: [a-zA-Záéíóúñ] ALPHABET* (WS+ ALPHABET+)* ;
 NEWLINE: '\r'? '\n' ;
 WS:     [ \t]+ -> skip ;
@@ -22,7 +22,7 @@ WS:     [ \t]+ -> skip ;
 // Parser rules
 workout: exercise+;
 
-exercise_name : 'Deadlift' | 'Squat' | 'Bench press' | 'Overhead press' | HYPHENATED_NAME | NAME;
+exercise_name: HYPHENATED_NAME | NAME;
 
 // Two weight variants. weight_dot is v1-compatible (dot decimals).
 // weight_com allows comma-decimals; used inside /-delimited contexts and for standalone
