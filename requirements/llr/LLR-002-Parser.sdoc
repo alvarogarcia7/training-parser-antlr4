@@ -53,3 +53,14 @@ PRIORITY: High
 RELATIONS:
 - TYPE: Parent
   VALUE: HLR-004
+
+[REQUIREMENT]
+UID: LLR-PARSER-2
+MID: 4b85b056a2f84c8fa5d0484ba4d70ddc
+TITLE: Exercises can have 1..* letters in its name
+STATEMENT: >>>
+As long as the exercise contains one letter, it is a valid exercise name.
+<<<
+RATIONALE: >>>
+Some synonyms, or exercise names, can be only one letter in length
+<<<
