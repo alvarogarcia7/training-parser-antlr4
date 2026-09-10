@@ -42,6 +42,7 @@ test: check-virtual-env
 	${MAKE} test-json-export
 	${MAKE} compare-v1-v2
 	${MAKE} test-lsp
+	${MAKE} test-bulk-parser
 .PHONY: test
 
 validate-datasets:
@@ -80,6 +81,11 @@ test-grammar-formats: check-virtual-env
 test-lsp: check-virtual-env
 	pytest lsp
 .PHONY: test-lsp
+
+test-bulk-parser: check-virtual-env
+	@echo "Testing bulk parser pipeline..."
+	pytest tests/test_bulk_parser.py -v
+.PHONY: test-bulk-parser
 
 typecheck: check-virtual-env
 	uv run mypy --strict . --exclude venv --exclude .venv --exclude output
