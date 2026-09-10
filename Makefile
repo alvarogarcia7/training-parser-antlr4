@@ -43,6 +43,7 @@ test: check-virtual-env
 	${MAKE} compare-v1-v2
 	${MAKE} test-lsp
 	${MAKE} test-bulk-parser
+	${MAKE} test-statistics
 .PHONY: test
 
 validate-datasets:
@@ -86,6 +87,11 @@ test-bulk-parser: check-virtual-env
 	@echo "Testing bulk parser pipeline..."
 	pytest tests/test_bulk_parser.py -v
 .PHONY: test-bulk-parser
+
+test-statistics: check-virtual-env
+	@echo "Testing statistics module..."
+	pytest tests/test_statistics.py -v
+.PHONY: test-statistics
 
 typecheck: check-virtual-env
 	uv run mypy --strict . --exclude venv --exclude .venv --exclude output
@@ -192,3 +198,10 @@ compare-v1-v2: check-virtual-env
 		exit 1; \
 	fi
 .PHONY: compare-v1-v2
+
+stats: check-virtual-env
+	@echo "Calculate workout statistics from JSON data"
+	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
+	@echo ""
+	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
+.PHONY: stats
