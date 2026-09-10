@@ -8,6 +8,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import nats
 
@@ -16,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from parser.parser import Parser
 
 
-async def process_message(msg_data):
+async def process_message(msg_data: bytes) -> None:
     """Process a message containing training data."""
     try:
         # Parse JSON message
@@ -47,10 +48,10 @@ async def process_message(msg_data):
 
                 for idx, exercise in enumerate(exercises, 1):
                     print(f"{idx}. {exercise.name}")
-                    for set_idx, set_data in enumerate(exercise.repetitions, 1):
+                    for set_idx, set_data in enumerate(exercise.sets_, 1):
                         print(
                             f"   Set {set_idx}: {set_data.repetitions} reps × "
-                            f"{set_data.weight.amount}{set_data.weight.unit.value}"
+                            f"{set_data.weight.amount}{set_data.weight.unit}"
                         )
 
             except Exception as parse_error:
@@ -65,7 +66,7 @@ async def process_message(msg_data):
         print(f"Error processing message: {e}")
 
 
-async def main():
+async def main() -> None:
     """Subscribe to NATS and process training messages."""
     print("🚀 Starting NATS Training Parser Subscriber")
     print("Connecting to NATS at localhost:4222...")
@@ -81,7 +82,7 @@ async def main():
     print("Listening for messages on topic 'training.notes'...")
     print("Press Ctrl+C to exit\n")
 
-    async def message_handler(msg):
+    async def message_handler(msg: Any) -> None:
         """Handle incoming messages."""
         await process_message(msg.data)
 
