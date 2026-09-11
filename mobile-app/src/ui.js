@@ -329,16 +329,10 @@ export async function init() {
   document.getElementById('sync-btn').addEventListener('click', syncNow);
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
   console.log('[init] Setting up event listeners...');
-  const settingsBtn = document.getElementById('settings-btn');
-  console.log('[init] Settings button found:', !!settingsBtn);
-  if (settingsBtn) {
-    settingsBtn.addEventListener('click', () => {
-      console.log('[event] Settings button clicked');
-      openSettings();
-    });
-  } else {
-    console.error('[init] Settings button NOT FOUND');
-  }
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    console.log('[event] Settings button clicked');
+    openSettings();
+  });
   document.getElementById('settings-save-btn').addEventListener('click', () => {
     console.log('[event] Save button clicked');
     saveSettingsFromForm();
