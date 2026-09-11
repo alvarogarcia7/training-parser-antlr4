@@ -280,25 +280,37 @@ async function shareCurrentResults() {
 // --- Settings modal ---
 
 function openSettings() {
+  console.log('[openSettings] Opening settings modal...');
   const settings = gitSync.loadSettings();
   document.getElementById('settings-remote').value = settings.remoteUrl || '';
   document.getElementById('settings-username').value = settings.username || '';
   document.getElementById('settings-token').value = settings.token || '';
   document.getElementById('settings-author').value = settings.author || '';
-  document.getElementById('settings-modal').hidden = false;
+  const modal = document.getElementById('settings-modal');
+  modal.hidden = false;
+  console.log('[openSettings] Modal opened:', { hidden: modal.hidden, display: modal.style.display });
 }
 
 function closeModal() {
-  document.getElementById('settings-modal').hidden = true;
+  const modal = document.getElementById('settings-modal');
+  console.log('[closeModal] Before:', { hidden: modal?.hidden, display: modal?.style.display });
+  if (modal) {
+    modal.hidden = true;
+    console.log('[closeModal] After:', { hidden: modal.hidden, display: modal.style.display });
+  } else {
+    console.warn('[closeModal] Modal element not found');
+  }
 }
 
 function saveSettingsFromForm() {
+  console.log('[saveSettingsFromForm] Saving settings...');
   gitSync.saveSettings({
     remoteUrl: document.getElementById('settings-remote').value.trim(),
     username: document.getElementById('settings-username').value.trim(),
     token: document.getElementById('settings-token').value.trim(),
     author: document.getElementById('settings-author').value.trim() || 'Training Parser',
   });
+  console.log('[saveSettingsFromForm] Calling closeModal...');
   closeModal();
   setStatus('Settings saved', 'ready');
 }
@@ -316,14 +328,29 @@ export async function init() {
   document.getElementById('save-btn').addEventListener('click', saveWorkout);
   document.getElementById('sync-btn').addEventListener('click', syncNow);
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
-  document.getElementById('settings-btn').addEventListener('click', openSettings);
-  document.getElementById('settings-save-btn').addEventListener('click', saveSettingsFromForm);
-  document.getElementById('settings-cancel-btn').addEventListener('click', closeModal);
+  console.log('[init] Setting up event listeners...');
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    console.log('[event] Settings button clicked');
+    openSettings();
+  });
+  document.getElementById('settings-save-btn').addEventListener('click', () => {
+    console.log('[event] Save button clicked');
+    saveSettingsFromForm();
+  });
+  document.getElementById('settings-cancel-btn').addEventListener('click', () => {
+    console.log('[event] Cancel button clicked');
+    closeModal();
+  });
 
   // Close modal when clicking backdrop
   document.getElementById('settings-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'settings-modal') closeModal();
+    console.log('[event] Modal backdrop click:', { targetId: e.target.id, eventTarget: e.target });
+    if (e.target.id === 'settings-modal') {
+      console.log('[event] Backdrop detected, closing modal');
+      closeModal();
+    }
   });
+  console.log('[init] Event listeners setup complete');
   document.getElementById('time-input').addEventListener('change', () => {
     const t = parseFloat(document.getElementById('time-input').value) || 0;
     calculateStats(t);
