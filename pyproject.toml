@@ -112,6 +112,7 @@ implicit_reexport = true
 exclude = [
     "^antlr4_Python3_examples-master",
     "^dist",
+    "^mobile-app",
     "^venv",
     "^\\.venv",
 ]
