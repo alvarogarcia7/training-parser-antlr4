@@ -146,6 +146,10 @@ async function initPyodide() {
   log(`Fetching ${PYTHON_FILES.length} Python files...`, 'DEBUG');
   const failedFiles = [];
   let successCount = 0;
+
+  // Log some sample files to verify paths
+  log(`Sample file paths: ${PYTHON_FILES.slice(0, 3).map(f => f[0]).join(', ')}...`, 'DEBUG');
+
   for (const [fetchPath, fsPath] of PYTHON_FILES) {
     try {
       const resp = await fetch(fetchPath);
@@ -155,6 +159,10 @@ async function initPyodide() {
           ensureParentDir(fsPath);
           pyodide.FS.writeFile(fsPath, text, { encoding: 'utf8' });
           successCount++;
+          // Log first file and every 10th file to avoid spam
+          if (successCount === 1 || successCount % 10 === 0) {
+            log(`Written: ${fsPath} (${text.length} bytes)`, 'DEBUG');
+          }
         } catch (writeErr) {
           failedFiles.push(`${fetchPath} (write failed: ${writeErr.message})`);
           log(`Failed to write ${fsPath}: ${writeErr.message}`, 'WARN');
@@ -168,9 +176,9 @@ async function initPyodide() {
       log(`Could not load ${fetchPath}: ${e.message}`, 'WARN');
     }
   }
-  log(`${successCount}/${PYTHON_FILES.length} files written successfully`, 'DEBUG');
+  log(`${successCount}/${PYTHON_FILES.length} files written successfully`, 'INFO');
   if (failedFiles.length > 0) {
-    log(`${failedFiles.length} file(s) failed to load: ${failedFiles.slice(0, 5).join(', ')}${failedFiles.length > 5 ? '...' : ''}`, 'WARN');
+    log(`${failedFiles.length} file(s) failed: ${failedFiles.slice(0, 3).join(', ')}${failedFiles.length > 3 ? '...' : ''}`, 'WARN');
   }
 
   // Put our source root on the Python path
