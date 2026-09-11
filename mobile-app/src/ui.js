@@ -36,8 +36,6 @@ function handleWorkerMessage(event) {
   if (type === 'ready') {
     pyodideReady = true;
     setStatus('Ready', 'ready');
-    document.getElementById('parse-btn').disabled = false;
-    document.getElementById('workout-input').disabled = false;
     return;
   }
 
@@ -78,7 +76,6 @@ async function parseWorkout() {
   }
 
   setStatus('Parsing...', 'loading');
-  document.getElementById('parse-btn').disabled = true;
 
   try {
     const result = await callWorker('parse', { text });
@@ -87,8 +84,6 @@ async function parseWorkout() {
     setStatus(result.is_valid ? 'Parsed successfully' : `Parsed with ${result.errors.length} error(s)`, result.is_valid ? 'ready' : 'error');
   } catch (e) {
     setStatus('Parse error: ' + e.message, 'error');
-  } finally {
-    document.getElementById('parse-btn').disabled = false;
   }
 }
 
