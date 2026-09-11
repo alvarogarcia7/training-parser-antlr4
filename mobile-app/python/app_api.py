@@ -28,7 +28,7 @@ def parse_workout_text(text: str) -> str:
     tp.removeErrorListeners()
     tp.addErrorListener(error_listener)
 
-    tree = tp.training()
+    tree = tp.workout()
     formatter = Formatter()
     formatter.visit(tree)
 
