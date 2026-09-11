@@ -199,6 +199,11 @@ compare-v1-v2: check-virtual-env
 	fi
 .PHONY: compare-v1-v2
 
+serve: check-virtual-env
+	@echo "Open: http://localhost:8080/mobile-app/"
+	uv run python3 serve.py
+.PHONY: serve
+
 stats: check-virtual-env
 	@echo "Calculate workout statistics from JSON data"
 	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
