@@ -288,6 +288,10 @@ function openSettings() {
   document.getElementById('settings-modal').hidden = false;
 }
 
+function closeModal() {
+  document.getElementById('settings-modal').hidden = true;
+}
+
 function saveSettingsFromForm() {
   gitSync.saveSettings({
     remoteUrl: document.getElementById('settings-remote').value.trim(),
@@ -295,7 +299,7 @@ function saveSettingsFromForm() {
     token: document.getElementById('settings-token').value.trim(),
     author: document.getElementById('settings-author').value.trim() || 'Training Parser',
   });
-  document.getElementById('settings-modal').hidden = true;
+  closeModal();
   setStatus('Settings saved', 'ready');
 }
 
@@ -314,13 +318,11 @@ export async function init() {
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
   document.getElementById('settings-btn').addEventListener('click', openSettings);
   document.getElementById('settings-save-btn').addEventListener('click', saveSettingsFromForm);
-  const closeModal = () => document.getElementById('settings-modal').hidden = true;
   document.getElementById('settings-cancel-btn').addEventListener('click', closeModal);
 
   // Close modal when clicking backdrop
-  const backdrop = document.getElementById('settings-modal');
-  backdrop.addEventListener('click', (e) => {
-    if (e.target === backdrop) closeModal();
+  document.getElementById('settings-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'settings-modal') closeModal();
   });
   document.getElementById('time-input').addEventListener('change', () => {
     const t = parseFloat(document.getElementById('time-input').value) || 0;
