@@ -43,12 +43,35 @@ async function initPyodide() {
   self.postMessage({ type: 'loading', message: 'Installing packages...' });
   log('loadPackage(micropip, pyyaml) starting...');
   await pyodide.loadPackage(['micropip', 'pyyaml']);
-  log('loadPackage done');
+  log('loadPackage done, packages loaded');
 
-  log('Installing antlr4-python3-runtime...');
+  log('Importing micropip...');
   const micropip = pyodide.pyimport('micropip');
-  await micropip.install('antlr4-python3-runtime==4.9.3');
-  log('antlr4 installed');
+  log('micropip imported');
+
+  // Try to install antlr4, but skip if it times out
+  log('Checking if antlr4 needs install...');
+  try {
+    pyodide.runPython('import antlr4; print("antlr4 already available")');
+    log('antlr4 already available, skipping install');
+  } catch (e) {
+    log('antlr4 not found, attempting to install...');
+    try {
+      log('Calling micropip.install...');
+      const installPromise = micropip.install('antlr4-python3-runtime==4.9.3');
+      log('install() called, awaiting...');
+
+      // Timeout after 15 seconds
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Install timeout')), 15000)
+      );
+
+      await Promise.race([installPromise, timeoutPromise]);
+      log('antlr4 installed successfully');
+    } catch (installErr) {
+      log(`WARN: antlr4 install failed: ${installErr.message}, skipping`);
+    }
+  }
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...');
