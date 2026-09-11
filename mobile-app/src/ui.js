@@ -329,10 +329,16 @@ export async function init() {
   document.getElementById('sync-btn').addEventListener('click', syncNow);
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
   console.log('[init] Setting up event listeners...');
-  document.getElementById('settings-btn').addEventListener('click', () => {
-    console.log('[event] Settings button clicked');
-    openSettings();
-  });
+  const settingsBtn = document.getElementById('settings-btn');
+  console.log('[init] Settings button found:', !!settingsBtn);
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      console.log('[event] Settings button clicked');
+      openSettings();
+    });
+  } else {
+    console.error('[init] Settings button NOT FOUND');
+  }
   document.getElementById('settings-save-btn').addEventListener('click', () => {
     console.log('[event] Save button clicked');
     saveSettingsFromForm();
@@ -342,11 +348,12 @@ export async function init() {
     closeModal();
   });
 
-  // Close modal when clicking backdrop
-  document.getElementById('settings-modal').addEventListener('click', (e) => {
-    console.log('[event] Modal backdrop click:', { targetId: e.target.id, eventTarget: e.target });
-    if (e.target.id === 'settings-modal') {
-      console.log('[event] Backdrop detected, closing modal');
+  // Close modal when clicking backdrop (not on the modal content)
+  const modalBackdrop = document.getElementById('settings-modal');
+  modalBackdrop.addEventListener('click', (e) => {
+    console.log('[event] Modal click:', { currentTarget: e.currentTarget.id, target: e.target.id });
+    if (e.currentTarget === e.target) {
+      console.log('[event] Backdrop detected (click outside modal), closing');
       closeModal();
     }
   });
