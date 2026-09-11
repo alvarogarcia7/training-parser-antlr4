@@ -102,10 +102,10 @@ async function initPyodide() {
   pyodide = await loadPyodide();
   log(`loadPyodide() done - ${pyodide ? 'success' : 'failed'}`, 'INFO');
 
-  log('loadPackage(pyyaml) starting...', 'DEBUG');
+  log('loadPackage starting...', 'DEBUG');
   self.postMessage({ type: 'loading', message: 'Loading packages...' });
-  await pyodide.loadPackage(['pyyaml']);
-  log('loadPackage done', 'DEBUG');
+  await pyodide.loadPackage(['pyyaml', 'jsonschema']);
+  log('Packages loaded: pyyaml, jsonschema', 'DEBUG');
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...', 'DEBUG');
