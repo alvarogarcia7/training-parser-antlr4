@@ -9,6 +9,59 @@ let requestId = 0;
 let lastParseResult = null;
 let pyodideReady = false;
 
+// --- localStorage persistence ---
+
+const STORAGE_KEYS = {
+  input: 'workout-input-text',
+  date: 'workout-date',
+  time: 'workout-time-minutes',
+  parseResult: 'workout-parse-result',
+};
+
+function saveToStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn('[storage] Failed to save:', key, e);
+  }
+}
+
+function loadFromStorage(key, defaultValue = null) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : defaultValue;
+  } catch (e) {
+    console.warn('[storage] Failed to load:', key, e);
+    return defaultValue;
+  }
+}
+
+function restoreSessionData() {
+  const inputText = loadFromStorage(STORAGE_KEYS.input);
+  const dateValue = loadFromStorage(STORAGE_KEYS.date);
+  const timeValue = loadFromStorage(STORAGE_KEYS.time);
+  const savedResult = loadFromStorage(STORAGE_KEYS.parseResult);
+
+  if (inputText) {
+    document.getElementById('workout-input').value = inputText;
+    console.log('[storage] Restored input text');
+  }
+  if (dateValue) {
+    document.getElementById('workout-date').value = dateValue;
+    console.log('[storage] Restored date');
+  }
+  if (timeValue) {
+    document.getElementById('time-input').value = timeValue;
+    console.log('[storage] Restored time');
+  }
+  if (savedResult) {
+    lastParseResult = savedResult;
+    renderParseResult(savedResult);
+    calculateStats(timeValue || 0);
+    console.log('[storage] Restored parse result');
+  }
+}
+
 // --- Worker communication ---
 
 function callWorker(type, data = {}) {
@@ -81,6 +134,7 @@ async function parseWorkout() {
     const result = await callWorker('parse', { text });
     lastParseResult = result;
     renderParseResult(result);
+    saveToStorage(STORAGE_KEYS.parseResult, result);
     setStatus(result.is_valid ? 'Parsed successfully' : `Parsed with ${result.errors.length} error(s)`, result.is_valid ? 'ready' : 'error');
   } catch (e) {
     setStatus('Parse error: ' + e.message, 'error');
@@ -347,10 +401,28 @@ export async function init() {
     }
   });
   console.log('[init] Event listeners setup complete');
+
+  // Save input text on change
+  document.getElementById('workout-input').addEventListener('change', () => {
+    const text = document.getElementById('workout-input').value;
+    saveToStorage(STORAGE_KEYS.input, text);
+  });
+
+  // Save date on change
+  document.getElementById('workout-date').addEventListener('change', () => {
+    const date = document.getElementById('workout-date').value;
+    saveToStorage(STORAGE_KEYS.date, date);
+  });
+
+  // Save time and recalculate stats
   document.getElementById('time-input').addEventListener('change', () => {
     const t = parseFloat(document.getElementById('time-input').value) || 0;
+    saveToStorage(STORAGE_KEYS.time, t);
     calculateStats(t);
   });
+
+  // Restore previous session data
+  restoreSessionData();
 
   // Handle shared text from URL (iOS Shortcuts) or SW message (Android)
   const sharedText = getSharedTextFromUrl();
