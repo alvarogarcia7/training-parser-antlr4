@@ -8,6 +8,8 @@ let pendingRequests = {};
 let requestId = 0;
 let lastParseResult = null;
 let pyodideReady = false;
+let logMessages = [];
+let minLogLevel = 1; // INFO by default (0=DEBUG, 1=INFO, 2=WARN, 3=ERROR)
 
 // --- localStorage persistence ---
 
@@ -79,10 +81,16 @@ function callWorker(type, data = {}) {
 }
 
 function handleWorkerMessage(event) {
-  const { type, id, result, message } = event.data;
+  const { type, id, result, message, level, elapsed } = event.data;
 
   if (type === 'log') {
-    console.log('[worker] ' + message);
+    const logEntry = { message, level: level || 'INFO', elapsed: elapsed || 0, timestamp: new Date().toLocaleTimeString() };
+    logMessages.push(logEntry);
+    const levelNum = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 }[logEntry.level] || 1;
+    if (levelNum >= minLogLevel) {
+      console.log(`[${logEntry.level}] ${message} (${elapsed}ms)`);
+    }
+    renderLogs();
     return;
   }
 
@@ -115,6 +123,34 @@ function handleWorkerMessage(event) {
   } else {
     pending.resolve(result);
   }
+}
+
+// --- Logging ---
+
+function renderLogs() {
+  const logsSection = document.getElementById('logs-section');
+  const logsList = document.getElementById('logs-list');
+  const levelNum = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
+  const minLevel = levelNum[['DEBUG', 'INFO', 'WARN', 'ERROR'][minLogLevel]] || 1;
+
+  const filtered = logMessages.filter(entry =>
+    (levelNum[entry.level] || 1) >= minLevel
+  );
+
+  logsList.innerHTML = filtered.map(entry => {
+    const level = entry.level || 'INFO';
+    return `<div class="log-entry ${level}"><span class="log-time">${entry.timestamp}</span><span class="log-badge">${level}</span> ${entry.message}</div>`;
+  }).join('');
+
+  logsSection.hidden = logMessages.length === 0;
+  if (logMessages.length > 0) {
+    logsList.parentElement.scrollTop = logsList.parentElement.scrollHeight;
+  }
+}
+
+function setLogLevel(level) {
+  minLogLevel = level;
+  renderLogs();
 }
 
 // --- Status bar ---
@@ -426,6 +462,11 @@ export async function init() {
     const t = parseFloat(document.getElementById('time-input').value) || 0;
     saveToStorage(STORAGE_KEYS.time, t);
     calculateStats(t);
+  });
+
+  // Log level filter
+  document.getElementById('log-level-filter').addEventListener('change', (e) => {
+    setLogLevel(parseInt(e.target.value));
   });
 
   // Restore previous session data

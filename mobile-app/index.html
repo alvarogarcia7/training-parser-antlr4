@@ -161,6 +161,14 @@
     }
     #history-list li:hover { background: var(--surface2); }
 
+    .log-entry { margin-bottom: 4px; padding: 2px 4px; border-left: 3px solid; }
+    .log-entry.DEBUG { border-color: var(--text2); color: var(--text2); }
+    .log-entry.INFO { border-color: var(--ok); color: var(--text); }
+    .log-entry.WARN { border-color: var(--warn); color: var(--warn); }
+    .log-entry.ERROR { border-color: var(--err); color: var(--err); }
+    .log-badge { display: inline-block; width: 40px; font-weight: 600; }
+    .log-time { color: var(--text2); font-size: 0.75rem; margin-right: 4px; }
+
     /* Settings modal */
     .modal-backdrop {
       position: fixed; inset: 0;
@@ -275,6 +283,20 @@
     <strong>iOS tip:</strong> To share text from Notes or other apps into this app, create an
     Apple Shortcut that opens this URL with your text:<br>
     <code style="word-break:break-all;">training-parser/?import=[Shortcut Input]</code>
+  </div>
+
+  <!-- Logs Viewer -->
+  <div class="card" id="logs-section" hidden style="max-height: 300px; overflow-y: auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="margin:0;">Logs</h2>
+      <select id="log-level-filter" style="background: var(--bg); color: var(--text); border: 1px solid var(--surface2); border-radius: 4px; padding: 4px 8px; font-size: 0.85rem;">
+        <option value="0">All (DEBUG+)</option>
+        <option value="1" selected>Info+ (INFO, WARN, ERROR)</option>
+        <option value="2">Warnings+ (WARN, ERROR)</option>
+        <option value="3">Errors only</option>
+      </select>
+    </div>
+    <div id="logs-list" style="font-family: monospace; font-size: 0.8rem; line-height: 1.4;"></div>
   </div>
 
 </main>
