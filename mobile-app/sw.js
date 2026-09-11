@@ -1,6 +1,7 @@
 /* Service Worker for Training Parser PWA */
 
 const CACHE_NAME = 'training-parser-v1';
+const PYODIDE_VERSION = 'v0.27.0';
 
 const APP_SHELL = [
   './',
@@ -10,6 +11,7 @@ const APP_SHELL = [
   './src/ui.js',
   './src/share.js',
   './src/git-sync.js',
+  './src/pyodide-worker.js',
   './python/app_api.py',
 ];
 
@@ -29,15 +31,28 @@ const PYTHON_SOURCES = [
   '../data/synonyms.yaml',
 ];
 
+// Pyodide runtime files to pre-cache
+const PYODIDE_RUNTIME = [
+  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`,
+  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.mjs`,
+  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide_py.tar`,
+  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/python_stdlib.tar`,
+];
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([...APP_SHELL, ...PYTHON_SOURCES].map(url => {
-        return new Request(url, { cache: 'no-cache' });
-      })).catch(() => {
-        // Cache what we can; Python sources may not be available at install time
-        return cache.addAll(APP_SHELL);
-      });
+      // Cache app shell immediately
+      const shellPromise = cache.addAll(APP_SHELL);
+
+      // Cache Python sources and Pyodide runtime in background
+      // Don't fail install if these aren't available yet
+      Promise.all([
+        cache.addAll(PYTHON_SOURCES).catch(() => {}),
+        cache.addAll(PYODIDE_RUNTIME).catch(() => {}),
+      ]).catch(() => {});
+
+      return shellPromise;
     })
   );
   self.skipWaiting();
@@ -61,12 +76,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for app shell and Python sources, network-first for Pyodide CDN
-  if (url.hostname === 'cdn.jsdelivr.net' || url.pathname.includes('pyodide')) {
-    event.respondWith(networkFirstWithCache(event.request));
-  } else {
-    event.respondWith(cacheFirstWithNetwork(event.request));
-  }
+  // Cache-first for everything (app shell, Python sources, Pyodide runtime)
+  // Pyodide CDN URLs cached aggressively to avoid re-download on every refresh
+  event.respondWith(cacheFirstWithNetwork(event.request));
 });
 
 async function handleShareTarget(request) {
@@ -95,20 +107,6 @@ async function cacheFirstWithNetwork(request) {
     return response;
   } catch {
     return new Response('Offline', { status: 503 });
-  }
-}
-
-async function networkFirstWithCache(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    return cached || new Response('Offline', { status: 503 });
   }
 }
 
