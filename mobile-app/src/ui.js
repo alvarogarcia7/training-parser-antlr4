@@ -163,6 +163,12 @@ function setStatus(text, state = 'idle') {
   el.className = `status status--${state}`;
 }
 
+// --- Formatting ---
+
+function formatVolume(volume) {
+  return Math.round(volume).toLocaleString();
+}
+
 // --- Parse ---
 
 async function parseWorkout() {
@@ -217,7 +223,7 @@ function renderParseResult(result) {
 
   // Summary
   document.getElementById('summary-text').textContent =
-    `${result.total_exercises} exercise(s), ${totalSets} set(s), ${totalVolume.toFixed(1)} kg total`;
+    `${result.total_exercises} exercise(s), ${totalSets} set(s), ${formatVolume(totalVolume)} kg total`;
 
   // Exercises table
   const tbody = document.getElementById('exercises-body');
@@ -226,7 +232,7 @@ function renderParseResult(result) {
     const ex = result.exercises[i];
     const tr = document.createElement('tr');
     const setsText = ex.sets.map(s => `${s.repetitions}×${s.weight.amount}${s.weight.unit}`).join(', ');
-    const volumeText = exerciseVolumes[i].toFixed(1);
+    const volumeText = formatVolume(exerciseVolumes[i]);
     tr.innerHTML = `<td>${ex.name}</td><td>${ex.sets.length}</td><td>${volumeText} kg</td><td>${setsText}</td>`;
     tbody.appendChild(tr);
   }
@@ -237,7 +243,7 @@ function renderParseResult(result) {
   const footerRow = document.createElement('tr');
   footerRow.style.borderTop = '2px solid var(--surface2)';
   footerRow.style.fontWeight = '600';
-  footerRow.innerHTML = `<td colspan="1"><strong>Total</strong></td><td>${totalSets}</td><td>${totalVolume.toFixed(1)} kg</td><td></td>`;
+  footerRow.innerHTML = `<td colspan="1"><strong>Total</strong></td><td>${totalSets}</td><td>${formatVolume(totalVolume)} kg</td><td></td>`;
   tfoot.appendChild(footerRow);
 
   // Auto-calculate stats with 0 time
