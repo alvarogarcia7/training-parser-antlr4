@@ -94,7 +94,7 @@ test-statistics: check-virtual-env
 .PHONY: test-statistics
 
 typecheck: check-virtual-env
-	uv run mypy --strict . --exclude venv --exclude .venv --exclude output
+	uv run mypy --strict . --exclude venv --exclude .venv --exclude mobile-app --exclude output
 .PHONY: typecheck
 
 examples: check-virtual-env

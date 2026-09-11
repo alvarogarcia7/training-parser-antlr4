@@ -112,7 +112,7 @@ implicit_reexport = true
 exclude = [
     "^antlr4_Python3_examples-master",
     "^dist",
-    "^mobile-app",
+    "^mobile-app/",
     "^venv",
     "^\\.venv",
 ]
@@ -120,6 +120,11 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "antlr4.*"
 ignore_missing_imports = true
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "mobile_app.*"
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = "parser.*"
