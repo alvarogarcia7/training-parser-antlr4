@@ -110,11 +110,17 @@ async function initPyodide() {
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...', 'DEBUG');
 
-  // Create directories in Pyodide FS
-  pyodide.FS.mkdir('/home/pyodide/parser');
-  pyodide.FS.mkdir('/home/pyodide/src');
-  pyodide.FS.mkdir('/home/pyodide/dist');
-  pyodide.FS.mkdir('/home/pyodide/data');
+  // Create directories in Pyodide FS with error handling
+  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/antlr4'];
+  for (const dir of dirs) {
+    try {
+      pyodide.FS.mkdir(dir);
+    } catch (e) {
+      if (!e.message.includes('already exists')) {
+        log(`Failed to create ${dir}: ${e.message}`, 'WARN');
+      }
+    }
+  }
   log('Directories created', 'DEBUG');
 
   // Write empty __init__.py for packages that don't have one on disk
@@ -122,15 +128,37 @@ async function initPyodide() {
   try { pyodide.FS.writeFile('/home/pyodide/src/__init__.py', emptyInit, { encoding: 'utf8' }); } catch {}
   try { pyodide.FS.writeFile('/home/pyodide/dist/__init__.py', emptyInit, { encoding: 'utf8' }); } catch {}
 
+  // Helper to ensure parent directories exist
+  function ensureParentDir(fsPath) {
+    const parts = fsPath.split('/').filter(p => p);
+    let currentPath = '';
+    for (const part of parts.slice(0, -1)) {
+      currentPath += '/' + part;
+      try {
+        pyodide.FS.mkdir(currentPath);
+      } catch (e) {
+        // Directory likely already exists
+      }
+    }
+  }
+
   // Fetch and write each Python source file
   log(`Fetching ${PYTHON_FILES.length} Python files...`, 'DEBUG');
   const failedFiles = [];
+  let successCount = 0;
   for (const [fetchPath, fsPath] of PYTHON_FILES) {
     try {
       const resp = await fetch(fetchPath);
       if (resp.ok) {
         const text = await resp.text();
-        pyodide.FS.writeFile(fsPath, text, { encoding: 'utf8' });
+        try {
+          ensureParentDir(fsPath);
+          pyodide.FS.writeFile(fsPath, text, { encoding: 'utf8' });
+          successCount++;
+        } catch (writeErr) {
+          failedFiles.push(`${fetchPath} (write failed: ${writeErr.message})`);
+          log(`Failed to write ${fsPath}: ${writeErr.message}`, 'WARN');
+        }
       } else {
         failedFiles.push(`${fetchPath} (HTTP ${resp.status})`);
         log(`Failed to fetch ${fetchPath}: HTTP ${resp.status}`, 'WARN');
@@ -140,27 +168,36 @@ async function initPyodide() {
       log(`Could not load ${fetchPath}: ${e.message}`, 'WARN');
     }
   }
+  log(`${successCount}/${PYTHON_FILES.length} files written successfully`, 'DEBUG');
   if (failedFiles.length > 0) {
-    log(`${failedFiles.length} file(s) failed to load: ${failedFiles.join(', ')}`, 'WARN');
+    log(`${failedFiles.length} file(s) failed to load: ${failedFiles.slice(0, 5).join(', ')}${failedFiles.length > 5 ? '...' : ''}`, 'WARN');
   }
-  log('Python files fetch complete', 'DEBUG');
 
   // Put our source root on the Python path
   log('Setting Python path...', 'DEBUG');
   pyodide.runPython(`
 import sys
 sys.path.insert(0, '/home/pyodide')
-print('Path updated')
+print('Path:', sys.path[:3])
 `);
   log('Python path set', 'DEBUG');
+
+  // Verify antlr4 exists
+  try {
+    const antlr4Path = '/home/pyodide/antlr4/__init__.py';
+    const antlr4File = pyodide.FS.readFile(antlr4Path, { encoding: 'utf8' });
+    log(`antlr4 found (${antlr4File.length} bytes)`, 'DEBUG');
+  } catch (e) {
+    log(`antlr4 NOT found: ${e.message}`, 'ERROR');
+  }
 
   // Check if app_api.py exists in filesystem
   try {
     const appApiPath = '/home/pyodide/app_api.py';
     const appApiFile = pyodide.FS.readFile(appApiPath, { encoding: 'utf8' });
-    log(`app_api.py found in filesystem (${appApiFile.length} bytes)`, 'DEBUG');
+    log(`app_api.py found (${appApiFile.length} bytes)`, 'DEBUG');
   } catch (e) {
-    log(`app_api.py NOT found in filesystem: ${e.message}`, 'ERROR');
+    log(`app_api.py NOT found: ${e.message}`, 'ERROR');
   }
 
   log('Testing imports...', 'DEBUG');
