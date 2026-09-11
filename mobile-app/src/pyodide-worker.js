@@ -14,6 +14,7 @@ log('Script imported');
 
 const PYTHON_FILES = [
   // [fetch_path, pyodide_fs_path]
+  // training parser modules
   ['../parser/__init__.py',           '/home/pyodide/parser/__init__.py'],
   ['../parser/model.py',              '/home/pyodide/parser/model.py'],
   ['../parser/parser.py',             '/home/pyodide/parser/parser.py'],
@@ -40,38 +41,20 @@ async function initPyodide() {
   pyodide = await loadPyodide();
   log(`loadPyodide() done - ${pyodide ? 'success' : 'failed'}`);
 
-  self.postMessage({ type: 'loading', message: 'Installing packages...' });
-  log('loadPackage(micropip, pyyaml) starting...');
-  await pyodide.loadPackage(['micropip', 'pyyaml']);
-  log('loadPackage done, packages loaded');
+  self.postMessage({ type: 'loading', message: 'Checking for pre-installed packages...' });
+  log('Checking if antlr4 is pre-installed in Pyodide...');
 
-  log('Importing micropip...');
-  const micropip = pyodide.pyimport('micropip');
-  log('micropip imported');
-
-  // Try to install antlr4, but skip if it times out
-  log('Checking if antlr4 needs install...');
+  // Try to import antlr4 - Pyodide v0.27 might have it
   try {
-    pyodide.runPython('import antlr4; print("antlr4 already available")');
-    log('antlr4 already available, skipping install');
+    await pyodide.runPythonAsync('import antlr4; print("antlr4 found!")');
+    log('antlr4 is pre-installed, skipping install');
   } catch (e) {
-    log('antlr4 not found, attempting to install...');
-    try {
-      log('Calling micropip.install...');
-      const installPromise = micropip.install('antlr4-python3-runtime==4.9.3');
-      log('install() called, awaiting...');
-
-      // Timeout after 15 seconds
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Install timeout')), 15000)
-      );
-
-      await Promise.race([installPromise, timeoutPromise]);
-      log('antlr4 installed successfully');
-    } catch (installErr) {
-      log(`WARN: antlr4 install failed: ${installErr.message}, skipping`);
-    }
+    log('antlr4 not pre-installed, will need to bundle it');
   }
+
+  log('loadPackage(pyyaml) starting...');
+  await pyodide.loadPackage(['pyyaml']);
+  log('loadPackage done, pyyaml loaded');
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...');
@@ -103,14 +86,23 @@ async function initPyodide() {
   }
   log('All Python files written');
 
-  // Put our source root on the Python path
+  // Put our source root on the Python path - antlr4 is bundled there
   log('Setting Python path...');
   pyodide.runPython(`
 import sys
-if '/home/pyodide' not in sys.path:
-    sys.path.insert(0, '/home/pyodide')
+sys.path.insert(0, '/home/pyodide')
+print('Path updated')
 `);
   log('Python path set');
+
+  log('Testing imports...');
+  try {
+    pyodide.runPython('import app_api');
+    log('app_api imported successfully');
+  } catch (e) {
+    log(`ERROR: app_api import failed: ${e.message}`);
+    throw e;
+  }
 
   log('initPyodide complete - sending ready signal');
   self.postMessage({ type: 'ready' });
