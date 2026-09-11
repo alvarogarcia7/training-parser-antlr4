@@ -1,8 +1,16 @@
 /* Pyodide Web Worker — loads Python runtime and exposes parse/stats API */
 
+const START_TIME = performance.now();
+function log(msg) {
+  const elapsed = (performance.now() - START_TIME).toFixed(0);
+  console.log(`[pyodide ${elapsed}ms] ${msg}`);
+  self.postMessage({ type: 'log', message: `${msg}` });
+}
+
 importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
 
 let pyodide = null;
+log('Script imported');
 
 const PYTHON_FILES = [
   // [fetch_path, pyodide_fs_path]
@@ -25,22 +33,32 @@ const PYTHON_FILES = [
 ];
 
 async function initPyodide() {
+  log('initPyodide started');
   self.postMessage({ type: 'loading', message: 'Loading Python runtime...' });
 
+  log('loadPyodide() starting...');
   pyodide = await loadPyodide();
+  log(`loadPyodide() done - ${pyodide ? 'success' : 'failed'}`);
 
   self.postMessage({ type: 'loading', message: 'Installing packages...' });
+  log('loadPackage(micropip, pyyaml) starting...');
   await pyodide.loadPackage(['micropip', 'pyyaml']);
+  log('loadPackage done');
+
+  log('Installing antlr4-python3-runtime...');
   const micropip = pyodide.pyimport('micropip');
   await micropip.install('antlr4-python3-runtime==4.9.3');
+  log('antlr4 installed');
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
+  log('Creating directories...');
 
   // Create directories in Pyodide FS
   pyodide.FS.mkdir('/home/pyodide/parser');
   pyodide.FS.mkdir('/home/pyodide/src');
   pyodide.FS.mkdir('/home/pyodide/dist');
   pyodide.FS.mkdir('/home/pyodide/data');
+  log('Directories created');
 
   // Write empty __init__.py for packages that don't have one on disk
   const emptyInit = '';
@@ -48,6 +66,7 @@ async function initPyodide() {
   try { pyodide.FS.writeFile('/home/pyodide/dist/__init__.py', emptyInit, { encoding: 'utf8' }); } catch {}
 
   // Fetch and write each Python source file
+  log(`Fetching ${PYTHON_FILES.length} Python files...`);
   for (const [fetchPath, fsPath] of PYTHON_FILES) {
     try {
       const resp = await fetch(fetchPath);
@@ -59,14 +78,18 @@ async function initPyodide() {
       console.warn(`Could not load ${fetchPath}:`, e);
     }
   }
+  log('All Python files written');
 
   // Put our source root on the Python path
+  log('Setting Python path...');
   pyodide.runPython(`
 import sys
 if '/home/pyodide' not in sys.path:
     sys.path.insert(0, '/home/pyodide')
 `);
+  log('Python path set');
 
+  log('initPyodide complete - sending ready signal');
   self.postMessage({ type: 'ready' });
 }
 
@@ -81,7 +104,9 @@ self.onmessage = async (event) => {
 
   try {
     if (type === 'init') {
+      log('init message received, starting initPyodide...');
       await initPyodide();
+      log('initPyodide complete');
       return;
     }
 
@@ -120,6 +145,8 @@ self.onmessage = async (event) => {
 };
 
 // Auto-start
+log('Worker script loaded, auto-starting initPyodide...');
 initPyodide().catch(e => {
+  log(`ERROR in initPyodide: ${e.message}`);
   self.postMessage({ type: 'error', message: 'Failed to initialize: ' + e.message });
 });

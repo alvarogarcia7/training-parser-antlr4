@@ -81,14 +81,21 @@ function callWorker(type, data = {}) {
 function handleWorkerMessage(event) {
   const { type, id, result, message } = event.data;
 
+  if (type === 'log') {
+    console.log('[worker] ' + message);
+    return;
+  }
+
   if (type === 'loading') {
     setStatus(message, 'loading');
+    console.log('[loading] ' + message);
     return;
   }
 
   if (type === 'ready') {
     pyodideReady = true;
     setStatus('Ready', 'ready');
+    console.log('[ready] Python runtime ready');
     return;
   }
 
