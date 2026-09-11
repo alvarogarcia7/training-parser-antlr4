@@ -314,8 +314,13 @@ export async function init() {
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
   document.getElementById('settings-btn').addEventListener('click', openSettings);
   document.getElementById('settings-save-btn').addEventListener('click', saveSettingsFromForm);
-  document.getElementById('settings-cancel-btn').addEventListener('click', () => {
-    document.getElementById('settings-modal').hidden = true;
+  const closeModal = () => document.getElementById('settings-modal').hidden = true;
+  document.getElementById('settings-cancel-btn').addEventListener('click', closeModal);
+
+  // Close modal when clicking backdrop
+  const backdrop = document.getElementById('settings-modal');
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) closeModal();
   });
   document.getElementById('time-input').addEventListener('change', () => {
     const t = parseFloat(document.getElementById('time-input').value) || 0;

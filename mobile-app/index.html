@@ -277,7 +277,10 @@
 <!-- Settings Modal -->
 <div class="modal-backdrop" id="settings-modal" hidden>
   <div class="modal">
-    <h2>Settings</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <h2 style="margin:0;">Settings</h2>
+      <button class="btn-icon" id="settings-cancel-btn" title="Close" style="font-size:1.4rem; padding:2px 8px;">✕</button>
+    </div>
 
     <div class="form-group">
       <label for="settings-remote">Git remote URL (GitHub/GitLab/Gitea)</label>
@@ -303,7 +306,6 @@
     </p>
 
     <div class="row">
-      <button class="btn-secondary" id="settings-cancel-btn">Cancel</button>
       <button class="btn-primary" id="settings-save-btn">Save</button>
     </div>
   </div>
