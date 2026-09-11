@@ -40,6 +40,7 @@ dev = [
     "pytest-asyncio>=0.23.0",
     "types-PyYAML>=6.0.12",
     "strictdoc>=0.19.0",
+    "playwright>=1.40.0",
 ]
 
 [project.scripts]
@@ -147,7 +148,7 @@ module = "pytest"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["parser", "lsp", "tests"]
+testpaths = ["parser", "lsp", "tests", "mobile-app/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

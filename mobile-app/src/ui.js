@@ -84,7 +84,9 @@ function handleWorkerMessage(event) {
   const { type, id, result, message, level, elapsed } = event.data;
 
   if (type === 'log') {
-    const logEntry = { message, level: level || 'INFO', elapsed: elapsed || 0, timestamp: new Date().toLocaleTimeString() };
+    const now = new Date();
+    const timestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const logEntry = { message, level: level || 'INFO', elapsed: elapsed || 0, timestamp };
     logMessages.push(logEntry);
     const levelNum = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 }[logEntry.level] || 1;
     if (levelNum >= minLogLevel) {
