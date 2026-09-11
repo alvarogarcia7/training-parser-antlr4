@@ -181,6 +181,15 @@ async function initPyodide() {
     log(`${failedFiles.length} file(s) failed: ${failedFiles.slice(0, 3).join(', ')}${failedFiles.length > 3 ? '...' : ''}`, 'WARN');
   }
 
+  // List what's actually in /home/pyodide to verify files were written
+  try {
+    const pyodideDir = pyodide.FS.readdir('/home/pyodide');
+    const pyodideDirContents = pyodideDir.filter(f => f !== '.' && f !== '..');
+    log(`Contents of /home/pyodide: ${pyodideDirContents.join(', ')}`, 'DEBUG');
+  } catch (e) {
+    log(`Cannot read /home/pyodide: ${e.message}`, 'ERROR');
+  }
+
   // Put our source root on the Python path
   log('Setting Python path...', 'DEBUG');
   pyodide.runPython(`
@@ -209,6 +218,23 @@ print('Path:', sys.path[:3])
   }
 
   log('Testing imports...', 'DEBUG');
+
+  // Test file existence
+  try {
+    pyodide.runPython(`
+import os
+files_exist = {
+    'antlr4': os.path.exists('/home/pyodide/antlr4/__init__.py'),
+    'app_api': os.path.exists('/home/pyodide/app_api.py'),
+    'parser': os.path.exists('/home/pyodide/parser/__init__.py'),
+}
+print("Files exist:", files_exist)
+`);
+    log('File existence check printed', 'DEBUG');
+  } catch (e) {
+    log(`File check error: ${e.message}`, 'WARN');
+  }
+
   try {
     // Test antlr4 import first (needed by app_api.py)
     pyodide.runPython('import antlr4; print("✓ antlr4 available")');
