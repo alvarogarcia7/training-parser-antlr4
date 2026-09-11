@@ -41,20 +41,10 @@ async function initPyodide() {
   pyodide = await loadPyodide();
   log(`loadPyodide() done - ${pyodide ? 'success' : 'failed'}`);
 
-  self.postMessage({ type: 'loading', message: 'Checking for pre-installed packages...' });
-  log('Checking if antlr4 is pre-installed in Pyodide...');
-
-  // Try to import antlr4 - Pyodide v0.27 might have it
-  try {
-    await pyodide.runPythonAsync('import antlr4; print("antlr4 found!")');
-    log('antlr4 is pre-installed, skipping install');
-  } catch (e) {
-    log('antlr4 not pre-installed, will need to bundle it');
-  }
-
   log('loadPackage(pyyaml) starting...');
+  self.postMessage({ type: 'loading', message: 'Loading packages...' });
   await pyodide.loadPackage(['pyyaml']);
-  log('loadPackage done, pyyaml loaded');
+  log('loadPackage done');
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...');
@@ -97,10 +87,19 @@ print('Path updated')
 
   log('Testing imports...');
   try {
-    pyodide.runPython('import app_api');
+    // Test antlr4 import first (needed by app_api.py)
+    pyodide.runPython('import antlr4; print("✓ antlr4 available")');
+    log('antlr4 available');
+  } catch (e) {
+    log(`WARNING: antlr4 not available: ${e.message}`);
+  }
+
+  try {
+    pyodide.runPython('import app_api; print("✓ app_api loaded")');
     log('app_api imported successfully');
   } catch (e) {
     log(`ERROR: app_api import failed: ${e.message}`);
+    self.postMessage({ type: 'error', message: `Python initialization failed: ${e.message}. antlr4 may not be available in Pyodide.` });
     throw e;
   }
 
