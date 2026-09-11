@@ -16,6 +16,7 @@ def parse_workout_text(text: str) -> str:
     from dist.trainingParser import trainingParser as TrainingParser
     from parser.parser import Formatter
     from parser.error_listener import TrainingErrorListener
+    from parser.standardize_name import StandardizeName
 
     input_stream = InputStream(text)
     lexer = trainingLexer(input_stream)
@@ -32,6 +33,8 @@ def parse_workout_text(text: str) -> str:
     formatter = Formatter()
     formatter.visit(tree)
 
+    standardizer = StandardizeName('data/synonyms.yaml')
+
     exercises_out = []
     for ex in formatter.result:
         sets_out = []
@@ -45,7 +48,7 @@ def parse_workout_text(text: str) -> str:
                 "rir": s.rir,
             })
         exercises_out.append({
-            "name": ex.name,
+            "name": standardizer.run(ex.name),
             "sets": sets_out,
         })
 
