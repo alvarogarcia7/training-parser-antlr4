@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TrainParse">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://api.github.com https://cors.isomorphic-git.org; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'nonce-training-parser-pwa'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://api.github.com https://cors.isomorphic-git.org; object-src 'none'; base-uri 'self';">
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/icon.svg">
   <title>Training Parser</title>
@@ -316,7 +316,7 @@
 <!-- CDN libraries (isomorphic-git + LightningFS) -->
 <script src="https://unpkg.com/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js"></script>
 <script src="https://unpkg.com/isomorphic-git@1.27.1/index.umd.min.js"></script>
-<script>
+<script nonce="training-parser-pwa">
   // Expose for git-sync.js
   window.git = git;
   window.GitHttp = {
@@ -344,7 +344,7 @@
 </script>
 
 <!-- App entry point -->
-<script type="module">
+<script type="module" nonce="training-parser-pwa">
   import { init } from './src/ui.js';
 
   // Set today's date as default
