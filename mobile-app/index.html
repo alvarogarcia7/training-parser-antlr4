@@ -146,6 +146,8 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     th { text-align: left; color: var(--text2); padding: 4px 6px; border-bottom: 1px solid var(--surface2); }
     td { padding: 5px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tfoot tr { background: rgba(233,69,96,0.1); border-top: 2px solid var(--accent); }
+    tfoot td { color: var(--ok); font-weight: 600; }
 
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
     .stat-card { background: var(--bg); border-radius: 8px; padding: 10px; }
@@ -244,8 +246,9 @@
   <div class="card" id="results-section" hidden>
     <p class="summary" id="summary-text"></p>
     <table>
-      <thead><tr><th>Exercise</th><th>Sets</th><th>Details</th></tr></thead>
+      <thead><tr><th>Exercise</th><th>Sets</th><th>Volume (kg)</th><th>Details</th></tr></thead>
       <tbody id="exercises-body"></tbody>
+      <tfoot id="exercises-footer"></tfoot>
     </table>
   </div>
 

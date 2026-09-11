@@ -200,19 +200,45 @@ function renderParseResult(result) {
   }
   document.getElementById('errors-section').hidden = result.errors.length === 0;
 
+  // Calculate volumes
+  let totalVolume = 0;
+  let totalSets = 0;
+  const exerciseVolumes = [];
+
+  for (const ex of result.exercises) {
+    let exVolume = 0;
+    for (const s of ex.sets) {
+      exVolume += s.weight.amount * s.repetitions;
+      totalVolume += s.weight.amount * s.repetitions;
+    }
+    exerciseVolumes.push(exVolume);
+    totalSets += ex.sets.length;
+  }
+
   // Summary
   document.getElementById('summary-text').textContent =
-    `${result.total_exercises} exercise(s), ${result.total_sets} set(s)`;
+    `${result.total_exercises} exercise(s), ${totalSets} set(s), ${totalVolume.toFixed(1)} kg total`;
 
   // Exercises table
   const tbody = document.getElementById('exercises-body');
   tbody.innerHTML = '';
-  for (const ex of result.exercises) {
+  for (let i = 0; i < result.exercises.length; i++) {
+    const ex = result.exercises[i];
     const tr = document.createElement('tr');
     const setsText = ex.sets.map(s => `${s.repetitions}×${s.weight.amount}${s.weight.unit}`).join(', ');
-    tr.innerHTML = `<td>${ex.name}</td><td>${ex.sets.length}</td><td>${setsText}</td>`;
+    const volumeText = exerciseVolumes[i].toFixed(1);
+    tr.innerHTML = `<td>${ex.name}</td><td>${ex.sets.length}</td><td>${volumeText} kg</td><td>${setsText}</td>`;
     tbody.appendChild(tr);
   }
+
+  // Footer row with totals
+  const tfoot = document.getElementById('exercises-footer');
+  tfoot.innerHTML = '';
+  const footerRow = document.createElement('tr');
+  footerRow.style.borderTop = '2px solid var(--surface2)';
+  footerRow.style.fontWeight = '600';
+  footerRow.innerHTML = `<td colspan="1"><strong>Total</strong></td><td>${totalSets}</td><td>${totalVolume.toFixed(1)} kg</td><td></td>`;
+  tfoot.appendChild(footerRow);
 
   // Auto-calculate stats with 0 time
   calculateStats(0);
