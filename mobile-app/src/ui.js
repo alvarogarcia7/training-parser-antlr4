@@ -173,6 +173,12 @@ function renderStats(stats, timeMinutes) {
 async function saveWorkout() {
   if (!lastParseResult || !lastParseResult.is_valid) return;
 
+  const settings = gitSync.loadSettings();
+  if (!settings.remoteUrl) {
+    setStatus('Git not configured — offline mode only', 'idle');
+    return;
+  }
+
   const dateStr = document.getElementById('workout-date').value || new Date().toISOString().split('T')[0];
 
   try {
@@ -191,6 +197,12 @@ async function saveWorkout() {
 }
 
 async function syncNow() {
+  const settings = gitSync.loadSettings();
+  if (!settings.remoteUrl) {
+    setStatus('Git not configured', 'error');
+    return;
+  }
+
   setStatus('Pushing to remote...', 'loading');
   const result = await gitSync.push();
   if (result.ok) {
@@ -203,6 +215,14 @@ async function syncNow() {
 // --- History ---
 
 async function refreshHistory() {
+  const settings = gitSync.loadSettings();
+  const historySection = document.getElementById('history-section');
+
+  if (!settings.remoteUrl) {
+    historySection.hidden = true;
+    return;
+  }
+
   const list = document.getElementById('history-list');
   const files = await gitSync.listWorkouts();
   list.innerHTML = '';
@@ -212,7 +232,7 @@ async function refreshHistory() {
     li.addEventListener('click', () => loadHistoryEntry(f));
     list.appendChild(li);
   }
-  document.getElementById('history-section').hidden = files.length === 0;
+  historySection.hidden = files.length === 0;
 }
 
 async function loadHistoryEntry(filename) {
@@ -319,13 +339,21 @@ export async function init() {
 
   setStatus('Loading Python runtime...', 'loading');
 
-  // Pre-fetch history
-  gitSync.initGit().then(refreshHistory).catch(() => {});
+  // Show/hide sync features based on git config
+  const settings = gitSync.loadSettings();
+  const hasSyncConfig = !!settings.remoteUrl;
+  document.getElementById('save-btn').hidden = !hasSyncConfig;
+  document.getElementById('sync-btn').hidden = !hasSyncConfig;
 
-  // Online/offline status
-  window.addEventListener('online', () => {
-    setStatus('Back online — syncing...', 'loading');
-    gitSync.push().then(r => setStatus(r.ok ? 'Synced' : 'Sync failed: ' + r.message, r.ok ? 'ready' : 'error'));
-  });
-  window.addEventListener('offline', () => setStatus('Offline', 'idle'));
+  // Pre-fetch history if git is configured
+  if (hasSyncConfig) {
+    gitSync.initGit().then(refreshHistory).catch(() => {});
+
+    // Online/offline status
+    window.addEventListener('online', () => {
+      setStatus('Back online — syncing...', 'loading');
+      gitSync.push().then(r => setStatus(r.ok ? 'Synced' : 'Sync failed: ' + r.message, r.ok ? 'ready' : 'error'));
+    });
+    window.addEventListener('offline', () => setStatus('Offline', 'idle'));
+  }
 }
