@@ -11,6 +11,36 @@ let pyodideReady = false;
 let logMessages = [];
 let minLogLevel = 1; // INFO by default (0=DEBUG, 1=INFO, 2=WARN, 3=ERROR)
 
+// --- Unified Logger ---
+
+class Logger {
+  constructor() {
+    this.levels = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
+  }
+
+  log(message, level = 'INFO', elapsed = 0) {
+    const levelNum = this.levels[level] || 1;
+
+    // Console logging with appropriate method
+    const consoleMethod = level.toLowerCase();
+    const consoleFunc = console[consoleMethod] || console.log;
+    consoleFunc(`[${level}] ${message}${elapsed ? ` (${elapsed}ms)` : ''}`);
+
+    // UI logging
+    const now = new Date();
+    const timestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    logMessages.push({ message, level, elapsed, timestamp });
+    renderLogs();
+  }
+
+  debug(msg, elapsed = 0) { this.log(msg, 'DEBUG', elapsed); }
+  info(msg, elapsed = 0) { this.log(msg, 'INFO', elapsed); }
+  warn(msg, elapsed = 0) { this.log(msg, 'WARN', elapsed); }
+  error(msg, elapsed = 0) { this.log(msg, 'ERROR', elapsed); }
+}
+
+const logger = new Logger();
+
 // --- localStorage persistence ---
 
 const STORAGE_KEYS = {
@@ -84,15 +114,7 @@ function handleWorkerMessage(event) {
   const { type, id, result, message, level, elapsed } = event.data;
 
   if (type === 'log') {
-    const now = new Date();
-    const timestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-    const logEntry = { message, level: level || 'INFO', elapsed: elapsed || 0, timestamp };
-    logMessages.push(logEntry);
-    const levelNum = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 }[logEntry.level] || 1;
-    if (levelNum >= minLogLevel) {
-      console.log(`[${logEntry.level}] ${message} (${elapsed}ms)`);
-    }
-    renderLogs();
+    logger.log(message, level || 'INFO', elapsed || 0);
     return;
   }
 
@@ -133,11 +155,11 @@ function renderLogs() {
   const logsSection = document.getElementById('logs-section');
   const logsList = document.getElementById('logs-list');
   const levelNum = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
-  const minLevel = levelNum[['DEBUG', 'INFO', 'WARN', 'ERROR'][minLogLevel]] || 1;
 
-  const filtered = logMessages.filter(entry =>
-    (levelNum[entry.level] || 1) >= minLevel
-  );
+  const filtered = logMessages.filter(entry => {
+    const entryLevel = levelNum[entry.level] || 1;
+    return entryLevel >= minLogLevel;
+  });
 
   logsList.innerHTML = filtered.map(entry => {
     const level = entry.level || 'INFO';
@@ -151,7 +173,7 @@ function renderLogs() {
 }
 
 function setLogLevel(level) {
-  minLogLevel = level;
+  minLogLevel = parseInt(level);
   renderLogs();
 }
 
