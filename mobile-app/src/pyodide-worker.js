@@ -84,6 +84,7 @@ const PYTHON_FILES = [
   ['../../parser/error_listener.py',     '/home/pyodide/parser/error_listener.py'],
   ['../../parser/series_builder.py',     '/home/pyodide/parser/series_builder.py'],
   ['../../src/__init__.py',              '/home/pyodide/src/__init__.py'],
+  ['../../src/data_access.py',           '/home/pyodide/src/data_access.py'],
   ['../../src/statistics.py',            '/home/pyodide/src/statistics.py'],
   ['../../dist/__init__.py',             '/home/pyodide/dist/__init__.py'],
   ['../../dist/trainingLexer.py',        '/home/pyodide/dist/trainingLexer.py'],
