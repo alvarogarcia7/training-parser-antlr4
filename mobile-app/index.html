@@ -289,12 +289,12 @@
   </div>
 
   <!-- Logs Viewer -->
-  <div class="card" id="logs-section" hidden style="max-height: 300px; overflow-y: auto;">
+  <div class="card" id="logs-section" hidden style="max-height: 500px; overflow-y: auto; order: -1;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
       <h2 style="margin:0;">Logs</h2>
       <select id="log-level-filter" style="background: var(--bg); color: var(--text); border: 1px solid var(--surface2); border-radius: 4px; padding: 4px 8px; font-size: 0.85rem;">
-        <option value="0">All (DEBUG+)</option>
-        <option value="1" selected>Info+ (INFO, WARN, ERROR)</option>
+        <option value="0" selected>All (DEBUG+)</option>
+        <option value="1">Info+ (INFO, WARN, ERROR)</option>
         <option value="2">Warnings+ (WARN, ERROR)</option>
         <option value="3">Errors only</option>
       </select>

@@ -9,7 +9,7 @@ let requestId = 0;
 let lastParseResult = null;
 let pyodideReady = false;
 let logMessages = [];
-let minLogLevel = 1; // INFO by default (0=DEBUG, 1=INFO, 2=WARN, 3=ERROR)
+let minLogLevel = 0; // DEBUG by default for troubleshooting (0=DEBUG, 1=INFO, 2=WARN, 3=ERROR)
 
 // --- Unified Logger ---
 
