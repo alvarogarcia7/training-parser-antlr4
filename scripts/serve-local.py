@@ -16,6 +16,10 @@ import sys
 import argparse
 import pathlib
 from datetime import datetime
+from pathlib import Path
+
+# Verify Python version
+assert sys.version_info >= (3, 7), "Python 3.7+ required"
 
 
 class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -86,28 +90,95 @@ def main():
     )
     args = parser.parse_args()
 
-    # Check for certificates
-    if not os.path.exists(args.cert) or not os.path.exists(args.key):
-        print("❌ SSL certificates not found!")
-        print(f"   Certificate: {args.cert}")
-        print(f"   Key: {args.key}")
+    # Validate port range
+    assert 1 <= args.port <= 65535, f"Invalid port: {args.port} (must be 1-65535)"
+
+    # Validate host
+    assert args.host, "Host cannot be empty"
+
+    # Check for mobile-app directory
+    app_dir = Path("mobile-app")
+    if not app_dir.exists() or not app_dir.is_dir():
+        print("❌ Error: mobile-app directory not found")
+        print("   Run this script from the project root directory")
+        print("   Expected: ./mobile-app/")
+        sys.exit(1)
+
+    # Verify index.html exists
+    index_file = app_dir / "index.html"
+    if not index_file.exists():
+        print("❌ Error: index.html not found in mobile-app/")
+        print("   The PWA app shell is missing")
+        sys.exit(1)
+
+    # Check for certificates with detailed error messages
+    cert_path = Path(args.cert)
+    key_path = Path(args.key)
+
+    if not cert_path.exists():
+        print("❌ SSL certificate not found!")
+        print(f"   Expected at: {cert_path.absolute()}")
         print("")
-        print("Generate them with:")
+        print("Generate certificates with:")
         print("   chmod +x scripts/create-ssl-certs.sh")
         print("   ./scripts/create-ssl-certs.sh")
         sys.exit(1)
 
+    if not key_path.exists():
+        print("❌ SSL private key not found!")
+        print(f"   Expected at: {key_path.absolute()}")
+        print("")
+        print("Generate certificates with:")
+        print("   chmod +x scripts/create-ssl-certs.sh")
+        print("   ./scripts/create-ssl-certs.sh")
+        sys.exit(1)
+
+    # Verify files are readable
+    try:
+        with open(cert_path, 'r') as f:
+            f.read(1)
+    except Exception as e:
+        print(f"❌ Error: Cannot read certificate file: {e}")
+        sys.exit(1)
+
+    try:
+        with open(key_path, 'r') as f:
+            f.read(1)
+    except Exception as e:
+        print(f"❌ Error: Cannot read key file: {e}")
+        sys.exit(1)
+
     # Create SSL context
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain(args.cert, args.key)
+    try:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(str(cert_path), str(key_path))
+    except ssl.SSLError as e:
+        print(f"❌ Error loading SSL certificates: {e}")
+        print("   Ensure the certificate and key files are valid")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Unexpected error creating SSL context: {e}")
+        sys.exit(1)
 
     # Create handler with directory
     def handler(*args, **kwargs):
         return PWARequestHandler(*args, directory="mobile-app", **kwargs)
 
-    # Create server
-    server = http.server.HTTPServer((args.host, args.port), handler)
-    server.socket = context.wrap_socket(server.socket, server_side=True)
+    # Create server with error handling
+    try:
+        server = http.server.HTTPServer((args.host, args.port), handler)
+        server.socket = context.wrap_socket(server.socket, server_side=True)
+    except OSError as e:
+        if "Address already in use" in str(e):
+            print(f"❌ Error: Port {args.port} is already in use")
+            print("   Try a different port: python3 scripts/serve-local.py --port 9443")
+        elif "Permission denied" in str(e):
+            print(f"❌ Error: Permission denied for port {args.port}")
+            print("   Ports < 1024 require administrator privileges")
+            print(f"   Try a port >= 1024: python3 scripts/serve-local.py --port 8443")
+        else:
+            print(f"❌ Error binding to {args.host}:{args.port}: {e}")
+        sys.exit(1)
 
     # Get actual IP for display
     try:
