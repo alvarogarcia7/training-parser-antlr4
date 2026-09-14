@@ -545,6 +545,14 @@ export async function init() {
 
   setStatus('Loading Python runtime...', 'loading');
 
+  // Set a timeout for initialization (45 seconds max)
+  setTimeout(() => {
+    if (!pyodideReady) {
+      logger.error('Initialization timeout - Pyodide took too long to load (>45s)');
+      setStatus('Timeout: Python runtime took >45s - check network and browser console', 'error');
+    }
+  }, 45000);
+
   // Show/hide sync features based on git config
   const settings = gitSync.loadSettings();
   const hasSyncConfig = !!settings.remoteUrl;

@@ -115,8 +115,16 @@ async function initPyodide() {
   self.postMessage({ type: 'loading', message: 'Loading Python runtime...' });
 
   try {
-    log('loadPyodide() starting...', 'DEBUG');
-    pyodide = await loadPyodide();
+    log('loadPyodide() starting (this may take 10-20s)...', 'DEBUG');
+    self.postMessage({ type: 'loading', message: 'Loading Pyodide... (this takes 10-20 seconds on first load)' });
+
+    // Wrap in timeout to detect hangs
+    const loadPromise = loadPyodide();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('loadPyodide timeout after 30 seconds')), 30000)
+    );
+
+    pyodide = await Promise.race([loadPromise, timeoutPromise]);
     if (!pyodide) throw new Error('loadPyodide returned null');
     log(`loadPyodide() done - Pyodide ready`, 'INFO');
   } catch (e) {
@@ -127,11 +135,18 @@ async function initPyodide() {
 
   try {
     log('loadPackage starting...', 'DEBUG');
-    self.postMessage({ type: 'loading', message: 'Loading packages (pyyaml, jsonschema)...' });
-    await pyodide.loadPackage(['pyyaml', 'jsonschema']);
+    self.postMessage({ type: 'loading', message: 'Loading Python packages (pyyaml, jsonschema)...' });
+
+    // Set timeout for package loading
+    const pkgPromise = pyodide.loadPackage(['pyyaml', 'jsonschema']);
+    const pkgTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('loadPackage timeout after 20 seconds')), 20000)
+    );
+
+    await Promise.race([pkgPromise, pkgTimeout]);
     log('Packages loaded: pyyaml, jsonschema', 'INFO');
   } catch (e) {
-    log(`loadPackage failed: ${e.message}`, 'WARN');
+    log(`loadPackage failed (non-critical): ${e.message}`, 'WARN');
     // Don't fail hard on package loading - continue
   }
 
