@@ -181,15 +181,29 @@ def main() -> None:
             print(f"❌ Error binding to {args.host}:{args.port}: {e}")
         sys.exit(1)
 
-    # Get actual IP for display
+    # Get actual IP for display (cross-platform: Mac and Linux)
+    local_ip = "localhost"
     try:
         import socket
 
+        # Try to get non-loopback local IP
         hostname = socket.gethostname()
-        local_ips = socket.gethostbyname_ex(hostname)[2]
-        local_ip = local_ips[0] if local_ips else "localhost"
-    except:
-        local_ip = "localhost"
+        ips = socket.gethostbyname_ex(hostname)[2]
+        # Filter out loopback addresses and use the first real IP
+        non_loopback = [ip for ip in ips if not ip.startswith("127.")]
+        if non_loopback:
+            local_ip = non_loopback[0]
+        elif ips:
+            local_ip = ips[0]
+    except Exception:
+        # Fallback: try to connect to an external address (doesn't actually send data)
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+        except Exception:
+            local_ip = "localhost"
 
     print("=" * 70)
     print("Training Parser PWA — Local HTTPS Server")

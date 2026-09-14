@@ -51,17 +51,21 @@ echo "This certificate is for development only and will NOT be trusted by browse
 echo "You'll need to accept the security warning when connecting."
 echo ""
 
-# Get local IP address with fallback
+# Get local IP address with fallback (cross-platform: Mac and Linux)
 LOCAL_IP=""
+
+# Try hostname -I (Linux)
 if command -v hostname &> /dev/null; then
     LOCAL_IP=$(hostname -I 2>/dev/null | awk '{print $1}' || true)
 fi
 
+# Try ifconfig (Mac and Linux) - extract inet address using portable sed/awk
 if [ -z "$LOCAL_IP" ] && command -v ifconfig &> /dev/null; then
-    LOCAL_IP=$(ifconfig 2>/dev/null | grep -m1 "inet " | grep -oP '(?<=inet )\d+\.\d+\.\d+\.\d+' || true)
+    # Extract first non-loopback inet address (works on both macOS and Linux)
+    LOCAL_IP=$(ifconfig 2>/dev/null | grep "inet " | grep -v "127.0.0.1" | head -1 | sed 's/^.*inet \([0-9.]*\).*/\1/' || true)
 fi
 
-# Final fallback
+# Final fallback for systems without hostname/ifconfig
 if [ -z "$LOCAL_IP" ]; then
     LOCAL_IP="192.168.1.100"
 fi
