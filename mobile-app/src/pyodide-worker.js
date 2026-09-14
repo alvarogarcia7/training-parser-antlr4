@@ -8,13 +8,28 @@ function log(msg, level = 'INFO') {
   const prefix = `[pyodide ${elapsed}ms]`;
   const levelStr = level.padEnd(5);
   console.log(`${prefix} ${levelStr} ${msg}`);
-  self.postMessage({ type: 'log', message: msg, level, elapsed: parseInt(elapsed) });
+  try {
+    self.postMessage({ type: 'log', message: msg, level, elapsed: parseInt(elapsed) });
+  } catch (e) {
+    console.error('Failed to post log message:', e);
+  }
 }
 
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
+// Very early logging to detect initialization
+console.log('[worker] Script starting, about to load Pyodide...');
+log('Worker script started', 'DEBUG');
+
+try {
+  importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
+  log('Pyodide script imported from CDN', 'INFO');
+} catch (e) {
+  log(`Failed to import Pyodide script: ${e.message}`, 'ERROR');
+  self.postMessage({ type: 'error', message: 'Failed to load Pyodide: ' + e.message });
+  throw e;
+}
 
 let pyodide = null;
-log('Script imported', 'DEBUG');
+log('Script imports complete', 'DEBUG');
 
 const PYTHON_FILES = [
   // [fetch_path, pyodide_fs_path]
@@ -99,14 +114,26 @@ async function initPyodide() {
   log('initPyodide started', 'INFO');
   self.postMessage({ type: 'loading', message: 'Loading Python runtime...' });
 
-  log('loadPyodide() starting...', 'DEBUG');
-  pyodide = await loadPyodide();
-  log(`loadPyodide() done - ${pyodide ? 'success' : 'failed'}`, 'INFO');
+  try {
+    log('loadPyodide() starting...', 'DEBUG');
+    pyodide = await loadPyodide();
+    if (!pyodide) throw new Error('loadPyodide returned null');
+    log(`loadPyodide() done - Pyodide ready`, 'INFO');
+  } catch (e) {
+    log(`loadPyodide() failed: ${e.message}`, 'ERROR');
+    self.postMessage({ type: 'error', message: 'Pyodide load failed: ' + e.message });
+    throw e;
+  }
 
-  log('loadPackage starting...', 'DEBUG');
-  self.postMessage({ type: 'loading', message: 'Loading packages...' });
-  await pyodide.loadPackage(['pyyaml', 'jsonschema']);
-  log('Packages loaded: pyyaml, jsonschema', 'DEBUG');
+  try {
+    log('loadPackage starting...', 'DEBUG');
+    self.postMessage({ type: 'loading', message: 'Loading packages (pyyaml, jsonschema)...' });
+    await pyodide.loadPackage(['pyyaml', 'jsonschema']);
+    log('Packages loaded: pyyaml, jsonschema', 'INFO');
+  } catch (e) {
+    log(`loadPackage failed: ${e.message}`, 'WARN');
+    // Don't fail hard on package loading - continue
+  }
 
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...', 'DEBUG');
@@ -144,7 +171,9 @@ async function initPyodide() {
   }
 
   // Fetch and write each Python source file
-  log(`Fetching ${PYTHON_FILES.length} Python files...`, 'DEBUG');
+  log(`Fetching ${PYTHON_FILES.length} Python files...`, 'INFO');
+  self.postMessage({ type: 'loading', message: `Loading files (0/${PYTHON_FILES.length})...` });
+
   const failedFiles = [];
   let successCount = 0;
 
@@ -154,9 +183,21 @@ async function initPyodide() {
   for (let idx = 0; idx < PYTHON_FILES.length; idx++) {
     const [fetchPath, fsPath] = PYTHON_FILES[idx];
     try {
-      const resp = await fetch(fetchPath);
+      let resp;
+      try {
+        resp = await fetch(fetchPath);
+      } catch (fetchErr) {
+        throw new Error(`Network error: ${fetchErr.message}`);
+      }
+
       if (resp.ok) {
-        const text = await resp.text();
+        let text;
+        try {
+          text = await resp.text();
+        } catch (readErr) {
+          throw new Error(`Failed to read response: ${readErr.message}`);
+        }
+
         try {
           ensureParentDir(fsPath);
           pyodide.FS.writeFile(fsPath, text, { encoding: 'utf8' });
@@ -165,6 +206,7 @@ async function initPyodide() {
           // Log progress every 10 files and first/last file
           if (successCount === 1 || successCount % 10 === 0 || successCount === PYTHON_FILES.length) {
             log(`Written ${successCount}/${PYTHON_FILES.length}: ${fsPath} (${text.length} bytes)`, 'DEBUG');
+            self.postMessage({ type: 'loading', message: `Loading files (${successCount}/${PYTHON_FILES.length})...` });
           }
         } catch (writeErr) {
           failedFiles.push(`${fetchPath} (write failed: ${writeErr.message})`);
@@ -221,6 +263,7 @@ print('Path:', sys.path[:3])
   }
 
   log('Testing imports...', 'DEBUG');
+  self.postMessage({ type: 'loading', message: 'Testing Python imports...' });
 
   // Test file existence
   try {
@@ -238,20 +281,25 @@ print("Files exist:", files_exist)
     log(`File check error: ${e.message}`, 'WARN');
   }
 
+  // Test antlr4 import first (needed by app_api.py)
   try {
-    // Test antlr4 import first (needed by app_api.py)
+    log('Attempting to import antlr4...', 'DEBUG');
     pyodide.runPython('import antlr4; print("✓ antlr4 available")');
     log('antlr4 available', 'INFO');
   } catch (e) {
-    log(`antlr4 not available: ${e.message}`, 'WARN');
+    log(`antlr4 import error: ${e.message}`, 'ERROR');
+    self.postMessage({ type: 'error', message: `antlr4 import failed: ${e.message}` });
+    throw e;
   }
 
+  // Import app_api
   try {
+    log('Attempting to import app_api...', 'DEBUG');
     pyodide.runPython('import app_api; print("✓ app_api loaded")');
     log('app_api imported successfully', 'INFO');
   } catch (e) {
     log(`app_api import failed: ${e.message}`, 'ERROR');
-    self.postMessage({ type: 'error', message: `Python initialization failed: ${e.message}` });
+    self.postMessage({ type: 'error', message: `app_api import failed: ${e.message}` });
     throw e;
   }
 
@@ -310,9 +358,18 @@ self.onmessage = async (event) => {
   }
 };
 
-// Auto-start
-log('Worker script loaded, auto-starting initPyodide...', 'DEBUG');
-initPyodide().catch(e => {
-  log(`initPyodide failed: ${e.message}`, 'ERROR');
-  self.postMessage({ type: 'error', message: 'Failed to initialize: ' + e.message });
-});
+// Auto-start initialization
+console.log('[worker] Worker script fully loaded, auto-starting initPyodide...');
+log('Worker script loaded, auto-starting initPyodide...', 'INFO');
+
+initPyodide()
+  .then(() => {
+    log('✓ Initialization complete and successful', 'INFO');
+    console.log('[worker] ✓ Initialization complete');
+  })
+  .catch(e => {
+    const errorMsg = e.message || String(e);
+    log(`✗ initPyodide failed: ${errorMsg}`, 'ERROR');
+    console.error('[worker] ✗ Initialization failed:', e);
+    self.postMessage({ type: 'error', message: 'Initialization failed: ' + errorMsg });
+  });
