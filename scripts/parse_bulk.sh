@@ -106,84 +106,24 @@ export_set_centric() {
 export_bench_centric() {
     local input_file="$1"
     local output_file="$2"
-
-    python3 <<EOF
+    python3 -c "
 import sys
-import json
-from pathlib import Path
-from src.data_access import DataAccess
-
-input_file = "$input_file"
-output_file = "$output_file"
-
-try:
-    data_access = DataAccess()
-    exercises = data_access.parse_single_file(input_file)
-
-    bench_data = {
-        "type": "bench-centric.v1",
-        "benches": [
-            {
-                "name": "default",
-                "exercises": [
-                    {
-                        "name": exercise.name,
-                        "sets": [
-                            {
-                                "reps": set_.repetitions,
-                                "weight": {
-                                    "amount": set_.weight.amount,
-                                    "unit": set_.weight.unit
-                                }
-                            }
-                            for set_ in exercise.sets_
-                        ]
-                    }
-                    for exercise in exercises
-                ]
-            }
-        ]
-    }
-
-    Path(output_file).write_text(json.dumps(bench_data, indent=2))
-except Exception as e:
-    print(f"Error processing {input_file}: {e}", file=sys.stderr)
-    sys.exit(1)
-EOF
+sys.path.insert(0, '.')
+from scripts.bulk_export import export_bench_centric
+export_bench_centric('$input_file', '$output_file')
+" || return 1
 }
 
 # Function to append to database
 append_to_database() {
     local json_file="$1"
     local database_file="$2"
-
-    python3 <<EOF
+    python3 -c "
 import sys
-import json
-from pathlib import Path
-
-input_json = "$json_file"
-database_file = "$database_file"
-
-try:
-    with open(input_json) as f:
-        new_data = json.load(f)
-
-    with open(database_file) as f:
-        db = json.load(f)
-
-    if "exercises" in new_data:
-        db["workouts"].append({
-            "source_file": input_json,
-            "exercises": new_data["exercises"]
-        })
-
-    with open(database_file, 'w') as f:
-        json.dump(db, f, indent=2)
-except Exception as e:
-    print(f"Error appending to database: {e}", file=sys.stderr)
-    sys.exit(1)
-EOF
+sys.path.insert(0, '.')
+from scripts.bulk_export import append_to_database
+append_to_database('$json_file', '$database_file')
+" || return 1
 }
 
 # Process each input file
