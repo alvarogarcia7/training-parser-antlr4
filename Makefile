@@ -169,7 +169,7 @@ validate-json: check-virtual-env
 .PHONY: validate-json
 
 to-clipboard:
-	@cat output.csv | pbcopy
+	@tail +2 output.csv | pbcopy # output.csv has headers - tail +2 skips them
 	@echo "The output is in your copy-paste clipboard."
 	@echo "Open https://docs.google.com/spreadsheets/d/1F1a95XZRIBLXj3TqpEZoIEB1-n17O8KYs65kf0s-HqA/edit#gid=1836141740"
 	@echo "Paste it in column Strength!F"
