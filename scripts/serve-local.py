@@ -11,6 +11,7 @@ Usage:
 
 import http.server
 import ssl
+import socket
 import os
 import sys
 import argparse
@@ -149,10 +150,14 @@ def main() -> None:
         print(f"❌ Error: Cannot read key file: {e}")
         sys.exit(1)
 
-    # Create SSL context
+    # Create SSL context (compatible with macOS, Linux, and Python 3.7+)
     try:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        # Use PROTOCOL_TLS (auto-negotiates best version) instead of PROTOCOL_TLS_SERVER
+        # for better compatibility across Python versions and platforms
+        context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(str(cert_path), str(key_path))
+        # Disable SSL/TLSv1.0 for security but allow TLSv1.2+
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
     except ssl.SSLError as e:
         print(f"❌ Error loading SSL certificates: {e}")
         print("   Ensure the certificate and key files are valid")
@@ -169,6 +174,8 @@ def main() -> None:
     try:
         server = http.server.HTTPServer((args.host, args.port), handler)
         server.socket = context.wrap_socket(server.socket, server_side=True)
+        # Disable Nagle's algorithm for better latency on local network
+        server.socket.setsockopt(0, 1, 1)  # TCP_NODELAY
     except OSError as e:
         if "Address already in use" in str(e):
             print(f"❌ Error: Port {args.port} is already in use")
@@ -184,8 +191,6 @@ def main() -> None:
     # Get actual IP for display (cross-platform: Mac and Linux)
     local_ip = "localhost"
     try:
-        import socket
-
         # Try to get non-loopback local IP
         hostname = socket.gethostname()
         ips = socket.gethostbyname_ex(hostname)[2]
