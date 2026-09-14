@@ -112,14 +112,14 @@ class TestDataSerializer(unittest.TestCase):
         rows = DataSerializer.to_tsv_rows(sessions)
 
         # First row should be header
-        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight'])
+        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes'])
 
         # Subsequent rows should have data
         self.assertGreater(len(rows), 1)
 
-        # Each data row should have 5 columns
+        # Each data row should have 6 columns
         for row in rows[1:]:
-            self.assertEqual(len(row), 5)
+            self.assertEqual(len(row), 6)
 
     def test_tsv_rows_content(self) -> None:
         """Test that TSV rows contain expected exercise data."""
@@ -280,7 +280,7 @@ class TestCLIIntegration(unittest.TestCase):
         rows = DataSerializer.to_tsv_rows(sessions)
 
         # Verify TSV structure
-        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight'])
+        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes'])
 
         # Verify data rows (flatten() groups by weight/reps, so we get 2 rows)
         # First row: single 4-rep set at 75kg (standardized name)
