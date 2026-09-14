@@ -80,12 +80,21 @@ const PYTHON_SOURCES = [
   '../parser/serializer.py',
   '../parser/error_listener.py',
   '../parser/series_builder.py',
+  '../src/__init__.py',
+  '../src/data_access.py',
   '../src/statistics.py',
+  '../dist/__init__.py',
   '../dist/trainingLexer.py',
   '../dist/trainingParser.py',
   '../dist/trainingListener.py',
   '../dist/trainingVisitor.py',
   '../data/synonyms.yaml',
+];
+
+// CDN libraries for git sync and filesystem
+const CDN_LIBS = [
+  'https://unpkg.com/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js',
+  'https://unpkg.com/isomorphic-git@1.27.1/index.umd.min.js',
 ];
 
 // Pyodide runtime files to pre-cache
@@ -102,11 +111,12 @@ self.addEventListener('install', (event) => {
       // Cache app shell immediately
       const shellPromise = cache.addAll(APP_SHELL);
 
-      // Cache Python sources and Pyodide runtime in background
+      // Cache Python sources, Pyodide runtime, and CDN libraries in background
       // Don't fail install if these aren't available yet
       Promise.all([
         cache.addAll(PYTHON_SOURCES).catch(() => {}),
         cache.addAll(PYODIDE_RUNTIME).catch(() => {}),
+        cache.addAll(CDN_LIBS).catch(() => {}),
       ]).catch(() => {});
 
       return shellPromise;
