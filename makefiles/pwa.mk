@@ -36,7 +36,7 @@ pwa-serve-local: check-virtual-env
 		chmod +x scripts/create-ssl-certs.sh; \
 		./scripts/create-ssl-certs.sh; \
 	fi
-	python3 scripts/serve-local.py
+	python3 scripts/serve-local.py --host 0.0.0.0 --port 8444
 .PHONY: pwa-serve-local
 
 pwa-certs:
