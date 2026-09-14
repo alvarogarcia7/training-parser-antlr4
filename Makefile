@@ -125,7 +125,7 @@ dist/trainingLexer.py: training.g4 $(ANTLR_JAR)
 compile-grammar: training.g4 $(ANTLR_JAR) dist/trainingLexer.py dist/trainingListener.py dist/trainingParser.py dist/trainingVisitor.py
 
 run: check-virtual-env
-	FILE=data.txt $(MAKE) output.csv
+	FILE=$${FILE:-data.txt} $(MAKE) output.csv-generic
 	$(MAKE) to-clipboard
 .PHONY: run
 
@@ -142,10 +142,11 @@ save-data:
 .PHONY: save-data
 
 
-run-splitter: output.csv
+run-splitter: check-virtual-env
+	${MAKE} FILE=$${FILE:-data.txt} output.csv-generic
 
 output.csv: check-virtual-env data.txt
-	FILE=data.txt $(MAKE) output.csv-generic
+	FILE=${FILE} $(MAKE) output.csv-generic
 
 output.csv-generic: check-virtual-env
 	# paste data into data.txt
