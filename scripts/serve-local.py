@@ -17,6 +17,7 @@ import argparse
 import pathlib
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Optional
 
 # Verify Python version
 assert sys.version_info >= (3, 7), "Python 3.7+ required"
@@ -25,11 +26,11 @@ assert sys.version_info >= (3, 7), "Python 3.7+ required"
 class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
     """HTTP request handler with PWA-friendly headers."""
 
-    def __init__(self, *args, directory=None, **kwargs):
+    def __init__(self, *args: Any, directory: Optional[str] = None, **kwargs: Any) -> None:
         self.app_dir = directory or "mobile-app"
         super().__init__(*args, directory=self.app_dir, **kwargs)
 
-    def end_headers(self):
+    def end_headers(self) -> None:
         """Add security and PWA headers."""
         # Service Worker and manifest must have max-age to prevent stale caches
         path = self.path
@@ -62,13 +63,13 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
 
         super().end_headers()
 
-    def log_message(self, format, *args):
+    def log_message(self, format: str, *args: Any) -> None:
         """Log with timestamp."""
         now = datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] {format % args}")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Local HTTPS server for Training Parser PWA"
     )
@@ -161,7 +162,7 @@ def main():
         sys.exit(1)
 
     # Create handler with directory
-    def handler(*args, **kwargs):
+    def handler(*args: Any, **kwargs: Any) -> PWARequestHandler:
         return PWARequestHandler(*args, directory="mobile-app", **kwargs)
 
     # Create server with error handling
