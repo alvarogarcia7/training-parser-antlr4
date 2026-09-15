@@ -7,7 +7,7 @@ This library provides a unified interface for:
 - Standardizing exercise names
 - Serializing to different JSON formats
 """
-
+import datetime
 import re
 from pathlib import Path
 from typing import Any, Optional, TextIO, TypedDict, List
@@ -241,7 +241,9 @@ class DataSerializer:
         Returns:
             List of lists, each inner list is a TSV row (including header)
         """
-        rows: list[list[str]] = [['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight']]
+        rows: list[list[str]] = [['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes']]
+
+        today = datetime.date.today().isoformat()
 
         for session in sessions:
             for exercise in session['parsed']:
@@ -257,7 +259,8 @@ class DataSerializer:
                         flattened_ex.name,
                         "{:d}".format(len(repetitions)),
                         "{:d}".format(int(sum(repetitions) / len(repetitions))),
-                        "{:.1f}".format(flattened_ex.sets_[0].weight.amount).replace('.', ',')
+                        "{:.1f}".format(flattened_ex.sets_[0].weight.amount).replace('.', ','),
+                        f"Origen=training-parser (ANTLR) ({today}.txt)"
                     ]
                     rows.append(row)
 

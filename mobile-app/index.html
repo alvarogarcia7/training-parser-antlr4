@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f3460">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TrainParse">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'nonce-training-parser-pwa' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://api.github.com https://cors.isomorphic-git.org; object-src 'none'; base-uri 'self';">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icons/icon.svg">
+  <title>Training Parser</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --surface: #16213e;
+      --surface2: #0f3460;
+      --accent: #e94560;
+      --text: #eaeaea;
+      --text2: #a0a0b0;
+      --ok: #4ade80;
+      --err: #f87171;
+      --warn: #fbbf24;
+      --radius: 12px;
+      --gap: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--surface2);
+      padding: 12px var(--gap);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+
+    .header-right { display: flex; gap: 8px; align-items: center; }
+
+    .status {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--surface);
+    }
+    .status--ready { color: var(--ok); }
+    .status--loading { color: var(--warn); }
+    .status--error { color: var(--err); }
+    .status--idle { color: var(--text2); }
+
+    main {
+      flex: 1;
+      padding: var(--gap);
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      max-width: 768px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    card, .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: var(--gap);
+    }
+
+    .card { background: var(--surface); border-radius: var(--radius); padding: var(--gap); }
+
+    label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 6px; }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--surface2);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+    textarea:disabled { opacity: 0.5; }
+
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    input[type="date"], input[type="number"], input[type="text"], input[type="password"], input[type="url"] {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--surface2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+    input[type="number"] { width: 90px; }
+    input[type="date"] { flex: 1; }
+
+    button {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--text); }
+    .btn-icon { background: transparent; color: var(--text2); font-size: 1.2rem; padding: 6px 10px; }
+    .btn-icon:hover { color: var(--text); }
+
+    h2 { font-size: 1rem; margin-bottom: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .errors-list { list-style: none; }
+    .errors-list li {
+      background: rgba(248,113,113,0.1);
+      border-left: 3px solid var(--err);
+      padding: 8px 10px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--err);
+    }
+
+    .summary { font-size: 1rem; font-weight: 600; color: var(--ok); margin-bottom: 10px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; color: var(--text2); padding: 8px 10px; border-bottom: 1px solid var(--surface2); white-space: nowrap; }
+    td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); word-break: break-word; }
+    tfoot tr { background: rgba(233,69,96,0.1); border-top: 2px solid var(--accent); }
+    tfoot td { color: var(--ok); font-weight: 600; }
+
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .stat-card { background: var(--bg); border-radius: 8px; padding: 10px; }
+    .stat-card h3 { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; }
+    .stat-card table { margin-top: 6px; }
+
+    #history-list { list-style: none; }
+    #history-list li {
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    #history-list li:hover { background: var(--surface2); }
+
+    .log-entry { margin-bottom: 4px; padding: 2px 4px; border-left: 3px solid; }
+    .log-entry.DEBUG { border-color: var(--text2); color: var(--text2); }
+    .log-entry.INFO { border-color: var(--ok); color: var(--text); }
+    .log-entry.WARN { border-color: var(--warn); color: var(--warn); }
+    .log-entry.ERROR { border-color: var(--err); color: var(--err); }
+    .log-badge { display: inline-block; width: 40px; font-weight: 600; }
+    .log-time { color: var(--text2); font-size: 0.75rem; margin-right: 4px; }
+
+    /* Settings modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--gap);
+    }
+    .modal-backdrop[hidden] {
+      display: none !important;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: var(--gap);
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal h2 { color: var(--text); text-transform: none; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group input { width: 100%; }
+    .modal .row { justify-content: flex-end; }
+
+    .ios-note {
+      background: rgba(251,191,36,0.1);
+      border-left: 3px solid var(--warn);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.8rem;
+      color: var(--warn);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Training Parser</h1>
+  <div class="header-right">
+    <span class="status status--loading" id="status">Loading…</span>
+    <button class="btn-icon" id="settings-btn" title="Settings">⚙️</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- Input -->
+  <div class="card">
+    <label for="workout-input">Paste workout text</label>
+    <textarea id="workout-input" placeholder="Bench press 4x75kg, 5x75kg&#10;Squat 10x70, 10x70&#10;..."></textarea>
+    <div class="row" style="margin-top: 10px;">
+      <input type="date" id="workout-date">
+      <button class="btn-primary" id="parse-btn">Parse</button>
+      <button class="btn-secondary" id="save-btn">Save</button>
+      <button class="btn-secondary" id="sync-btn" title="Push to remote">↑ Sync</button>
+      <button class="btn-secondary" id="share-btn" title="Share results">↗ Share</button>
+    </div>
+    <p style="font-size:0.75rem; color:var(--text2); margin-top:8px;">💡 Tip: Configure git in Settings to enable saving & syncing. Without it, use Share to export results.</p>
+  </div>
+
+  <!-- Errors -->
+  <div class="card" id="errors-section" hidden>
+    <h2>Errors</h2>
+    <ul class="errors-list" id="errors-list"></ul>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="results-section" hidden>
+    <p class="summary" id="summary-text"></p>
+    <table>
+      <thead><tr><th>Exercise</th><th>Sets</th><th>Volume (kg)</th><th>Details</th></tr></thead>
+      <tbody id="exercises-body"></tbody>
+      <tfoot id="exercises-footer"></tfoot>
+    </table>
+  </div>
+
+  <!-- Statistics -->
+  <div class="card" id="stats-section" hidden>
+    <h2>Statistics</h2>
+    <div class="row" style="margin-bottom: 10px;">
+      <label for="time-input" style="margin:0;">Workout duration (min):</label>
+      <input type="number" id="time-input" value="0" min="0" step="5">
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Totals</h3>
+        <table><tbody id="stats-totals"></tbody></table>
+      </div>
+      <div class="stat-card">
+        <h3>Averages</h3>
+        <table><tbody id="stats-averages"></tbody></table>
+      </div>
+    </div>
+    <section id="rates-section" hidden style="margin-top: 10px;">
+      <h3 style="font-size:0.75rem; color:var(--text2); text-transform:uppercase; margin-bottom:6px;">Rates</h3>
+      <table><tbody id="stats-rates"></tbody></table>
+    </section>
+  </div>
+
+  <!-- History -->
+  <div class="card" id="history-section" hidden>
+    <h2>Saved Workouts</h2>
+    <ul id="history-list"></ul>
+  </div>
+
+  <!-- iOS share note -->
+  <div class="ios-note" id="ios-note" hidden>
+    <strong>iOS tip:</strong> To share text from Notes or other apps into this app, create an
+    Apple Shortcut that opens this URL with your text:<br>
+    <code style="word-break:break-all;">training-parser/?import=[Shortcut Input]</code>
+  </div>
+
+  <!-- Logs Viewer -->
+  <div class="card" id="logs-section" hidden style="max-height: 500px; overflow-y: auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="margin:0;">Logs</h2>
+      <select id="log-level-filter" style="background: var(--bg); color: var(--text); border: 1px solid var(--surface2); border-radius: 4px; padding: 4px 8px; font-size: 0.85rem;">
+        <option value="0" selected>All (DEBUG+)</option>
+        <option value="1">Info+ (INFO, WARN, ERROR)</option>
+        <option value="2">Warnings+ (WARN, ERROR)</option>
+        <option value="3">Errors only</option>
+      </select>
+    </div>
+    <div id="logs-list" style="font-family: monospace; font-size: 0.8rem; line-height: 1.4;"></div>
+  </div>
+
+</main>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settings-modal" hidden>
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <h2 style="margin:0;">Settings</h2>
+      <button class="btn-icon" id="settings-cancel-btn" title="Close" style="font-size:1.4rem; padding:2px 8px;">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label for="settings-remote">Git remote URL (GitHub/GitLab/Gitea)</label>
+      <input type="url" id="settings-remote" placeholder="https://github.com/user/workout-data.git">
+    </div>
+    <div class="form-group">
+      <label for="settings-username">Username</label>
+      <input type="text" id="settings-username" placeholder="your-username">
+    </div>
+    <div class="form-group">
+      <label for="settings-token">Personal access token</label>
+      <input type="password" id="settings-token" placeholder="ghp_...">
+    </div>
+    <div class="form-group">
+      <label for="settings-author">Commit author name</label>
+      <input type="text" id="settings-author" placeholder="Training Parser">
+    </div>
+
+    <p style="font-size:0.78rem; color:var(--text2); line-height:1.5;">
+      Token is stored locally in this browser. Commits are pushed via
+      <a href="https://cors.isomorphic-git.org" style="color:var(--accent);">cors.isomorphic-git.org</a>
+      CORS proxy.
+    </p>
+
+    <div class="row">
+      <button class="btn-primary" id="settings-save-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CDN libraries (isomorphic-git + LightningFS) -->
+<script src="https://unpkg.com/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js"></script>
+<script src="https://unpkg.com/isomorphic-git@1.27.1/index.umd.min.js"></script>
+<script nonce="training-parser-pwa">
+  // Expose for git-sync.js
+  window.git = git;
+  window.GitHttp = {
+    async request({ url, method, headers, body }) {
+      const resp = await fetch(url, { method, headers: Object.fromEntries(headers), body: body ? (await collect(body)) : undefined });
+      return {
+        url: resp.url,
+        method,
+        statusCode: resp.status,
+        statusMessage: resp.statusText,
+        body: [new Uint8Array(await resp.arrayBuffer())],
+        headers: Object.fromEntries(resp.headers),
+      };
+    }
+  };
+  async function collect(iter) {
+    const chunks = [];
+    for await (const chunk of iter) chunks.push(chunk);
+    const total = chunks.reduce((s, c) => s + c.length, 0);
+    const out = new Uint8Array(total);
+    let pos = 0;
+    for (const c of chunks) { out.set(c, pos); pos += c.length; }
+    return out;
+  }
+</script>
+
+<!-- App entry point -->
+<script type="module" nonce="training-parser-pwa">
+  import { init } from './src/ui.js';
+
+  // Set today's date as default
+  document.getElementById('workout-date').value = new Date().toISOString().split('T')[0];
+
+  // Show iOS tip on non-Android
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isIOS) document.getElementById('ios-note').hidden = false;
+
+  init();
+</script>
+
+</body>
+</html>

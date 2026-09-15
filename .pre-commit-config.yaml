@@ -13,13 +13,22 @@ repos:
         entry: make typecheck
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
       - id: compile-grammar
         name: ANTLRv4 Compile Grammar
         entry: make compile-grammar
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
       - id: unittest
         name: Python Unit Tests
         entry: make test-python
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
+      - id: webapp-tests
+        name: PWA Browser Tests
+        entry: make test-webapp
+        language: system
+        pass_filenames: false
+        files: ^mobile-app/

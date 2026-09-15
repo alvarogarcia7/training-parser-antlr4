@@ -7,6 +7,7 @@ from pathlib import Path
 from io import StringIO
 import sys
 from datetime import datetime, timezone
+from typing import cast
 
 from parser import Exercise, Set_, Weight
 from src.data_access import DataSerializer, ParsedWorkoutSession
@@ -102,31 +103,31 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_structure(self) -> None:
         """Test that TSV rows have correct structure."""
-        sessions: list[ParsedWorkoutSession] = [{
+        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [{
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
-        }]
+        }])
 
         rows = DataSerializer.to_tsv_rows(sessions)
 
         # First row should be header
-        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight'])
+        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes'])
 
         # Subsequent rows should have data
         self.assertGreater(len(rows), 1)
 
-        # Each data row should have 5 columns
+        # Each data row should have 6 columns
         for row in rows[1:]:
-            self.assertEqual(len(row), 5)
+            self.assertEqual(len(row), 6)
 
     def test_tsv_rows_content(self) -> None:
         """Test that TSV rows contain expected exercise data."""
-        sessions: list[ParsedWorkoutSession] = [{
+        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [{
             'date': '2025-01-01',
             'parsed': self.exercises,
             'notes': ''
-        }]
+        }])
 
         rows = DataSerializer.to_tsv_rows(sessions)
 
@@ -150,7 +151,7 @@ class TestDataSerializer(unittest.TestCase):
 
     def test_tsv_rows_multiple_sessions(self) -> None:
         """Test that TSV rows handle multiple sessions correctly."""
-        sessions: list[ParsedWorkoutSession] = [
+        sessions: list[ParsedWorkoutSession] = cast(list[ParsedWorkoutSession], [
             {
                 'date': '2025-01-01',
                 'parsed': self.exercises[:2],  # Bench + Squat
@@ -161,7 +162,7 @@ class TestDataSerializer(unittest.TestCase):
                 'parsed': self.exercises[2:4],  # Overhead press + Deadlift
                 'notes': ''
             }
-        ]
+        ])
 
         rows = DataSerializer.to_tsv_rows(sessions)
 
@@ -279,7 +280,7 @@ class TestCLIIntegration(unittest.TestCase):
         rows = DataSerializer.to_tsv_rows(sessions)
 
         # Verify TSV structure
-        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight'])
+        self.assertEqual(rows[0], ['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes'])
 
         # Verify data rows (flatten() groups by weight/reps, so we get 2 rows)
         # First row: single 4-rep set at 75kg (standardized name)

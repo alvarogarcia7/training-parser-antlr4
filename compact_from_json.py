@@ -35,6 +35,7 @@ def main() -> None:
 
     # Format total volume as int if it's a whole number, otherwise as float
     total_volume_display = int(total_volume_all) if total_volume_all == int(total_volume_all) else total_volume_all
+    # TODO 4D8E1E66-CD44-4E35-9493-5A75B72FED09: format total_volume_display as a thousands, one or no decimal (formatted: 34.1 k kg or 34 k kg)
     print(f"Total volume for all workouts: {total_volume_display}")
 
 
