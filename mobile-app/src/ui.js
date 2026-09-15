@@ -466,9 +466,9 @@ function saveSettingsFromForm() {
 // --- Init ---
 
 export async function init() {
-  // Service Worker (use ../sw.js because this module is in /mobile-app/src/)
+  // Service Worker (relative to current page at /mobile-app/index.html)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('../sw.js', { scope: '/mobile-app/' }).catch(e => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(e => {
       logger.error('Service Worker registration failed: ' + e.message);
     });
   }
