@@ -56,6 +56,10 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_header("Cache-Control", "public, max-age=31536000")
 
+        # Required for Pyodide SharedArrayBuffer (threads) - same as serve.py
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+
         # CORS headers for local development
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
@@ -80,6 +84,13 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
         """Log with timestamp."""
         now = datetime.now().strftime("%H:%M:%S")
         print(f"[{now}] {format % args}")
+
+    def send_response(self, code: int, message: str | None = None) -> None:
+        """Log response codes for debugging."""
+        path = getattr(self, 'path', '?')
+        now = datetime.now().strftime("%H:%M:%S")
+        print(f"[{now}] {self.client_address[0]} {code} {self.command} {path}")
+        super().send_response(code, message)
 
 
 def main() -> None:
