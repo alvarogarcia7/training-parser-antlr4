@@ -466,9 +466,11 @@ function saveSettingsFromForm() {
 // --- Init ---
 
 export async function init() {
-  // Service Worker
+  // Service Worker (use ../sw.js because this module is in /mobile-app/src/)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(console.error);
+    navigator.serviceWorker.register('../sw.js', { scope: '/mobile-app/' }).catch(e => {
+      logger.error('Service Worker registration failed: ' + e.message);
+    });
   }
 
   // Wire up buttons

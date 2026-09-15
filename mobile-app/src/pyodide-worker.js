@@ -101,7 +101,7 @@ const PYTHON_FILES = [
   ['/src/__init__.py',              '/home/pyodide/src/__init__.py'],
   ['/src/data_access.py',           '/home/pyodide/src/data_access.py'],
   ['/src/statistics.py',            '/home/pyodide/src/statistics.py'],
-  ['/dist/__init__.py',             '/home/pyodide/dist/__init__.py'],
+  // dist/__init__.py is created programmatically below, not fetched
   ['/dist/trainingLexer.py',        '/home/pyodide/dist/trainingLexer.py'],
   ['/dist/trainingParser.py',       '/home/pyodide/dist/trainingParser.py'],
   ['/dist/trainingListener.py',     '/home/pyodide/dist/trainingListener.py'],
