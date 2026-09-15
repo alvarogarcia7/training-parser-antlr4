@@ -31,12 +31,17 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
         # Serve from project root to access parser/, src/, dist/, data/
         super().__init__(*args, directory=directory or ".", **kwargs)
 
-    def translate_path(self, path: str) -> str:
-        """Translate path, handling root request to mobile-app/index.html."""
-        # If requesting root, serve mobile-app/index.html
-        if path == "/":
-            path = "/mobile-app/index.html"
-        return super().translate_path(path)
+    def do_GET(self) -> None:
+        """Handle GET requests with redirect for root path."""
+        # Redirect root to /mobile-app/ so relative paths resolve correctly
+        if self.path == "/":
+            self.send_response(302)
+            self.send_header("Location", "/mobile-app/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        # For all other requests, use the default handler
+        super().do_GET()
 
     def end_headers(self) -> None:
         """Add security and PWA headers."""
