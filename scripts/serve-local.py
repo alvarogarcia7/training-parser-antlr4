@@ -43,6 +43,12 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
         # For all other requests, use the default handler
         super().do_GET()
 
+    def do_OPTIONS(self) -> None:
+        """Handle OPTIONS requests for CORS preflight."""
+        self.send_response(200)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def end_headers(self) -> None:
         """Add security and PWA headers."""
         # Service Worker and manifest must have max-age to prevent stale caches
