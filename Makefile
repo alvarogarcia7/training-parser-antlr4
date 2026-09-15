@@ -95,8 +95,8 @@ test-statistics: check-virtual-env
 .PHONY: test-statistics
 
 test-webapp: check-virtual-env
-	@echo "Testing PWA with Playwright..."
-	uv run pytest mobile-app/tests/ -v
+	@echo "Testing PWA loading and serving..."
+	uv run pytest mobile-app/tests/test_pwa_loading.py mobile-app/tests/test_pwa_serve_local.py -v
 .PHONY: test-webapp
 
 typecheck: check-virtual-env
