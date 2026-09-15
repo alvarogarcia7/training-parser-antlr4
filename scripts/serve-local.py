@@ -53,10 +53,10 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "SAMEORIGIN")
 
-        # Allow eval for Pyodide
+        # Allow eval for Pyodide and allow inline scripts with nonce
         self.send_header(
             "Content-Security-Policy",
-            "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-eval'; "
+            "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'nonce-training-parser-pwa' 'unsafe-eval'; "
             "style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
             "connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://cors.isomorphic-git.org; "
             "object-src 'none'; base-uri 'self';"

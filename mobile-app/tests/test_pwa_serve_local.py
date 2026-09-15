@@ -170,6 +170,7 @@ def test_csp_header_allows_eval(pwa_server):
         assert "Content-Security-Policy" in headers
         csp = headers["Content-Security-Policy"]
         assert "unsafe-eval" in csp
+        assert "nonce-training-parser-pwa" in csp, "CSP must include nonce for inline scripts"
 
 
 def test_all_required_scripts_loadable(pwa_server):
