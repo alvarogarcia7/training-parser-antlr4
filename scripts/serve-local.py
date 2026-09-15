@@ -28,8 +28,15 @@ class PWARequestHandler(http.server.SimpleHTTPRequestHandler):
     """HTTP request handler with PWA-friendly headers."""
 
     def __init__(self, *args: Any, directory: Optional[str] = None, **kwargs: Any) -> None:
-        self.app_dir = directory or "mobile-app"
-        super().__init__(*args, directory=self.app_dir, **kwargs)
+        # Serve from project root to access parser/, src/, dist/, data/
+        super().__init__(*args, directory=directory or ".", **kwargs)
+
+    def translate_path(self, path: str) -> str:
+        """Translate path, handling root request to mobile-app/index.html."""
+        # If requesting root, serve mobile-app/index.html
+        if path == "/":
+            path = "/mobile-app/index.html"
+        return super().translate_path(path)
 
     def end_headers(self) -> None:
         """Add security and PWA headers."""
@@ -166,9 +173,9 @@ def main() -> None:
         print(f"❌ Unexpected error creating SSL context: {e}")
         sys.exit(1)
 
-    # Create handler with directory
+    # Create handler (serves from project root to access parser/, src/, dist/, data/)
     def handler(*args: Any, **kwargs: Any) -> PWARequestHandler:
-        return PWARequestHandler(*args, directory="mobile-app", **kwargs)
+        return PWARequestHandler(*args, **kwargs)
 
     # Create server with error handling
     try:

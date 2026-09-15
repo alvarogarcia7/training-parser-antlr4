@@ -75,7 +75,7 @@ def test_index_html_serves_correctly(pwa_server):
 
 def test_service_worker_serves_correctly(pwa_server):
     """Test that service worker script is accessible."""
-    content = get_page("/sw.js", pwa_server).decode("utf-8")
+    content = get_page("/mobile-app/sw.js", pwa_server).decode("utf-8")
 
     assert "cacheNames" in content or "const" in content
     assert "self" in content  # Service worker uses 'self'
@@ -83,7 +83,7 @@ def test_service_worker_serves_correctly(pwa_server):
 
 def test_pyodide_worker_serves_correctly(pwa_server):
     """Test that pyodide worker script is accessible."""
-    content = get_page("/src/pyodide-worker.js", pwa_server).decode("utf-8")
+    content = get_page("/mobile-app/src/pyodide-worker.js", pwa_server).decode("utf-8")
 
     assert "loadPyodide" in content
     assert "initPyodide" in content
@@ -92,7 +92,7 @@ def test_pyodide_worker_serves_correctly(pwa_server):
 
 def test_ui_js_serves_correctly(pwa_server):
     """Test that ui.js is accessible."""
-    content = get_page("/src/ui.js", pwa_server).decode("utf-8")
+    content = get_page("/mobile-app/src/ui.js", pwa_server).decode("utf-8")
 
     assert "parseWorkout" in content
     assert "Logger" in content
@@ -100,7 +100,7 @@ def test_ui_js_serves_correctly(pwa_server):
 
 def test_manifest_serves_correctly(pwa_server):
     """Test that manifest.json is valid JSON and serves."""
-    content = get_page("/manifest.json", pwa_server).decode("utf-8")
+    content = get_page("/mobile-app/manifest.json", pwa_server).decode("utf-8")
 
     manifest = json.loads(content)
     assert "name" in manifest
@@ -111,8 +111,8 @@ def test_python_files_are_accessible(pwa_server):
     """Test that Python source files are accessible."""
     # Test a few key files
     files_to_test = [
-        "/python/app_api.py",
-        "/python/antlr4/__init__.py",
+        "/mobile-app/python/app_api.py",
+        "/mobile-app/python/antlr4/__init__.py",
     ]
 
     for file_path in files_to_test:
@@ -145,7 +145,7 @@ def test_cors_headers_present(pwa_server):
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
 
-    url = "https://127.0.0.1:8445/index.html"
+    url = "https://127.0.0.1:8445/mobile-app/index.html"
     req = Request(url)
 
     with urlopen(req, context=ssl_context, timeout=5) as response:
@@ -161,7 +161,7 @@ def test_csp_header_allows_eval(pwa_server):
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
 
-    url = "https://127.0.0.1:8445/index.html"
+    url = "https://127.0.0.1:8445/mobile-app/index.html"
     req = Request(url)
 
     with urlopen(req, context=ssl_context, timeout=5) as response:
@@ -177,14 +177,17 @@ def test_all_required_scripts_loadable(pwa_server):
     """Test that all critical scripts are accessible and loadable."""
     # List of critical files that must be accessible for the app to work
     critical_files = [
-        "/index.html",
-        "/sw.js",
-        "/src/ui.js",
-        "/src/pyodide-worker.js",
-        "/src/share.js",
-        "/src/git-sync.js",
-        "/manifest.json",
-        "/python/app_api.py",
+        "/mobile-app/index.html",
+        "/mobile-app/sw.js",
+        "/mobile-app/src/ui.js",
+        "/mobile-app/src/pyodide-worker.js",
+        "/mobile-app/src/share.js",
+        "/mobile-app/src/git-sync.js",
+        "/mobile-app/manifest.json",
+        "/mobile-app/python/app_api.py",
+        # Parser modules accessible from project root
+        "/parser/model.py",
+        "/src/statistics.py",
     ]
 
     for file_path in critical_files:

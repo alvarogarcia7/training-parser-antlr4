@@ -5,6 +5,11 @@ pwa-build: check-virtual-env
 	@echo "Packaging PWA for deployment..."
 	@mkdir -p dist/pwa
 	@cp -r mobile-app/* dist/pwa/
+	@echo "Copying Python modules into PWA..."
+	@cp -r parser dist/pwa/
+	@cp -r src dist/pwa/
+	@cp -r dist dist/pwa/
+	@cp -r data dist/pwa/
 	@echo "PWA packaged to dist/pwa/"
 	@echo "To test locally: python3 -m http.server -d dist/pwa 8080"
 	@echo "Open: http://localhost:8080/"
