@@ -43,6 +43,7 @@ class DataReader:
     def read_lines(file_path: str) -> list[str]:
         """Read file as lines, preserving line structure."""
         lines: list[str] = []
+        assert Path(file_path).absolute().exists(), f"File {file_path} does not exist"
         with open(file_path, 'r') as f:
             while True:
                 line = f.readline()
