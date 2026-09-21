@@ -29,14 +29,14 @@ class Driver(unittest.TestCase):
         self.print_as_csv("data/workdir/parsed_2023.csv", parsed)
 
 
-    # def test_from_file_2026(self) -> None:
-    #     file_contents = DataReader.read_lines("data/workdir/weight_2026.txt")
-    #
-    #     parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2026")).parse(file_contents)
-    #
-    #     self.assertEqual(2, len(parsed))
-    #
-    #     self.print_as_csv("data/workdir/parsed_2026.csv", parsed)
+    def test_from_file_2026(self) -> None:
+        file_contents = DataReader.read_lines("data/workdir/weight_2026.txt")
+
+        parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2026")).parse(file_contents)
+
+        self.assertEqual(2, len(parsed))
+
+        self.print_as_csv("data/workdir/parsed_2026.csv", parsed)
 
     def print_as_csv(self, file_path_: str, parsed: list[Any]) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
