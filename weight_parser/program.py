@@ -56,32 +56,32 @@ class SingleMeasurementWeightParser:
 
         assert bodv_score
 
-        # In 2026, the BMI appears as:
-        # BMI
-        # BMI XX.Y
-        function_parsing_bmi_when_bmi_appears_twice = chain(lines,
-                                                            lambda lines: list(
-                                                                filter(lambda line: "BMI" in line, lines)),
-                                                            lambda ele: self._select_last_element(ele),
-                                                            lambda ele: ele.split()[-1],
-                                                            lambda ele: ele.strip(),
-                                                            lambda ele: self._to_spanish_locale(ele),
-                                                            lambda ele: str(ele)
-                                                            )
 
-        # In Previous years, the BMI appears as:
-        # BMI BMI XX.Y
-        function_parsing_bmi_when_bmi_appears_once_only = chain(lines,
-                                                                lambda lines: self.select_single_then_split(lines,
-                                                                                                            "BMI"),
-                                                                lambda ele: self._select_before_space(ele),
+
+        if self.year == "2026":
+            # In 2026, the BMI appears as:
+            # BMI
+            # BMI XX.Y
+            function_parsing_bmi_when_bmi_appears_twice = chain(lines,
+                                                                lambda lines: list(
+                                                                    filter(lambda line: "BMI" in line, lines)),
+                                                                lambda ele: self._select_last_element(ele),
+                                                                lambda ele: ele.split()[-1],
+                                                                lambda ele: ele.strip(),
                                                                 lambda ele: self._to_spanish_locale(ele),
                                                                 lambda ele: str(ele)
                                                                 )
-
-        if self.year == "2026":
             function_parsing_bmi = function_parsing_bmi_when_bmi_appears_twice
         else:
+            # In other years, the BMI appears as:
+            # BMI BMI XX.Y
+            function_parsing_bmi_when_bmi_appears_once_only = chain(lines,
+                                                                    lambda lines: self.select_single_then_split(lines,
+                                                                                                                "BMI"),
+                                                                    lambda ele: self._select_before_space(ele),
+                                                                    lambda ele: self._to_spanish_locale(ele),
+                                                                    lambda ele: str(ele)
+                                                                    )
             function_parsing_bmi = function_parsing_bmi_when_bmi_appears_once_only
 
 
