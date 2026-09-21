@@ -34,7 +34,7 @@ class Driver(unittest.TestCase):
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2026")).parse(file_contents)
 
-        self.assertEqual(2, len(parsed))
+        self.assertEqual(25, len(parsed))
 
         self.print_as_csv("data/workdir/parsed_2026.csv", parsed)
 
@@ -43,19 +43,19 @@ class Driver(unittest.TestCase):
             csv_writer = csv.writer(csvfile, delimiter=';', quotechar='"')
             for row in parsed:
                 row_as_columns = [row['date'],
-                                  '',
                                   row['body score'],
                                   row['weight'],
                                   row['bmi'],
                                   row['body fat'],
-                                  '',
+                                  '', # body water
                                   row['basal metabolism'],
                                   row['visceral fat'],
-                                  '',
+                                  '', # skeletal muscle - empty column
                                   row['muscle'],
                                   row['protein'],
                                   row['bone mass'],
-                                  '',
+                                  '', # metabolic age is not properly parsed
+                                  '', # desired weight - computed by a formula, here keep empty
                                   row['body type'],
                                   ]
                 csv_writer.writerow(row_as_columns)
