@@ -9,11 +9,19 @@ class SeriesBuilder:
         self.sets: list[Set_] = []
         self.pending_weights: list[float] = []
         self.pending_repetitions: list[int] = []
+        self._pending_consumed: bool = False
 
     def set_exercise_name(self, name: str) -> None:
         self.name = name
 
     def add_weight(self, weight: float) -> None:
+        # If the current pending weights have already produced series
+        # (e.g. `50: 1, 2, 60: 3, 4` — 50 was used for reps 1,2 and now 60
+        # arrives), drop them so the new weight replaces rather than
+        # cross-products with the old ones.
+        if self._pending_consumed:
+            self.pending_weights.clear()
+            self._pending_consumed = False
         self.pending_weights.append(weight)
 
     def add_series(self, repetitions: int, weight: float, rir: int | None = None) -> None:
@@ -32,11 +40,14 @@ class SeriesBuilder:
             weight = 0  # Default weight when not specified
         for _ in range(number_of_series):
             self.add_series(number_of_repetitions, weight, rir)
+        if self.pending_weights:
+            self._pending_consumed = True
 
     def add_single_rep_set(self, number_of_repetitions: int, rir: int | None = None) -> None:
         if self.pending_weights:
             for weight in self.pending_weights:
                 self.add_series(number_of_repetitions, weight, rir)
+            self._pending_consumed = True
         else:
             # If no weight is specified, use 0 (bodyweight or unspecified)
             self.add_series(number_of_repetitions, 0, rir)
@@ -59,6 +70,7 @@ class SeriesBuilder:
         self.sets = []
         self.pending_weights = []
         self.pending_repetitions = []
+        self._pending_consumed = False
 
     def build(self) -> Exercise:
         if not self.name:
