@@ -229,6 +229,7 @@
     <div class="row" style="margin-top: 10px;">
       <input type="date" id="workout-date">
       <button class="btn-primary" id="parse-btn">Parse</button>
+      <button class="btn-secondary" id="download-json-btn" title="Download set-centric JSON" hidden>⬇ Download JSON</button>
       <button class="btn-secondary" id="save-btn">Save</button>
       <button class="btn-secondary" id="sync-btn" title="Push to remote">↑ Sync</button>
       <button class="btn-secondary" id="share-btn" title="Share results">↗ Share</button>
@@ -250,6 +251,16 @@
       <tbody id="exercises-body"></tbody>
       <tfoot id="exercises-footer"></tfoot>
     </table>
+  </div>
+
+  <!-- TSV / Spreadsheet output -->
+  <div class="card" id="tsv-section" hidden>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="margin:0;">Spreadsheet (TSV)</h2>
+      <button class="btn-secondary" id="copy-tsv-btn" title="Copy TSV to clipboard">📋 Copy</button>
+    </div>
+    <textarea id="tsv-output" readonly style="min-height:120px;"></textarea>
+    <p id="tsv-copy-status" style="font-size:0.75rem; color:var(--text2); margin-top:6px;"></p>
   </div>
 
   <!-- Statistics -->

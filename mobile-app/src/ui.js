@@ -7,6 +7,8 @@ let worker = null;
 let pendingRequests = {};
 let requestId = 0;
 let lastParseResult = null;
+let lastEnvelope = null;
+let lastEnvelopePretty = null;
 let pyodideReady = false;
 let logMessages = [];
 let minLogLevel = 0; // DEBUG by default for troubleshooting (0=DEBUG, 1=INFO, 2=WARN, 3=ERROR)
@@ -203,15 +205,82 @@ async function parseWorkout() {
 
   setStatus('Parsing...', 'loading');
 
+  const dateStr = document.getElementById('workout-date').value || new Date().toISOString().split('T')[0];
+
   try {
-    const result = await callWorker('parse', { text });
-    lastParseResult = result;
-    renderParseResult(result);
-    saveToStorage(STORAGE_KEYS.parseResult, result);
-    setStatus(result.is_valid ? 'Parsed successfully' : `Parsed with ${result.errors.length} error(s)`, result.is_valid ? 'ready' : 'error');
+    const result = await callWorker('parse_and_export', { text, dateStr });
+    // Adapt Python pipeline result to legacy shape for downstream code.
+    const payload = result.envelope.payload;
+    lastParseResult = {
+      exercises: payload.exercises.map(ex => ({
+        name: ex.name,
+        sets: ex.sets.map(s => ({
+          repetitions: s.repetitions,
+          weight: s.weight,
+          rir: s.rir ?? null,
+        })),
+      })),
+      errors: result.errors,
+      is_valid: result.is_valid,
+      total_exercises: result.totals.total_exercises,
+      total_sets: result.totals.total_sets,
+      totals: result.totals,
+    };
+    lastEnvelope = result.envelope;
+    lastEnvelopePretty = result.envelope_pretty;
+
+    renderParseResult(lastParseResult);
+    renderTsv(result.tsv);
+    document.getElementById('download-json-btn').hidden = !result.is_valid;
+    saveToStorage(STORAGE_KEYS.parseResult, lastParseResult);
+
+    if (result.is_valid) {
+      copyToClipboard(result.tsv, /*auto=*/true);
+    }
+    setStatus(
+      result.is_valid ? 'Parsed successfully' : `Parsed with ${result.errors.length} error(s)`,
+      result.is_valid ? 'ready' : 'error'
+    );
   } catch (e) {
     setStatus('Parse error: ' + e.message, 'error');
   }
+}
+
+function renderTsv(tsv) {
+  const section = document.getElementById('tsv-section');
+  const out = document.getElementById('tsv-output');
+  out.value = tsv || '';
+  section.hidden = !tsv;
+}
+
+async function copyToClipboard(text, auto = false) {
+  const status = document.getElementById('tsv-copy-status');
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = auto ? '✓ TSV auto-copied to clipboard' : '✓ Copied to clipboard';
+    status.style.color = 'var(--ok)';
+  } catch (e) {
+    status.textContent = auto
+      ? 'Auto-copy blocked — click Copy to copy manually'
+      : 'Clipboard error: ' + e.message;
+    status.style.color = 'var(--warn)';
+  }
+}
+
+function downloadJsonA() {
+  if (!lastEnvelopePretty) return;
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const filename = `set_centric_training_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.json`;
+  const blob = new Blob([lastEnvelopePretty], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function renderParseResult(result) {
@@ -228,47 +297,46 @@ function renderParseResult(result) {
   }
   document.getElementById('errors-section').hidden = result.errors.length === 0;
 
-  // Calculate volumes
-  let totalVolume = 0;
-  let totalSets = 0;
-  const exerciseVolumes = [];
-
-  for (const ex of result.exercises) {
-    let exVolume = 0;
-    for (const s of ex.sets) {
-      exVolume += s.weight.amount * s.repetitions;
-      totalVolume += s.weight.amount * s.repetitions;
-    }
-    exerciseVolumes.push(exVolume);
-    totalSets += ex.sets.length;
+  // Prefer Python-computed totals when available (from parse_and_export).
+  // Fall back to a JS computation for restored sessions that lack them.
+  let totals = result.totals;
+  if (!totals) {
+    const perExercise = result.exercises.map(ex => {
+      const vol = ex.sets.reduce((a, s) => a + s.weight.amount * s.repetitions, 0);
+      return {
+        name: ex.name,
+        sets: ex.sets.length,
+        volume_kg: vol,
+        details: ex.sets.map(s => `${s.repetitions}×${s.weight.amount}${s.weight.unit}`).join(', '),
+      };
+    });
+    totals = {
+      per_exercise: perExercise,
+      total_exercises: result.exercises.length,
+      total_sets: perExercise.reduce((a, x) => a + x.sets, 0),
+      total_volume_kg: perExercise.reduce((a, x) => a + x.volume_kg, 0),
+    };
   }
 
-  // Summary
   document.getElementById('summary-text').textContent =
-    `${result.total_exercises} exercise(s), ${totalSets} set(s), ${formatVolume(totalVolume)} kg total`;
+    `${totals.total_exercises} exercise(s), ${totals.total_sets} set(s), ${formatVolume(totals.total_volume_kg)} kg total`;
 
-  // Exercises table
   const tbody = document.getElementById('exercises-body');
   tbody.innerHTML = '';
-  for (let i = 0; i < result.exercises.length; i++) {
-    const ex = result.exercises[i];
+  for (const ex of totals.per_exercise) {
     const tr = document.createElement('tr');
-    const setsText = ex.sets.map(s => `${s.repetitions}×${s.weight.amount}${s.weight.unit}`).join(', ');
-    const volumeText = formatVolume(exerciseVolumes[i]);
-    tr.innerHTML = `<td>${ex.name}</td><td>${ex.sets.length}</td><td>${volumeText} kg</td><td>${setsText}</td>`;
+    tr.innerHTML = `<td>${ex.name}</td><td>${ex.sets}</td><td>${formatVolume(ex.volume_kg)} kg</td><td>${ex.details}</td>`;
     tbody.appendChild(tr);
   }
 
-  // Footer row with totals
   const tfoot = document.getElementById('exercises-footer');
   tfoot.innerHTML = '';
   const footerRow = document.createElement('tr');
   footerRow.style.borderTop = '2px solid var(--surface2)';
   footerRow.style.fontWeight = '600';
-  footerRow.innerHTML = `<td colspan="1"><strong>Total</strong></td><td>${totalSets}</td><td>${formatVolume(totalVolume)} kg</td><td></td>`;
+  footerRow.innerHTML = `<td colspan="1"><strong>Total</strong></td><td>${totals.total_sets}</td><td>${formatVolume(totals.total_volume_kg)} kg</td><td></td>`;
   tfoot.appendChild(footerRow);
 
-  // Auto-calculate stats with 0 time
   calculateStats(0);
 }
 
@@ -475,6 +543,11 @@ export async function init() {
 
   // Wire up buttons
   document.getElementById('parse-btn').addEventListener('click', parseWorkout);
+  document.getElementById('download-json-btn').addEventListener('click', downloadJsonA);
+  document.getElementById('copy-tsv-btn').addEventListener('click', () => {
+    const tsv = document.getElementById('tsv-output').value;
+    if (tsv) copyToClipboard(tsv);
+  });
   document.getElementById('save-btn').addEventListener('click', saveWorkout);
   document.getElementById('sync-btn').addEventListener('click', syncNow);
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);

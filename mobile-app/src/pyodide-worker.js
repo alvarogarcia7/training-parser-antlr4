@@ -107,6 +107,9 @@ const PYTHON_FILES = [
   ['/dist/trainingListener.py',     '/home/pyodide/dist/trainingListener.py'],
   ['/dist/trainingVisitor.py',      '/home/pyodide/dist/trainingVisitor.py'],
   ['/data/synonyms.yaml',           '/home/pyodide/data/synonyms.yaml'],
+  ['/schema/envelope-set-centric.schema.json', '/home/pyodide/schema/envelope-set-centric.schema.json'],
+  ['/schema/set-centric.schema.json',          '/home/pyodide/schema/set-centric.schema.json'],
+  ['/schema/common-definitions.schema.json',   '/home/pyodide/schema/common-definitions.schema.json'],
   ['../python/app_api.py',             '/home/pyodide/app_api.py'],
 ];
 
@@ -154,7 +157,7 @@ async function initPyodide() {
   log('Creating directories...', 'DEBUG');
 
   // Create directories in Pyodide FS with error handling
-  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/antlr4'];
+  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/antlr4', '/home/pyodide/schema'];
   for (const dir of dirs) {
     try {
       pyodide.FS.mkdir(dir);
@@ -349,6 +352,12 @@ self.onmessage = async (event) => {
         `import app_api; app_api.parse_workout_text(${JSON.stringify(data.text)})`
       );
       self.postMessage({ type: 'parse_result', id, result: JSON.parse(result) });
+
+    } else if (type === 'parse_and_export') {
+      const result = await pyodide.runPythonAsync(
+        `import app_api; app_api.parse_and_export(${JSON.stringify(data.text)}, ${JSON.stringify(data.dateStr || '')})`
+      );
+      self.postMessage({ type: 'parse_and_export_result', id, result: JSON.parse(result) });
 
     } else if (type === 'stats') {
       const result = await pyodide.runPythonAsync(
