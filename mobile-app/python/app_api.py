@@ -196,9 +196,7 @@ def _tsv_from_payload(payload: dict[str, Any]) -> str:
     today = datetime.now(timezone.utc).date().isoformat()
     date = payload.get("date", "").split("T")[0] or today
 
-    rows: list[list[str]] = [
-        ["Date", "Exercise", "Sets", "Avg Reps", "Weight", "Notes"]
-    ]
+    rows: list[list[str]] = []
 
     for ex in payload["exercises"]:
         # Group by (weight_amount, repetitions) to match TSV semantics.
