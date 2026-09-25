@@ -18,6 +18,29 @@ export function saveSettings(settings) {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }
 
+async function detectRemoteDefaultBranch() {
+  try {
+    const refs = await git.listServerRefs({
+      http: window.GitHttp,
+      url: loadSettings().remoteUrl,
+      corsProxy: 'https://cors.isomorphic-git.org',
+    });
+
+    // Look for HEAD ref which points to default branch
+    const headRef = refs.find(ref => ref.ref === 'HEAD');
+    if (headRef && headRef.target) {
+      const match = headRef.target.match(/refs\/heads\/(.+)$/);
+      if (match) {
+        console.log('[git-sync:detect] Remote default branch:', match[1]);
+        return match[1];
+      }
+    }
+  } catch (e) {
+    console.log('[git-sync:detect] Could not detect remote default branch:', e.message);
+  }
+  return null;
+}
+
 export async function initGit() {
   console.log('[git-sync:init] Initializing git');
   if (gitReady) {
@@ -148,16 +171,25 @@ export async function push() {
 
     // Determine current/target branch
     let branch = 'main';
-    try {
-      const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
-      if (currentBranch) {
-        branch = currentBranch;
-        console.log('[git-sync:push] Current branch detected:', branch);
-      } else {
-        console.log('[git-sync:push] No current branch, using default: main');
+
+    // Try to detect remote default branch first
+    const remoteBranch = await detectRemoteDefaultBranch();
+    if (remoteBranch) {
+      branch = remoteBranch;
+      console.log('[git-sync:push] Using remote default branch:', branch);
+    } else {
+      // Fall back to local current branch
+      try {
+        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
+        if (currentBranch) {
+          branch = currentBranch;
+          console.log('[git-sync:push] Current branch detected:', branch);
+        } else {
+          console.log('[git-sync:push] No current branch, using default: main');
+        }
+      } catch (e) {
+        console.log('[git-sync:push] Could not detect branch, using default: main', e.message);
       }
-    } catch (e) {
-      console.log('[git-sync:push] Could not detect branch, using default: main', e.message);
     }
 
     // Try pushing to the current branch
@@ -202,25 +234,26 @@ export async function push() {
           const forceMsg = forceError.message || String(forceError);
           console.warn('[git-sync:push] Force push failed:', forceMsg);
 
-          // Last resort: try pushing to master if main failed
-          if (branch === 'main') {
-            console.log('[git-sync:push] Attempting fallback to master branch');
+          // Last resort: try pushing to alternate branch (main ↔ master)
+          if ((forceMsg.includes('Could not find') || forceMsg.includes('not found') || forceMsg.includes('no matching'))) {
+            const alternateBranch = branch === 'main' ? 'master' : 'main';
+            console.log('[git-sync:push] Attempting fallback to', alternateBranch, 'branch');
             try {
               await git.push({
                 fs,
                 http: window.GitHttp,
                 dir: GIT_DIR,
                 remote: 'origin',
-                ref: 'master',
+                ref: alternateBranch,
                 force: true,
                 corsProxy: 'https://cors.isomorphic-git.org',
                 onAuth: () => ({ username: settings.username, password: settings.token }),
               });
-              console.log('[git-sync:push] Push successful to master branch');
+              console.log('[git-sync:push] Push successful to', alternateBranch, 'branch');
               return { ok: true };
-            } catch (masterError) {
-              const masterMsg = masterError.message || String(masterError);
-              console.error('[git-sync:push] All push attempts failed. Master error:', masterMsg);
+            } catch (altError) {
+              const altMsg = altError.message || String(altError);
+              console.error('[git-sync:push] All push attempts failed. Alternate error:', altMsg);
               throw forceError;
             }
           } else {
@@ -284,16 +317,25 @@ export async function pull() {
 
     // Determine current/target branch
     let branch = 'main';
-    try {
-      const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
-      if (currentBranch) {
-        branch = currentBranch;
-        console.log('[git-sync:pull] Current branch detected:', branch);
-      } else {
-        console.log('[git-sync:pull] No current branch, using default: main');
+
+    // Try to detect remote default branch first
+    const remoteBranch = await detectRemoteDefaultBranch();
+    if (remoteBranch) {
+      branch = remoteBranch;
+      console.log('[git-sync:pull] Using remote default branch:', branch);
+    } else {
+      // Fall back to local current branch
+      try {
+        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
+        if (currentBranch) {
+          branch = currentBranch;
+          console.log('[git-sync:pull] Current branch detected:', branch);
+        } else {
+          console.log('[git-sync:pull] No current branch, using default: main');
+        }
+      } catch (e) {
+        console.log('[git-sync:pull] Could not detect branch, using default: main', e.message);
       }
-    } catch (e) {
-      console.log('[git-sync:pull] Could not detect branch, using default: main', e.message);
     }
 
     // Try pulling from the current branch
@@ -322,16 +364,17 @@ export async function pull() {
       const pullMsg = pullError.message || String(pullError);
       console.warn('[git-sync:pull] First pull attempt failed:', pullMsg);
 
-      // If pulling from main failed, try master
-      if ((pullMsg.includes('Could not find') || pullMsg.includes('not found') || pullMsg.includes('no matching')) && branch === 'main') {
-        console.log('[git-sync:pull] Main branch not found, attempting fallback to master');
+      // If pulling from current branch failed, try alternate branch (main ↔ master)
+      if (pullMsg.includes('Could not find') || pullMsg.includes('not found') || pullMsg.includes('no matching')) {
+        const alternateBranch = branch === 'main' ? 'master' : 'main';
+        console.log('[git-sync:pull] Branch not found, attempting fallback to', alternateBranch);
         try {
           await git.pull({
             fs,
             http: window.GitHttp,
             dir: GIT_DIR,
             remote: 'origin',
-            ref: 'master',
+            ref: alternateBranch,
             corsProxy: 'https://cors.isomorphic-git.org',
             onAuth: () => ({ username: settings.username, password: settings.token }),
             author: {
@@ -339,11 +382,11 @@ export async function pull() {
               email: 'training@local',
             },
           });
-          console.log('[git-sync:pull] Pull successful from master branch');
+          console.log('[git-sync:pull] Pull successful from', alternateBranch, 'branch');
           return { ok: true };
-        } catch (masterError) {
-          const masterMsg = masterError.message || String(masterError);
-          console.error('[git-sync:pull] Master pull also failed:', masterMsg);
+        } catch (altError) {
+          const altMsg = altError.message || String(altError);
+          console.error('[git-sync:pull] Pull from', alternateBranch, 'also failed:', altMsg);
           throw pullError;  // Return original error
         }
       } else {
