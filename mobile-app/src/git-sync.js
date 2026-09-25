@@ -32,7 +32,18 @@ export function saveSettings(settings) {
 
 export async function testConnection() {
   console.log('[git-sync:test] Testing connection to remote repository');
-  const settings = loadSettings();
+  let settings = loadSettings();
+
+  // For development: auto-populate local test server if running on localhost
+  if (!settings.remoteUrl && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    console.log('[git-sync:test] Using local test server: http://localhost:8888/test-repo.git');
+    settings = {
+      remoteUrl: 'http://localhost:8888/test-repo.git',
+      username: 'test',
+      token: 'test',
+      author: 'Training Parser'
+    };
+  }
 
   if (!settings.remoteUrl) {
     console.warn('[git-sync:test] No remote URL configured');
@@ -213,7 +224,7 @@ async function detectRemoteDefaultBranch() {
     const refs = await git.listServerRefs({
       http: window.GitHttp,
       url: loadSettings().remoteUrl,
-      corsProxy: 'https://cors.isomorphic-git.org',
+      corsProxy: getCorsProxy(),
     });
 
     console.log('[git-sync:detect] Remote refs:', refs.length, 'found');
