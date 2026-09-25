@@ -51,19 +51,37 @@ export async function testConnection() {
         },
       });
 
-      console.log('[git-sync:test] Direct listServerRefs succeeded');
+      console.log('[git-sync:test] Direct listServerRefs returned');
+      console.log('[git-sync:test] Response type:', typeof refs);
+      console.log('[git-sync:test] Is array?', Array.isArray(refs));
+      console.log('[git-sync:test] Response keys:', refs ? Object.keys(refs).slice(0, 5) : 'null');
+      console.log('[git-sync:test] Full response:', JSON.stringify(refs).substring(0, 200));
+
       usedDirect = true;
 
       // Handle both array and object returns
       if (Array.isArray(refs)) {
-        branches = refs.filter(ref => ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
+        console.log('[git-sync:test] Processing as array');
+        branches = refs.filter(ref => ref && ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
       } else if (refs && typeof refs === 'object') {
-        branches = Object.keys(refs || {}).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+        console.log('[git-sync:test] Processing as object');
+        try {
+          const refsKeys = Object.keys(refs || {});
+          console.log('[git-sync:test] Object keys count:', refsKeys.length);
+          branches = refsKeys.filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+        } catch (keyError) {
+          console.log('[git-sync:test] Error processing object keys:', keyError.message);
+          branches = [];
+        }
+      } else {
+        console.log('[git-sync:test] Response is neither array nor object');
+        branches = [];
       }
 
       console.log('[git-sync:test] Successfully connected (direct). Branches found:', branches.length);
     } catch (directError) {
       console.log('[git-sync:test] Direct access failed:', directError.message);
+      console.log('[git-sync:test] Error details:', directError);
 
       // Method 2: Fall back to CORS proxy
       console.log('[git-sync:test] Falling back to CORS proxy...');
@@ -78,30 +96,52 @@ export async function testConnection() {
           },
         });
 
-        console.log('[git-sync:test] CORS proxy listServerRefs succeeded');
+        console.log('[git-sync:test] CORS proxy listServerRefs returned');
+        console.log('[git-sync:test] Response type:', typeof refs);
+        console.log('[git-sync:test] Is array?', Array.isArray(refs));
 
         if (Array.isArray(refs)) {
-          branches = refs.filter(ref => ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
+          console.log('[git-sync:test] Processing proxy response as array');
+          branches = refs.filter(ref => ref && ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
         } else if (refs && typeof refs === 'object') {
-          branches = Object.keys(refs || {}).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+          console.log('[git-sync:test] Processing proxy response as object');
+          try {
+            const refsKeys = Object.keys(refs || {});
+            branches = refsKeys.filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+          } catch (keyError) {
+            console.log('[git-sync:test] Error processing proxy response:', keyError.message);
+            branches = [];
+          }
         }
 
         console.log('[git-sync:test] Successfully connected (via proxy). Branches found:', branches.length);
       } catch (proxyError) {
         console.log('[git-sync:test] CORS proxy also failed:', proxyError.message);
+        console.log('[git-sync:test] Proxy error details:', proxyError);
 
         // Method 3: Try getRemoteInfo
         try {
+          console.log('[git-sync:test] Trying getRemoteInfo fallback...');
           const info = await git.getRemoteInfo({
             http: window.GitHttp,
             url: settings.remoteUrl,
             onAuth: () => ({ username: settings.username, password: settings.token }),
           });
           console.log('[git-sync:test] getRemoteInfo succeeded');
-          branches = info.refs ? Object.keys(info.refs).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', '')) : [];
+          console.log('[git-sync:test] Info type:', typeof info);
+          console.log('[git-sync:test] Info keys:', info ? Object.keys(info).slice(0, 5) : 'null');
+
+          if (info && info.refs) {
+            console.log('[git-sync:test] Found refs in info');
+            branches = Object.keys(info.refs).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+          } else {
+            console.log('[git-sync:test] No refs found in info');
+            branches = [];
+          }
         } catch (infoError) {
           const msg = infoError.message || String(infoError);
           console.error('[git-sync:test] All methods failed');
+          console.error('[git-sync:test] Final error:', infoError);
           if (msg.includes('Unauthorized') || msg.includes('403') || msg.includes('authentication')) {
             throw new Error('Authentication failed: ' + msg);
           }

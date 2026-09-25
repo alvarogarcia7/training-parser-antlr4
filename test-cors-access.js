@@ -4,14 +4,24 @@
  * Tests authentication and branch listing via cors.isomorphic-git.org
  */
 
-const token = process.env.GITLAB_TOKEN || 'glpat-XXXXXXXXXXXXXXXXXXXX'; // Set via env var or edit here
-const user = 'alvarogarcia8110';
-const repo = 'https://gitlab.crypto.tii.ae/agb-project-incubator/training-parser-data.git';
+const token = process.env.GITLAB_TOKEN;
+const user = process.env.GITLAB_USER;
+const repo = process.env.GITLAB_REPO;
 const corsProxy = 'https://cors.isomorphic-git.org';
+
+if (!token || !user || !repo) {
+  console.error('❌ Missing required environment variables:\n');
+  console.error('  GITLAB_TOKEN - Your GitLab personal access token (glpat-...)');
+  console.error('  GITLAB_USER - Your GitLab username');
+  console.error('  GITLAB_REPO - Your GitLab repository URL (https://domain/owner/repo.git)');
+  console.error('\nUsage:');
+  console.error('  GITLAB_TOKEN=glpat-xxx GITLAB_USER=username GITLAB_REPO=https://gitlab.example.com/owner/repo.git node test-cors-access.js');
+  process.exit(1);
+}
 
 console.log('🔍 Testing GitLab Repository Access via CORS Proxy\n');
 console.log('Configuration:');
-console.log(`  Repository: ${repo}`);
+console.log(`  Repository: ${repo.replace(/https?:\/\/[^@]*@/, 'https://***@')}`);
 console.log(`  User: ${user}`);
 console.log(`  CORS Proxy: ${corsProxy}\n`);
 
@@ -133,7 +143,7 @@ async function testViaCorProxyWithEmbeddedAuth() {
     const repoWithAuth = repo.replace('https://', `https://${user}:${token}@`);
     const targetUrl = `${repoWithAuth}/info/refs?service=git-upload-pack`;
     const url = `${corsProxy}/${targetUrl}`;
-    console.log(`   Target with embedded auth: https://${user}:***@gitlab.crypto.tii.ae/...`);
+    console.log(`   Target with embedded auth: (from env var with credentials redacted)`);
 
     const resp = await fetch(url, {
       method: 'GET',
