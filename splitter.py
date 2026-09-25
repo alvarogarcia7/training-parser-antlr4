@@ -1,7 +1,7 @@
 import csv
 import sys
 
-from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
+from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession, VolumeFormatter
 
 
 class Splitter:
@@ -39,22 +39,17 @@ class Splitter:
 
             for exercise in workout['parsed']:
                 volume = exercise.total_volume()
-                # Format volume as int if it's a whole number, otherwise as float
-                volume_display = int(volume) if volume == int(volume) else volume
+                volume_display = VolumeFormatter.format_volume_thousands(volume)
                 print(f"  {exercise.__repr__()}; subtotal: {volume_display}")
                 total_volume_for_workout += volume
                 total_volume += volume
             print(f"  # Stats for this session")
 
             print(f"  Total number of exercises: {len(workout['parsed'])}")
-            # Format total volume as int if it's a whole number, otherwise as float
-            # TODO 4D8E1E66-CD44-4E35-9493-5A75B72FED09: format total_volume_display as a thousands, one or no decimal (formatted: 34.1 k kg or 34 k kg)
-            total_volume_display = int(total_volume_for_workout) if total_volume_for_workout == int(total_volume_for_workout) else total_volume_for_workout
+            total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_for_workout)
             print(f"  Total volume this workout: {total_volume_display}")
 
-        # Format total volume as int if it's a whole number, otherwise as float
-        total_volume_all = int(total_volume) if total_volume == int(total_volume) else total_volume
-        # TODO 4D8E1E66-CD44-4E35-9493-5A75B72FED09: format total_volume_all as a thousands, one or no decimal (formatted: 34.1 k kg or 34 k kg)
+        total_volume_all = VolumeFormatter.format_volume_thousands(total_volume)
         print(f"Total volume for all workouts: {total_volume_all}")
 
 

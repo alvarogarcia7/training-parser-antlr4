@@ -232,6 +232,78 @@ class TestVolumeAdditivityProperty:
             f"Combined {combined_volume} != sum of individuals {expected_total}"
 
 
+class TestVolumeAllSeriesFormats:
+    """Test volume computation across all series format variations."""
+
+    def test_whole_set_dot_notation(self) -> None:
+        """Dot notation: 10.10.10 → 10 sets × 10 reps × 10kg = 1000 kg."""
+        text = "squat: 10.10.10\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        assert exercises[0].total_volume() == 1000
+
+    def test_group_of_reps_x_notation(self) -> None:
+        """Group of reps x notation: 10x10 → 10 sets × 10 reps × 0kg = 0 kg."""
+        text = "squat: 10x10\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        assert exercises[0].total_volume() == 0
+
+    def test_single_rep_with_weight_dot_notation(self) -> None:
+        """Single rep with weight: 20.14 → 1 set × 20 reps × 14kg = 280 kg."""
+        text = "squat: 20.14\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        assert exercises[0].total_volume() == 280
+
+    def test_fixed_reps_multiple_weight_comma_v1(self) -> None:
+        """Fixed reps, multiple weights (comma v1): 10..50,60,70 → 1 set × 10 reps @ 50kg + 1 set @ 60kg + 1 set @ 70kg = 1800 kg."""
+        text = "squat: 10..50,60,70\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        total = exercises[0].total_volume()
+        assert total == 1800
+
+    def test_fixed_reps_multiple_weight_slash_v2(self) -> None:
+        """Fixed reps, multiple weights (slash v2): 10..50/60/70 → same as comma version."""
+        text = "squat: 10..50/60/70\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        total = exercises[0].total_volume()
+        assert total == 1800
+
+    def test_bare_single_rep(self) -> None:
+        """Bare single rep: 10 → 1 set × 10 reps × 0kg = 0 kg."""
+        text = "squat: 10\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        assert exercises[0].total_volume() == 0
+
+    def test_weight_only_notation(self) -> None:
+        """Weight only: 80 or 80k → creates single rep sets."""
+        text = "squat: 80\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        # Single weight creates a single-rep set
+        assert exercises[0].total_volume() == 0
+
+    def test_rir_with_whole_set(self) -> None:
+        """RIR notation: 5x5x50-3 → 5 sets × 5 reps × 50kg RIR3 = 1250 kg (RIR doesn't affect volume)."""
+        text = "squat: 5x5x50-3\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        ex = exercises[0]
+        assert all(s.rir == 3 for s in ex.sets_)
+        assert ex.total_volume() == 1250
+
+    def test_rir_with_single_rep(self) -> None:
+        """RIR with single rep: 10-2 → 1 set × 10 reps × 0kg RIR2 = 0 kg."""
+        text = "squat: 10-2\n"
+        exercises = DataParser.parse_raw_text(text)
+        assert len(exercises) == 1
+        assert exercises[0].sets_[0].rir == 2
+
+
 class TestVolumeJsonOnly:
     """Verify volume computation via JSON (Python), not JavaScript."""
 

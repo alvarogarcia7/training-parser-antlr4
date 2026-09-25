@@ -31,6 +31,20 @@ ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
     'notes': str})
 
 
+class VolumeFormatter:
+    """Formats volume values for display."""
+
+    @staticmethod
+    def format_volume_thousands(volume: float) -> str:
+        """Format volume in thousands notation (e.g., '34.1 k kg' or '34 k kg')."""
+        if volume < 1000:
+            return str(int(volume) if volume == int(volume) else volume)
+        thousands = volume / 1000
+        if thousands == int(thousands):
+            return f"{int(thousands)} k kg"
+        return f"{thousands:.1f} k kg"
+
+
 class DataReader:
     """Handles reading training log files."""
 
