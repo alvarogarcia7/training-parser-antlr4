@@ -36,54 +36,77 @@ export async function testConnection() {
     console.log('[git-sync:test] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
     console.log('[git-sync:test] Username:', settings.username);
 
-    // Method 1: Try listServerRefs (if available)
-    console.log('[git-sync:test] Attempting to list remote refs...');
     let branches = [];
+    let usedDirect = false;
+
+    // Method 1: Try direct access first (no proxy - works for private instances)
+    console.log('[git-sync:test] Attempting direct connection...');
     try {
       const refs = await git.listServerRefs({
         http: window.GitHttp,
         url: settings.remoteUrl,
-        corsProxy: 'https://cors.isomorphic-git.org',
         onAuth: () => {
-          console.log('[git-sync:test] Auth requested for user:', settings.username);
+          console.log('[git-sync:test] Auth requested (direct, no proxy) for user:', settings.username);
           return { username: settings.username, password: settings.token };
         },
       });
 
-      console.log('[git-sync:test] listServerRefs returned:', typeof refs, Array.isArray(refs) ? 'array' : 'object');
+      console.log('[git-sync:test] Direct listServerRefs succeeded');
+      usedDirect = true;
 
       // Handle both array and object returns
       if (Array.isArray(refs)) {
         branches = refs.filter(ref => ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
       } else if (refs && typeof refs === 'object') {
-        // If it's an object, try to extract refs differently
-        console.log('[git-sync:test] Refs object keys:', Object.keys(refs || {}));
         branches = Object.keys(refs || {}).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
       }
 
-      console.log('[git-sync:test] Successfully connected. Branches found:', branches.length);
-    } catch (refError) {
-      console.log('[git-sync:test] listServerRefs failed, trying alternate method:', refError.message);
+      console.log('[git-sync:test] Successfully connected (direct). Branches found:', branches.length);
+    } catch (directError) {
+      console.log('[git-sync:test] Direct access failed:', directError.message);
 
-      // Method 2: Try getRemoteInfo
+      // Method 2: Fall back to CORS proxy
+      console.log('[git-sync:test] Falling back to CORS proxy...');
       try {
-        const info = await git.getRemoteInfo({
+        const refs = await git.listServerRefs({
           http: window.GitHttp,
           url: settings.remoteUrl,
           corsProxy: 'https://cors.isomorphic-git.org',
-          onAuth: () => ({ username: settings.username, password: settings.token }),
+          onAuth: () => {
+            console.log('[git-sync:test] Auth requested (via proxy) for user:', settings.username);
+            return { username: settings.username, password: settings.token };
+          },
         });
-        console.log('[git-sync:test] getRemoteInfo succeeded:', info);
-        // If getRemoteInfo succeeds, credentials are valid
-        branches = info.refs ? Object.keys(info.refs).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', '')) : [];
-      } catch (infoError) {
-        console.log('[git-sync:test] getRemoteInfo also failed, using fallback');
-        // If both fail, check if it's an auth error
-        const msg = infoError.message || String(infoError);
-        if (msg.includes('Unauthorized') || msg.includes('403') || msg.includes('authentication')) {
-          throw new Error('Authentication failed: ' + msg);
+
+        console.log('[git-sync:test] CORS proxy listServerRefs succeeded');
+
+        if (Array.isArray(refs)) {
+          branches = refs.filter(ref => ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
+        } else if (refs && typeof refs === 'object') {
+          branches = Object.keys(refs || {}).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
         }
-        throw infoError;
+
+        console.log('[git-sync:test] Successfully connected (via proxy). Branches found:', branches.length);
+      } catch (proxyError) {
+        console.log('[git-sync:test] CORS proxy also failed:', proxyError.message);
+
+        // Method 3: Try getRemoteInfo
+        try {
+          const info = await git.getRemoteInfo({
+            http: window.GitHttp,
+            url: settings.remoteUrl,
+            onAuth: () => ({ username: settings.username, password: settings.token }),
+          });
+          console.log('[git-sync:test] getRemoteInfo succeeded');
+          branches = info.refs ? Object.keys(info.refs).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', '')) : [];
+        } catch (infoError) {
+          const msg = infoError.message || String(infoError);
+          console.error('[git-sync:test] All methods failed');
+          if (msg.includes('Unauthorized') || msg.includes('403') || msg.includes('authentication')) {
+            throw new Error('Authentication failed: ' + msg);
+          }
+          throw infoError;
+        }
       }
     }
 
@@ -91,14 +114,16 @@ export async function testConnection() {
       console.log('[git-sync:test] Connected but repository is empty (no branches yet)');
       return {
         ok: true,
-        message: '✅ Connected! Repository is empty. Add a README on GitHub to initialize it.'
+        message: usedDirect
+          ? '✅ Connected directly! Repository is empty. Add a README to initialize it.'
+          : '✅ Connected via CORS proxy! Repository is empty. Add a README to initialize it.'
       };
     }
 
     console.log('[git-sync:test] Available branches:', branches);
     return {
       ok: true,
-      message: `✅ Connected! Found ${branches.length} branch(es): ${branches.join(', ')}`
+      message: `✅ Connected! Found ${branches.length} branch(es): ${branches.join(', ')} (${usedDirect ? 'direct' : 'via proxy'})`
     };
   } catch (e) {
     const msg = e.message || String(e);
