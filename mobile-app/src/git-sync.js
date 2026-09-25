@@ -183,11 +183,11 @@ export async function testConnection() {
         message: '❌ Repository not found. Check the URL.'
       };
     }
-    if (msg.includes('CORS') || msg.includes('cors')) {
-      console.error('[git-sync:test] Diagnosis: CORS error');
+    if (msg.includes('CORS') || msg.includes('cors') || msg.includes('Access-Control-Allow-Origin')) {
+      console.error('[git-sync:test] Diagnosis: CORS error - server does not allow cross-origin requests');
       return {
         ok: false,
-        message: '❌ CORS error. Try a different network or check URL format.'
+        message: '❌ CORS blocked. Private git servers require:\n1) Deploy PWA on same domain, or\n2) Use a local CORS proxy, or\n3) Configure server CORS headers'
       };
     }
     console.error('[git-sync:test] Returning generic error:', msg);
@@ -467,11 +467,11 @@ export async function push() {
         message: 'Authentication failed. Check your token and username.'
       };
     }
-    if (msg.includes('CORS') || msg.includes('cors')) {
-      console.error('[git-sync:push] Diagnosis: CORS error');
+    if (msg.includes('CORS') || msg.includes('cors') || msg.includes('Access-Control-Allow-Origin')) {
+      console.error('[git-sync:push] Diagnosis: CORS error - server does not allow cross-origin requests');
       return {
         ok: false,
-        message: 'CORS error - try a different network or check repository URL.'
+        message: 'CORS blocked. For private git servers: deploy PWA on same domain or use local CORS proxy.'
       };
     }
     console.error('[git-sync:push] Returning generic error:', msg);
@@ -596,11 +596,11 @@ export async function pull() {
         message: 'Authentication failed. Check your token and username.'
       };
     }
-    if (msg.includes('CORS') || msg.includes('cors')) {
-      console.error('[git-sync:pull] Diagnosis: CORS error');
+    if (msg.includes('CORS') || msg.includes('cors') || msg.includes('Access-Control-Allow-Origin')) {
+      console.error('[git-sync:pull] Diagnosis: CORS error - server does not allow cross-origin requests');
       return {
         ok: false,
-        message: 'CORS error - try a different network or check repository URL.'
+        message: 'CORS blocked. For private git servers: deploy PWA on same domain or use local CORS proxy.'
       };
     }
     console.error('[git-sync:pull] Returning generic error:', msg);
