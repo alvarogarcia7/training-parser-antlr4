@@ -172,10 +172,14 @@ Annual backup = Click [⬇ Download JSON] for each
 | Problem | Solution |
 |---------|----------|
 | Buttons not showing | Click ⚙️ to configure remote URL, username, token |
-| Push fails | Check internet, verify GitHub token is valid |
+| "Could not find main" | **Initialize your repository:** On GitHub, add a README and commit it. Or run: `git init && git add README.md && git commit -m "init" && git push -u origin main` |
+| Push fails - "Branch not found" | Go to GitHub, create repository, add README.md, commit and push. This creates the `main` branch. |
+| "Nothing to pull" / Pull fails | Push from this device first (needs initial commit), OR pull from device that has already pushed workouts |
+| Check internet, verify GitHub token is valid | Check token hasn't expired, has `repo` scope, and password/token is correct |
 | Can't find workout | Click ↓ Pull first to sync from remote |
 | Local storage full | Download JSON backups and clear history |
 | Lost data | Stored on GitHub! Click ↓ Pull to recover |
+| Pull says "Nothing to pull" on new device | Push workouts from first device using ↑ Push button first |
 
 ## Next Steps
 

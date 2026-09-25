@@ -91,18 +91,45 @@ export async function push() {
 
   try {
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+
+    // Try to determine the correct branch (main or master)
+    let branch = 'main';
+    try {
+      // Try to list refs to see what branches exist on remote
+      const refs = await git.listRemotes({ fs, dir: GIT_DIR, remote: 'origin' });
+      const hasMain = refs.some(ref => ref === 'main' || ref === 'refs/heads/main');
+      const hasMaster = refs.some(ref => ref === 'master' || ref === 'refs/heads/master');
+
+      if (hasMaster && !hasMain) {
+        branch = 'master';
+      }
+    } catch (e) {
+      // If listRemotes fails, try to check current branch or use main
+      try {
+        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR });
+        if (currentBranch) branch = currentBranch;
+      } catch {}
+    }
+
     await git.push({
       fs,
       http: window.GitHttp,
       dir: GIT_DIR,
       remote: 'origin',
-      ref: 'main',
+      ref: branch,
       corsProxy: 'https://cors.isomorphic-git.org',
       onAuth: () => ({ username: settings.username, password: settings.token }),
     });
     return { ok: true };
   } catch (e) {
-    return { ok: false, message: e.message };
+    const msg = e.message || String(e);
+    if (msg.includes('Could not find') || msg.includes('not found')) {
+      return {
+        ok: false,
+        message: 'Branch not found on remote. Create the repository with a README on GitHub first.'
+      };
+    }
+    return { ok: false, message: msg };
   }
 }
 
@@ -113,12 +140,32 @@ export async function pull() {
 
   try {
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+
+    // Try to determine the correct branch (main or master)
+    let branch = 'main';
+    try {
+      // Try to list refs to see what branches exist on remote
+      const refs = await git.listRemotes({ fs, dir: GIT_DIR, remote: 'origin' });
+      const hasMain = refs.some(ref => ref === 'main' || ref === 'refs/heads/main');
+      const hasMaster = refs.some(ref => ref === 'master' || ref === 'refs/heads/master');
+
+      if (hasMaster && !hasMain) {
+        branch = 'master';
+      }
+    } catch (e) {
+      // If listRemotes fails, try to check current branch or use main
+      try {
+        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR });
+        if (currentBranch) branch = currentBranch;
+      } catch {}
+    }
+
     await git.pull({
       fs,
       http: window.GitHttp,
       dir: GIT_DIR,
       remote: 'origin',
-      ref: 'main',
+      ref: branch,
       corsProxy: 'https://cors.isomorphic-git.org',
       onAuth: () => ({ username: settings.username, password: settings.token }),
       author: {
@@ -128,6 +175,13 @@ export async function pull() {
     });
     return { ok: true };
   } catch (e) {
-    return { ok: false, message: e.message };
+    const msg = e.message || String(e);
+    if (msg.includes('Could not find') || msg.includes('not found')) {
+      return {
+        ok: false,
+        message: 'Nothing to pull. Push your workouts first, or create a README on remote.'
+      };
+    }
+    return { ok: false, message: msg };
   }
 }

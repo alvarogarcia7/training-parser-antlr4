@@ -138,15 +138,29 @@ If configured for remote sync:
 ### GitHub Example
 
 1. Create a repository: `training-workouts`
-2. Initialize with empty README
-3. Get HTTPS URL: `https://github.com/username/training-workouts.git`
-4. Create personal access token:
+   - **IMPORTANT**: Initialize with **README.md** (creates main branch)
+   - ✅ Do this: Click "Initialize this repository with a README"
+   - ❌ Don't do this: Leave empty
+2. Get HTTPS URL: `https://github.com/username/training-workouts.git`
+3. Create personal access token:
    - Settings → Developer Settings → Personal Access Tokens
    - Scope: `repo` (full control of private repositories)
-5. Use in PWA settings:
+   - Copy the token immediately (can't see it again)
+4. Use in PWA settings:
    - **Remote URL**: `https://github.com/username/training-workouts.git`
    - **Username**: `username`
    - **Token**: `ghp_xxxxxxxxxxxxx`
+
+**If you created an empty repo:**
+```bash
+# On your computer, initialize the main branch:
+git init
+git add README.md
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+This creates the `main` branch that the PWA expects.
 
 ### Self-Hosted Git
 

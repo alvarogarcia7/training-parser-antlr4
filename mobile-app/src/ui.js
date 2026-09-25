@@ -434,7 +434,12 @@ async function syncNow() {
     setStatus('✓ Pushed to remote', 'ready');
     refreshHistory();
   } else {
-    setStatus('Push failed: ' + result.message, 'error');
+    let errorMsg = result.message;
+    if (result.message.includes('Branch not found')) {
+      errorMsg = result.message + ' Initialize repo: git init && git add README.md && git commit -m "init" && git push -u origin main';
+    }
+    setStatus('Push failed: ' + errorMsg, 'error');
+    console.error('[sync] Push error:', result.message);
   }
 }
 
@@ -452,7 +457,12 @@ async function pullFromRemote() {
       setStatus('✓ Pulled from remote', 'ready');
       refreshHistory();
     } else {
-      setStatus('Pull failed: ' + result.message, 'error');
+      let errorMsg = result.message;
+      if (result.message.includes('Nothing to pull')) {
+        errorMsg = result.message + ' Or: Push workouts from another device first.';
+      }
+      setStatus('Pull failed: ' + errorMsg, 'error');
+      console.error('[sync] Pull error:', result.message);
     }
   } catch (e) {
     setStatus('Pull error: ' + e.message, 'error');
