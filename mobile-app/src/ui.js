@@ -637,6 +637,23 @@ export async function init() {
     console.log('[event] Save button clicked');
     saveSettingsFromForm();
   });
+  document.getElementById('settings-test-btn').addEventListener('click', async () => {
+    console.log('[event] Test button clicked');
+    setStatus('Testing connection...', 'loading');
+
+    // Temporarily apply form values for testing
+    const testSettings = {
+      remoteUrl: document.getElementById('settings-remote').value.trim(),
+      username: document.getElementById('settings-username').value.trim(),
+      token: document.getElementById('settings-token').value.trim(),
+      author: document.getElementById('settings-author').value.trim() || 'Training Parser',
+    };
+    gitSync.saveSettings(testSettings);
+
+    const result = await gitSync.testConnection();
+    setStatus(result.message, result.ok ? 'ready' : 'error');
+    console.log('[ui:testConnection] Test result:', result);
+  });
   document.getElementById('settings-cancel-btn').addEventListener('click', () => {
     console.log('[event] Cancel button clicked');
     closeModal();

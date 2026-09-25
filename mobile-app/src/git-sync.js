@@ -18,6 +18,85 @@ export function saveSettings(settings) {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }
 
+export async function testConnection() {
+  console.log('[git-sync:test] Testing connection to remote repository');
+  const settings = loadSettings();
+
+  if (!settings.remoteUrl) {
+    console.warn('[git-sync:test] No remote URL configured');
+    return { ok: false, message: 'Remote URL not configured' };
+  }
+
+  if (!settings.username || !settings.token) {
+    console.warn('[git-sync:test] Credentials not configured');
+    return { ok: false, message: 'Username or token not configured' };
+  }
+
+  try {
+    console.log('[git-sync:test] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
+    console.log('[git-sync:test] Username:', settings.username);
+
+    console.log('[git-sync:test] Listing remote refs...');
+    const refs = await git.listServerRefs({
+      http: window.GitHttp,
+      url: settings.remoteUrl,
+      corsProxy: 'https://cors.isomorphic-git.org',
+      onAuth: () => {
+        console.log('[git-sync:test] Auth requested for user:', settings.username);
+        return { username: settings.username, password: settings.token };
+      },
+    });
+
+    console.log('[git-sync:test] Successfully connected. Remote refs:', refs.length);
+
+    if (refs.length === 0) {
+      console.log('[git-sync:test] Connected but repository is empty (no branches yet)');
+      return {
+        ok: true,
+        message: '✅ Connected! Repository is empty. Add a README on GitHub to initialize it.'
+      };
+    }
+
+    // List available branches
+    const branches = refs
+      .filter(ref => ref.ref.startsWith('refs/heads/'))
+      .map(ref => ref.ref.replace('refs/heads/', ''));
+
+    console.log('[git-sync:test] Available branches:', branches);
+    return {
+      ok: true,
+      message: `✅ Connected! Found ${branches.length} branch(es): ${branches.join(', ')}`
+    };
+  } catch (e) {
+    const msg = e.message || String(e);
+    console.error('[git-sync:test] Connection failed:', msg);
+
+    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+      console.error('[git-sync:test] Diagnosis: Authentication error');
+      return {
+        ok: false,
+        message: '❌ Authentication failed. Check username and token.'
+      };
+    }
+    if (msg.includes('not found') || msg.includes('404')) {
+      console.error('[git-sync:test] Diagnosis: Repository not found');
+      return {
+        ok: false,
+        message: '❌ Repository not found. Check the URL.'
+      };
+    }
+    if (msg.includes('CORS') || msg.includes('cors')) {
+      console.error('[git-sync:test] Diagnosis: CORS error');
+      return {
+        ok: false,
+        message: '❌ CORS error. Try a different network or check URL format.'
+      };
+    }
+    console.error('[git-sync:test] Returning generic error:', msg);
+    return { ok: false, message: '❌ Connection failed: ' + msg };
+  }
+}
+
 async function detectRemoteDefaultBranch() {
   try {
     console.log('[git-sync:detect] Querying remote refs...');
