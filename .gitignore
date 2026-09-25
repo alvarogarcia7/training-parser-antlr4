@@ -89,6 +89,7 @@ data.txt
 output.csv
 output.json
 /data/workdir/
+/data/parsed/
 
 # VSCode extension build artifacts
 lsp/vscode-extension/node_modules/
@@ -98,3 +99,7 @@ trainingLexer.interp
 
 # StrictDoc
 /output/
+
+
+/certs/
+

@@ -11,41 +11,51 @@ from weight_parser.program import SingleMeasurementWeightParser, WeightParser
 class Driver(unittest.TestCase):
 
     def test_from_file_2022(self) -> None:
-        file_contents = DataReader.read_lines("../../data/weight_2022.txt")
+        file_contents = DataReader.read_lines("data/workdir/weight_2022.txt")
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2022")).parse(file_contents)
 
         self.assertEqual(13, len(parsed))
 
-        self.print_as_csv("../../data/parsed_2022.csv", parsed)
+        self.print_as_csv("data/workdir/parsed_2022.csv", parsed)
 
     def test_from_file_2023(self) -> None:
-        file_contents = DataReader.read_lines("../../data/weight_2023.txt")
+        file_contents = DataReader.read_lines("data/workdir/weight_2023.txt")
 
         parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2023")).parse(file_contents)
 
         self.assertEqual(7, len(parsed))
 
-        self.print_as_csv("../../data/parsed_2023.csv", parsed)
+        self.print_as_csv("data/workdir/parsed_2023.csv", parsed)
+
+
+    def test_from_file_2026(self) -> None:
+        file_contents = DataReader.read_lines("data/workdir/weight_2026.txt")
+
+        parsed = WeightParser("Mi Fit", SingleMeasurementWeightParser("2026")).parse(file_contents)
+
+        self.assertEqual(25, len(parsed))
+
+        self.print_as_csv("data/workdir/parsed_2026.csv", parsed)
 
     def print_as_csv(self, file_path_: str, parsed: list[Any]) -> None:
         with open(file_path_, mode='w+', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=';', quotechar='"')
             for row in parsed:
                 row_as_columns = [row['date'],
-                                  '',
                                   row['body score'],
                                   row['weight'],
                                   row['bmi'],
                                   row['body fat'],
-                                  '',
+                                  '', # body water
                                   row['basal metabolism'],
                                   row['visceral fat'],
-                                  '',
+                                  '', # skeletal muscle - empty column
                                   row['muscle'],
                                   row['protein'],
                                   row['bone mass'],
-                                  '',
+                                  '', # metabolic age is not properly parsed
+                                  '', # desired weight - computed by a formula, here keep empty
                                   row['body type'],
                                   ]
                 csv_writer.writerow(row_as_columns)

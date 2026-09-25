@@ -23,6 +23,7 @@ dependencies = [
     "click-default-group>=1.2.4",
     "jsonschema>=4.23.0",
     "logzero>=1.7.0",
+    "nats-py>=2.6.0",
     "pygls>=1.3.0",
     "python-dateutil>=2.9.0",
     "pyyaml>=6.0.1",
@@ -39,6 +40,7 @@ dev = [
     "pytest-asyncio>=0.23.0",
     "types-PyYAML>=6.0.12",
     "strictdoc>=0.19.0",
+    "playwright>=1.40.0",
 ]
 
 [project.scripts]
@@ -111,6 +113,7 @@ implicit_reexport = true
 exclude = [
     "^antlr4_Python3_examples-master",
     "^dist",
+    "^mobile-app/",
     "^venv",
     "^\\.venv",
 ]
@@ -118,6 +121,11 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "antlr4.*"
 ignore_missing_imports = true
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "mobile_app.*"
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = "parser.*"
@@ -140,7 +148,7 @@ module = "pytest"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["parser", "lsp", "tests"]
+testpaths = ["parser", "lsp", "tests", "mobile-app/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

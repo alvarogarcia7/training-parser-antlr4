@@ -524,3 +524,53 @@ class TestParser(unittest.TestCase):
 
     def serie(self, repetition: int, weight: float, rir: int | None = None) -> Set_:
         return Set_(repetitions=repetition, weight=Weight(amount=weight, unit=Units.KILOGRAM), rir=rir)
+
+
+class TestWeightReDeclarationMidSet(unittest.TestCase):
+    """Regression tests for the cross-product bug where re-declaring a weight
+    mid-set (e.g. `50: 1, 2, 60: 3, 4`) previously fanned every rep out over
+    all pending weights, producing 6 sets instead of 4.
+
+    Each of the three surface syntaxes must yield the same 4 series:
+        (1, 50kg), (2, 50kg), (3, 60kg), (4, 60kg)
+    Per-line volume: 50*(1+2) + 60*(3+4) = 570 kg.
+    All three lines together: 1710 kg.
+    """
+
+    LINES = [
+        'Squat: 50k: 1, 2, 60k: 3, 4\n',
+        'Squat: 50 : 1, 2, 60k: 3, 4\n',
+        'Squat: 50 : 1, 2, 60 : 3, 4\n',
+    ]
+
+    def _expected(self) -> Exercise:
+        def s(rep: int, w: float) -> Set_:
+            return Set_(repetitions=rep, weight=Weight(amount=w, unit=Units.KILOGRAM), rir=None)
+        return Exercise('Squat', [s(1, 50), s(2, 50), s(3, 60), s(4, 60)])
+
+    def test_kg_kg(self) -> None:
+        result = Parser.from_string(self.LINES[0]).parse_sessions()
+        self.assertListEqual(result, [self._expected()])
+        self.assertEqual(len(result[0].sets_), 4)
+        self.assertEqual(result[0].total_volume(), 570)
+
+    def test_bare_kg(self) -> None:
+        result = Parser.from_string(self.LINES[1]).parse_sessions()
+        self.assertListEqual(result, [self._expected()])
+        self.assertEqual(len(result[0].sets_), 4)
+        self.assertEqual(result[0].total_volume(), 570)
+
+    def test_bare_bare(self) -> None:
+        result = Parser.from_string(self.LINES[2]).parse_sessions()
+        self.assertListEqual(result, [self._expected()])
+        self.assertEqual(len(result[0].sets_), 4)
+        self.assertEqual(result[0].total_volume(), 570)
+
+    def test_all_three_lines_total_1710_kg(self) -> None:
+        text = ''.join(self.LINES)
+        result = Parser.from_string(text).parse_sessions()
+        self.assertEqual(len(result), 3)
+        for ex in result:
+            self.assertEqual(len(ex.sets_), 4)
+            self.assertEqual(ex.total_volume(), 570)
+        self.assertEqual(sum(ex.total_volume() for ex in result), 1710)
