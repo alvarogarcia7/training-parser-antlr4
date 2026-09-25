@@ -103,3 +103,7 @@ trainingLexer.interp
 
 /certs/
 
+# Credentials and secrets
+creds.txt
+.env
+.env.local

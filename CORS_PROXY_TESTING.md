@@ -18,7 +18,7 @@
 ## Diagnosis
 
 **The Issue:**
-- Your GitLab instance at `gitlab.crypto.tii.ae` requires authentication
+- Your private GitLab instance requires authentication
 - The public CORS proxy (`cors.isomorphic-git.org`) cannot:
   - Forward Authorization headers properly
   - Access private GitLab instances
@@ -49,7 +49,7 @@ The PWA now uses a **multi-strategy approach**:
 When you test the connection in PWA Settings:
 
 1. **Direct Access Test:**
-   - Connects directly to `gitlab.crypto.tii.ae`
+   - Connects directly to your private GitLab instance
    - Uses your credentials
    - Returns: `✅ Connected directly! Found X branch(es)`
 
@@ -67,8 +67,8 @@ When you test the connection in PWA Settings:
 
 **Setup:**
 ```
-Repository: https://gitlab.crypto.tii.ae/agb-project-incubator/training-parser-data.git
-Username: alvarogarcia8110
+Repository: https://{your-gitlab-domain}/path/to/repo.git
+Username: {your-username}
 Token: glpat-XXXXXXXXXXXXXXXXXXXX (GitLab Personal Access Token - see creds.txt)
 ```
 
@@ -81,8 +81,8 @@ Token: glpat-XXXXXXXXXXXXXXXXXXXX (GitLab Personal Access Token - see creds.txt)
 ## Usage
 
 1. **In PWA Settings:**
-   - Enter remote URL: `https://gitlab.crypto.tii.ae/agb-project-incubator/training-parser-data.git`
-   - Username: `alvarogarcia8110`
+   - Enter remote URL: `https://{your-gitlab-domain}/path/to/repo.git`
+   - Username: `{your-username}`
    - Token: (see creds.txt)
 
 2. **Test Connection:**
@@ -119,10 +119,10 @@ If direct fails but proxy works:
 1. **Check Username & Token:**
    ```bash
    # Test manually in terminal
-   curl -u alvarogarcia8110:glpat-XXXXXXXXXXXXXXXXXXXX \
-     https://gitlab.crypto.tii.ae/agb-project-incubator/training-parser-data.git/info/refs?service=git-upload-pack
+   curl -u {your-username}:glpat-XXXXXXXXXXXXXXXXXXXX \
+     https://{your-gitlab-domain}/path/to/repo.git/info/refs?service=git-upload-pack
    # Should return 200 OK
-   # Use actual token from creds.txt
+   # Use actual credentials from creds.txt
    ```
 
 2. **Check Token Permissions:**
