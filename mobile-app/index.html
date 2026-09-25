@@ -362,14 +362,38 @@
   window.git = git;
   window.GitHttp = {
     async request({ url, method, headers, body }) {
-      const resp = await fetch(url, { method, headers: Object.fromEntries(headers), body: body ? (await collect(body)) : undefined });
+      // Convert headers iterable to object
+      let headersObj = {};
+      if (headers && typeof headers[Symbol.iterator] === 'function') {
+        for (const [key, value] of headers) {
+          headersObj[key] = value;
+        }
+      } else if (headers) {
+        headersObj = headers;
+      }
+
+      const resp = await fetch(url, { method, headers: headersObj, body: body ? (await collect(body)) : undefined });
+
+      // Convert Response headers to object
+      const respHeaders = {};
+      if (resp.headers && typeof resp.headers.entries === 'function') {
+        for (const [key, value] of resp.headers.entries()) {
+          respHeaders[key] = value;
+        }
+      } else if (resp.headers) {
+        // Fallback for older environments
+        resp.headers.forEach((value, key) => {
+          respHeaders[key] = value;
+        });
+      }
+
       return {
         url: resp.url,
         method,
         statusCode: resp.status,
         statusMessage: resp.statusText,
         body: [new Uint8Array(await resp.arrayBuffer())],
-        headers: Object.fromEntries(resp.headers),
+        headers: respHeaders,
       };
     }
   };
