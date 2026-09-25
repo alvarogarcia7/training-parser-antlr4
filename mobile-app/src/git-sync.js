@@ -36,31 +36,64 @@ export async function testConnection() {
     console.log('[git-sync:test] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
     console.log('[git-sync:test] Username:', settings.username);
 
-    console.log('[git-sync:test] Listing remote refs...');
-    const refs = await git.listServerRefs({
-      http: window.GitHttp,
-      url: settings.remoteUrl,
-      corsProxy: 'https://cors.isomorphic-git.org',
-      onAuth: () => {
-        console.log('[git-sync:test] Auth requested for user:', settings.username);
-        return { username: settings.username, password: settings.token };
-      },
-    });
+    // Method 1: Try listServerRefs (if available)
+    console.log('[git-sync:test] Attempting to list remote refs...');
+    let branches = [];
+    try {
+      const refs = await git.listServerRefs({
+        http: window.GitHttp,
+        url: settings.remoteUrl,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        onAuth: () => {
+          console.log('[git-sync:test] Auth requested for user:', settings.username);
+          return { username: settings.username, password: settings.token };
+        },
+      });
 
-    console.log('[git-sync:test] Successfully connected. Remote refs:', refs.length);
+      console.log('[git-sync:test] listServerRefs returned:', typeof refs, Array.isArray(refs) ? 'array' : 'object');
 
-    if (refs.length === 0) {
+      // Handle both array and object returns
+      if (Array.isArray(refs)) {
+        branches = refs.filter(ref => ref.ref && ref.ref.startsWith('refs/heads/')).map(ref => ref.ref.replace('refs/heads/', ''));
+      } else if (refs && typeof refs === 'object') {
+        // If it's an object, try to extract refs differently
+        console.log('[git-sync:test] Refs object keys:', Object.keys(refs || {}));
+        branches = Object.keys(refs || {}).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', ''));
+      }
+
+      console.log('[git-sync:test] Successfully connected. Branches found:', branches.length);
+    } catch (refError) {
+      console.log('[git-sync:test] listServerRefs failed, trying alternate method:', refError.message);
+
+      // Method 2: Try getRemoteInfo
+      try {
+        const info = await git.getRemoteInfo({
+          http: window.GitHttp,
+          url: settings.remoteUrl,
+          corsProxy: 'https://cors.isomorphic-git.org',
+          onAuth: () => ({ username: settings.username, password: settings.token }),
+        });
+        console.log('[git-sync:test] getRemoteInfo succeeded:', info);
+        // If getRemoteInfo succeeds, credentials are valid
+        branches = info.refs ? Object.keys(info.refs).filter(ref => ref.startsWith('refs/heads/')).map(ref => ref.replace('refs/heads/', '')) : [];
+      } catch (infoError) {
+        console.log('[git-sync:test] getRemoteInfo also failed, using fallback');
+        // If both fail, check if it's an auth error
+        const msg = infoError.message || String(infoError);
+        if (msg.includes('Unauthorized') || msg.includes('403') || msg.includes('authentication')) {
+          throw new Error('Authentication failed: ' + msg);
+        }
+        throw infoError;
+      }
+    }
+
+    if (branches.length === 0) {
       console.log('[git-sync:test] Connected but repository is empty (no branches yet)');
       return {
         ok: true,
         message: '✅ Connected! Repository is empty. Add a README on GitHub to initialize it.'
       };
     }
-
-    // List available branches
-    const branches = refs
-      .filter(ref => ref.ref.startsWith('refs/heads/'))
-      .map(ref => ref.ref.replace('refs/heads/', ''));
 
     console.log('[git-sync:test] Available branches:', branches);
     return {
@@ -71,14 +104,14 @@ export async function testConnection() {
     const msg = e.message || String(e);
     console.error('[git-sync:test] Connection failed:', msg);
 
-    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403') || msg.includes('Authentication failed')) {
       console.error('[git-sync:test] Diagnosis: Authentication error');
       return {
         ok: false,
         message: '❌ Authentication failed. Check username and token.'
       };
     }
-    if (msg.includes('not found') || msg.includes('404')) {
+    if (msg.includes('not found') || msg.includes('404') || msg.includes('no such file')) {
       console.error('[git-sync:test] Diagnosis: Repository not found');
       return {
         ok: false,
