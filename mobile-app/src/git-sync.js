@@ -19,51 +19,84 @@ export function saveSettings(settings) {
 }
 
 export async function initGit() {
-  if (gitReady) return;
-
-  fs = new LightningFS('workout-git');
-  const pfs = fs.promises;
-
-  try {
-    await pfs.mkdir(GIT_DIR);
-  } catch {}
-
-  const isRepo = await git.resolveRef({ fs, dir: GIT_DIR, ref: 'HEAD' }).catch(() => null);
-
-  if (!isRepo) {
-    await git.init({ fs, dir: GIT_DIR });
+  console.log('[git-sync:init] Initializing git');
+  if (gitReady) {
+    console.log('[git-sync:init] Git already ready, skipping');
+    return;
   }
 
-  gitReady = true;
+  try {
+    console.log('[git-sync:init] Creating LightningFS instance');
+    fs = new LightningFS('workout-git');
+    const pfs = fs.promises;
+
+    console.log('[git-sync:init] Creating directory:', GIT_DIR);
+    try {
+      await pfs.mkdir(GIT_DIR);
+      console.log('[git-sync:init] Directory created');
+    } catch (e) {
+      console.log('[git-sync:init] Directory already exists');
+    }
+
+    console.log('[git-sync:init] Checking if repository exists');
+    const isRepo = await git.resolveRef({ fs, dir: GIT_DIR, ref: 'HEAD' }).catch(() => null);
+
+    if (!isRepo) {
+      console.log('[git-sync:init] No repository found, initializing');
+      await git.init({ fs, dir: GIT_DIR });
+      console.log('[git-sync:init] Repository initialized');
+    } else {
+      console.log('[git-sync:init] Repository already exists');
+    }
+
+    gitReady = true;
+    console.log('[git-sync:init] Git initialization complete');
+  } catch (e) {
+    console.error('[git-sync:init] Initialization failed:', e);
+    throw e;
+  }
 }
 
 export async function saveWorkout(dateStr, setcentricJson) {
+  console.log('[git-sync] saveWorkout starting:', { dateStr });
   if (!gitReady) await initGit();
   const pfs = fs.promises;
   const filename = `${dateStr}.json`;
   const filepath = `${GIT_DIR}/${filename}`;
 
-  await pfs.writeFile(filepath, JSON.stringify(setcentricJson, null, 2), 'utf8');
+  try {
+    console.log('[git-sync] Writing file:', filepath);
+    await pfs.writeFile(filepath, JSON.stringify(setcentricJson, null, 2), 'utf8');
+    console.log('[git-sync] File written successfully');
 
-  const settings = loadSettings();
-  await git.add({ fs, dir: GIT_DIR, filepath: filename });
-  await git.commit({
-    fs,
-    dir: GIT_DIR,
-    message: `Add workout ${dateStr}`,
-    author: {
-      name: settings.author || 'Training Parser',
-      email: 'training@local',
-    },
-  });
+    const settings = loadSettings();
+    console.log('[git-sync] Adding to git:', filename);
+    await git.add({ fs, dir: GIT_DIR, filepath: filename });
+    console.log('[git-sync] Committing...');
+    await git.commit({
+      fs,
+      dir: GIT_DIR,
+      message: `Add workout ${dateStr}`,
+      author: {
+        name: settings.author || 'Training Parser',
+        email: 'training@local',
+      },
+    });
+    console.log('[git-sync] Commit successful');
 
-  // Queue a background sync if supported
-  if ('serviceWorker' in navigator && 'SyncManager' in window) {
-    const reg = await navigator.serviceWorker.ready;
-    await reg.sync.register('git-push').catch(() => {});
+    // Queue a background sync if supported
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      const reg = await navigator.serviceWorker.ready;
+      await reg.sync.register('git-push').catch((e) => {
+        console.log('[git-sync] Background sync registration skipped:', e.message);
+      });
+    }
+
+    return filename;
+  } catch (e) {
+    console.error('[git-sync] saveWorkout failed:', e);
+    throw e;
   }
-
-  return filename;
 }
 
 export async function listWorkouts() {
@@ -85,23 +118,44 @@ export async function loadWorkout(filename) {
 }
 
 export async function push() {
-  if (!gitReady) return { ok: false, message: 'Git not ready' };
+  console.log('[git-sync:push] Starting push operation');
+  if (!gitReady) {
+    console.warn('[git-sync:push] Git not ready');
+    return { ok: false, message: 'Git not ready' };
+  }
+
   const settings = loadSettings();
-  if (!settings.remoteUrl) return { ok: false, message: 'No remote URL configured' };
+  if (!settings.remoteUrl) {
+    console.warn('[git-sync:push] No remote URL configured');
+    return { ok: false, message: 'No remote URL configured' };
+  }
+
+  console.log('[git-sync:push] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
+  console.log('[git-sync:push] Username:', settings.username);
 
   try {
+    console.log('[git-sync:push] Adding remote origin');
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+    console.log('[git-sync:push] Remote added successfully');
 
     // Determine current/target branch
     let branch = 'main';
     try {
       const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
-      if (currentBranch) branch = currentBranch;
-    } catch {}
+      if (currentBranch) {
+        branch = currentBranch;
+        console.log('[git-sync:push] Current branch detected:', branch);
+      } else {
+        console.log('[git-sync:push] No current branch, using default: main');
+      }
+    } catch (e) {
+      console.log('[git-sync:push] Could not detect branch, using default: main', e.message);
+    }
 
     // Try pushing to the current branch
-    // First attempt: push as-is (branch might exist on remote)
+    console.log('[git-sync:push] Attempting push to branch:', branch);
     try {
+      console.log('[git-sync:push] First attempt: push as-is');
       await git.push({
         fs,
         http: window.GitHttp,
@@ -109,15 +163,20 @@ export async function push() {
         remote: 'origin',
         ref: branch,
         corsProxy: 'https://cors.isomorphic-git.org',
-        onAuth: () => ({ username: settings.username, password: settings.token }),
+        onAuth: () => {
+          console.log('[git-sync:push] Auth requested for user:', settings.username);
+          return { username: settings.username, password: settings.token };
+        },
       });
+      console.log('[git-sync:push] Push successful on first attempt');
       return { ok: true };
     } catch (pushError) {
-      // If push failed, try with force create for new repositories
       const pushMsg = pushError.message || String(pushError);
+      console.warn('[git-sync:push] First push attempt failed:', pushMsg);
 
-      // Try with force create (creates branch if it doesn't exist)
+      // If push failed, try with force create for new repositories
       if (pushMsg.includes('Could not find') || pushMsg.includes('not found') || pushMsg.includes('no matching')) {
+        console.log('[git-sync:push] Branch not found, attempting with force: true');
         try {
           await git.push({
             fs,
@@ -129,10 +188,15 @@ export async function push() {
             corsProxy: 'https://cors.isomorphic-git.org',
             onAuth: () => ({ username: settings.username, password: settings.token }),
           });
+          console.log('[git-sync:push] Push successful with force flag');
           return { ok: true };
         } catch (forceError) {
+          const forceMsg = forceError.message || String(forceError);
+          console.warn('[git-sync:push] Force push failed:', forceMsg);
+
           // Last resort: try pushing to master if main failed
           if (branch === 'main') {
+            console.log('[git-sync:push] Attempting fallback to master branch');
             try {
               await git.push({
                 fs,
@@ -144,9 +208,11 @@ export async function push() {
                 corsProxy: 'https://cors.isomorphic-git.org',
                 onAuth: () => ({ username: settings.username, password: settings.token }),
               });
+              console.log('[git-sync:push] Push successful to master branch');
               return { ok: true };
             } catch (masterError) {
-              // All attempts failed
+              const masterMsg = masterError.message || String(masterError);
+              console.error('[git-sync:push] All push attempts failed. Master error:', masterMsg);
               throw forceError;
             }
           } else {
@@ -159,39 +225,73 @@ export async function push() {
     }
   } catch (e) {
     const msg = e.message || String(e);
+    console.error('[git-sync:push] Push operation failed:', msg);
+
     if (msg.includes('Could not find') || msg.includes('not found') || msg.includes('no matching')) {
+      console.error('[git-sync:push] Diagnosis: Repository not initialized or empty');
       return {
         ok: false,
         message: 'Repository not initialized. Create it on GitHub with a README, then try again.'
       };
     }
     if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+      console.error('[git-sync:push] Diagnosis: Authentication error');
       return {
         ok: false,
         message: 'Authentication failed. Check your token and username.'
       };
     }
+    if (msg.includes('CORS') || msg.includes('cors')) {
+      console.error('[git-sync:push] Diagnosis: CORS error');
+      return {
+        ok: false,
+        message: 'CORS error - try a different network or check repository URL.'
+      };
+    }
+    console.error('[git-sync:push] Returning generic error:', msg);
     return { ok: false, message: msg };
   }
 }
 
 export async function pull() {
-  if (!gitReady) return { ok: false, message: 'Git not ready' };
+  console.log('[git-sync:pull] Starting pull operation');
+  if (!gitReady) {
+    console.warn('[git-sync:pull] Git not ready');
+    return { ok: false, message: 'Git not ready' };
+  }
+
   const settings = loadSettings();
-  if (!settings.remoteUrl) return { ok: false, message: 'No remote URL configured' };
+  if (!settings.remoteUrl) {
+    console.warn('[git-sync:pull] No remote URL configured');
+    return { ok: false, message: 'No remote URL configured' };
+  }
+
+  console.log('[git-sync:pull] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
+  console.log('[git-sync:pull] Username:', settings.username);
 
   try {
+    console.log('[git-sync:pull] Adding remote origin');
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+    console.log('[git-sync:pull] Remote added successfully');
 
     // Determine current/target branch
     let branch = 'main';
     try {
       const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
-      if (currentBranch) branch = currentBranch;
-    } catch {}
+      if (currentBranch) {
+        branch = currentBranch;
+        console.log('[git-sync:pull] Current branch detected:', branch);
+      } else {
+        console.log('[git-sync:pull] No current branch, using default: main');
+      }
+    } catch (e) {
+      console.log('[git-sync:pull] Could not detect branch, using default: main', e.message);
+    }
 
     // Try pulling from the current branch
+    console.log('[git-sync:pull] Attempting pull from branch:', branch);
     try {
+      console.log('[git-sync:pull] First attempt: pull as-is');
       await git.pull({
         fs,
         http: window.GitHttp,
@@ -199,18 +299,24 @@ export async function pull() {
         remote: 'origin',
         ref: branch,
         corsProxy: 'https://cors.isomorphic-git.org',
-        onAuth: () => ({ username: settings.username, password: settings.token }),
+        onAuth: () => {
+          console.log('[git-sync:pull] Auth requested for user:', settings.username);
+          return { username: settings.username, password: settings.token };
+        },
         author: {
           name: settings.author || 'Training Parser',
           email: 'training@local',
         },
       });
+      console.log('[git-sync:pull] Pull successful on first attempt');
       return { ok: true };
     } catch (pullError) {
-      // If pulling from main failed, try master
       const pullMsg = pullError.message || String(pullError);
+      console.warn('[git-sync:pull] First pull attempt failed:', pullMsg);
 
+      // If pulling from main failed, try master
       if ((pullMsg.includes('Could not find') || pullMsg.includes('not found') || pullMsg.includes('no matching')) && branch === 'main') {
+        console.log('[git-sync:pull] Main branch not found, attempting fallback to master');
         try {
           await git.pull({
             fs,
@@ -225,8 +331,11 @@ export async function pull() {
               email: 'training@local',
             },
           });
+          console.log('[git-sync:pull] Pull successful from master branch');
           return { ok: true };
         } catch (masterError) {
+          const masterMsg = masterError.message || String(masterError);
+          console.error('[git-sync:pull] Master pull also failed:', masterMsg);
           throw pullError;  // Return original error
         }
       } else {
@@ -235,18 +344,30 @@ export async function pull() {
     }
   } catch (e) {
     const msg = e.message || String(e);
+    console.error('[git-sync:pull] Pull operation failed:', msg);
+
     if (msg.includes('Could not find') || msg.includes('not found') || msg.includes('no matching')) {
+      console.error('[git-sync:pull] Diagnosis: Repository empty or not initialized');
       return {
         ok: false,
         message: 'Nothing to pull. Repository is empty. Push workouts from another device first.'
       };
     }
     if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+      console.error('[git-sync:pull] Diagnosis: Authentication error');
       return {
         ok: false,
         message: 'Authentication failed. Check your token and username.'
       };
     }
+    if (msg.includes('CORS') || msg.includes('cors')) {
+      console.error('[git-sync:pull] Diagnosis: CORS error');
+      return {
+        ok: false,
+        message: 'CORS error - try a different network or check repository URL.'
+      };
+    }
+    console.error('[git-sync:pull] Returning generic error:', msg);
     return { ok: false, message: msg };
   }
 }

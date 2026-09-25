@@ -387,10 +387,15 @@ function renderStats(stats, timeMinutes) {
 // --- Save & sync ---
 
 async function saveWorkout() {
-  if (!lastParseResult || !lastParseResult.is_valid) return;
+  console.log('[ui:saveWorkout] Save button clicked');
+  if (!lastParseResult || !lastParseResult.is_valid) {
+    console.warn('[ui:saveWorkout] No valid parse result, aborting');
+    return;
+  }
 
   const settings = gitSync.loadSettings();
   if (!settings.remoteUrl) {
+    console.log('[ui:saveWorkout] Git not configured, local save only');
     setStatus('Git not configured — save locally only', 'idle');
     return;
   }
@@ -398,13 +403,17 @@ async function saveWorkout() {
   const dateStr = document.getElementById('workout-date').value || new Date().toISOString().split('T')[0];
   const workoutText = document.getElementById('workout-input').value;
 
+  console.log('[ui:saveWorkout] Date:', dateStr, 'Exercises:', lastParseResult.exercises.length);
+
   try {
     setStatus('Saving...', 'loading');
+    console.log('[ui:saveWorkout] Calling serialize worker');
     const serialized = await callWorker('serialize', {
       exercisesJson: JSON.stringify(lastParseResult.exercises),
       dateStr,
     });
 
+    console.log('[ui:saveWorkout] Initializing git');
     await gitSync.initGit();
     const envelope = {
       date: dateStr,
@@ -413,24 +422,31 @@ async function saveWorkout() {
       timestamp: new Date().toISOString()
     };
 
+    console.log('[ui:saveWorkout] Saving workout to git');
     await gitSync.saveWorkout(dateStr, envelope);
+    console.log('[ui:saveWorkout] Save successful');
     setStatus('Saved to local repo (push to sync)', 'ready');
     refreshHistory();
   } catch (e) {
+    console.error('[ui:saveWorkout] Save failed:', e);
     setStatus('Save error: ' + e.message, 'error');
   }
 }
 
 async function syncNow() {
+  console.log('[ui:syncNow] Push button clicked');
   const settings = gitSync.loadSettings();
   if (!settings.remoteUrl) {
+    console.warn('[ui:syncNow] Git not configured');
     setStatus('Git not configured', 'error');
     return;
   }
 
+  console.log('[ui:syncNow] Starting push to remote');
   setStatus('Pushing to remote...', 'loading');
   const result = await gitSync.push();
   if (result.ok) {
+    console.log('[ui:syncNow] Push successful');
     setStatus('✓ Pushed to remote', 'ready');
     refreshHistory();
   } else {
@@ -438,22 +454,26 @@ async function syncNow() {
     if (result.message.includes('Branch not found')) {
       errorMsg = result.message + ' Initialize repo: git init && git add README.md && git commit -m "init" && git push -u origin main';
     }
+    console.error('[ui:syncNow] Push failed:', result.message);
     setStatus('Push failed: ' + errorMsg, 'error');
-    console.error('[sync] Push error:', result.message);
   }
 }
 
 async function pullFromRemote() {
+  console.log('[ui:pullFromRemote] Pull button clicked');
   const settings = gitSync.loadSettings();
   if (!settings.remoteUrl) {
+    console.warn('[ui:pullFromRemote] Git not configured');
     setStatus('Git not configured', 'error');
     return;
   }
 
   try {
+    console.log('[ui:pullFromRemote] Starting pull from remote');
     setStatus('Pulling from remote...', 'loading');
     const result = await gitSync.pull();
     if (result.ok) {
+      console.log('[ui:pullFromRemote] Pull successful');
       setStatus('✓ Pulled from remote', 'ready');
       refreshHistory();
     } else {
@@ -461,10 +481,11 @@ async function pullFromRemote() {
       if (result.message.includes('Nothing to pull')) {
         errorMsg = result.message + ' Or: Push workouts from another device first.';
       }
+      console.error('[ui:pullFromRemote] Pull failed:', result.message);
       setStatus('Pull failed: ' + errorMsg, 'error');
-      console.error('[sync] Pull error:', result.message);
     }
   } catch (e) {
+    console.error('[ui:pullFromRemote] Pull exception:', e.message);
     setStatus('Pull error: ' + e.message, 'error');
   }
 }
