@@ -45,6 +45,14 @@ export async function initGit() {
       console.log('[git-sync:init] No repository found, initializing');
       await git.init({ fs, dir: GIT_DIR });
       console.log('[git-sync:init] Repository initialized');
+
+      // Ensure we're on a branch for the first commit
+      try {
+        await git.checkout({ fs, dir: GIT_DIR, ref: 'main', create: true });
+        console.log('[git-sync:init] Created and checked out main branch');
+      } catch (e) {
+        console.log('[git-sync:init] Branch setup note:', e.message);
+      }
     } else {
       console.log('[git-sync:init] Repository already exists');
     }
@@ -231,7 +239,7 @@ export async function push() {
       console.error('[git-sync:push] Diagnosis: Repository not initialized or empty');
       return {
         ok: false,
-        message: 'Repository not initialized. Create it on GitHub with a README, then try again.'
+        message: 'Remote repository is empty. On GitHub: Add a README file to initialize the main branch, then try pushing again.'
       };
     }
     if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
