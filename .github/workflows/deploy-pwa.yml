@@ -1,0 +1,60 @@
+name: Deploy PWA to GitHub Pages
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'mobile-app/**'
+      - 'parser/**'
+      - 'src/**'
+      - 'data/**'
+      - 'dist/trainingLexer.py'
+      - 'dist/trainingParser.py'
+      - 'Makefile'
+      - 'makefiles/pwa.mk'
+      - '.github/workflows/deploy-pwa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-pwa:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Install dependencies
+      run: |
+        uv sync
+
+    - name: Configure Git
+      run: |
+        git config user.email "github-actions@github.com"
+        git config user.name "GitHub Actions"
+
+    - name: Build and publish PWA
+      run: |
+        source .venv/bin/activate
+        make pwa-publish
+
+    - name: Print deployment info
+      run: |
+        echo "✓ PWA deployed to GitHub Pages"
+        REPO_NAME=$(basename ${{ github.repository }})
+        REPO_OWNER=$(dirname ${{ github.repository }} | xargs basename)
+        echo "URL: https://${REPO_OWNER}.github.io/${REPO_NAME}/index.html"
