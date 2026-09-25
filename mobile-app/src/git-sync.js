@@ -92,41 +92,83 @@ export async function push() {
   try {
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
 
-    // Try to determine the correct branch (main or master)
+    // Determine current/target branch
     let branch = 'main';
     try {
-      // Try to list refs to see what branches exist on remote
-      const refs = await git.listRemotes({ fs, dir: GIT_DIR, remote: 'origin' });
-      const hasMain = refs.some(ref => ref === 'main' || ref === 'refs/heads/main');
-      const hasMaster = refs.some(ref => ref === 'master' || ref === 'refs/heads/master');
+      const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
+      if (currentBranch) branch = currentBranch;
+    } catch {}
 
-      if (hasMaster && !hasMain) {
-        branch = 'master';
+    // Try pushing to the current branch
+    // First attempt: push as-is (branch might exist on remote)
+    try {
+      await git.push({
+        fs,
+        http: window.GitHttp,
+        dir: GIT_DIR,
+        remote: 'origin',
+        ref: branch,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        onAuth: () => ({ username: settings.username, password: settings.token }),
+      });
+      return { ok: true };
+    } catch (pushError) {
+      // If push failed, try with force create for new repositories
+      const pushMsg = pushError.message || String(pushError);
+
+      // Try with force create (creates branch if it doesn't exist)
+      if (pushMsg.includes('Could not find') || pushMsg.includes('not found') || pushMsg.includes('no matching')) {
+        try {
+          await git.push({
+            fs,
+            http: window.GitHttp,
+            dir: GIT_DIR,
+            remote: 'origin',
+            ref: branch,
+            force: true,
+            corsProxy: 'https://cors.isomorphic-git.org',
+            onAuth: () => ({ username: settings.username, password: settings.token }),
+          });
+          return { ok: true };
+        } catch (forceError) {
+          // Last resort: try pushing to master if main failed
+          if (branch === 'main') {
+            try {
+              await git.push({
+                fs,
+                http: window.GitHttp,
+                dir: GIT_DIR,
+                remote: 'origin',
+                ref: 'master',
+                force: true,
+                corsProxy: 'https://cors.isomorphic-git.org',
+                onAuth: () => ({ username: settings.username, password: settings.token }),
+              });
+              return { ok: true };
+            } catch (masterError) {
+              // All attempts failed
+              throw forceError;
+            }
+          } else {
+            throw forceError;
+          }
+        }
+      } else {
+        throw pushError;
       }
-    } catch (e) {
-      // If listRemotes fails, try to check current branch or use main
-      try {
-        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR });
-        if (currentBranch) branch = currentBranch;
-      } catch {}
     }
-
-    await git.push({
-      fs,
-      http: window.GitHttp,
-      dir: GIT_DIR,
-      remote: 'origin',
-      ref: branch,
-      corsProxy: 'https://cors.isomorphic-git.org',
-      onAuth: () => ({ username: settings.username, password: settings.token }),
-    });
-    return { ok: true };
   } catch (e) {
     const msg = e.message || String(e);
-    if (msg.includes('Could not find') || msg.includes('not found')) {
+    if (msg.includes('Could not find') || msg.includes('not found') || msg.includes('no matching')) {
       return {
         ok: false,
-        message: 'Branch not found on remote. Create the repository with a README on GitHub first.'
+        message: 'Repository not initialized. Create it on GitHub with a README, then try again.'
+      };
+    }
+    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+      return {
+        ok: false,
+        message: 'Authentication failed. Check your token and username.'
       };
     }
     return { ok: false, message: msg };
@@ -141,45 +183,68 @@ export async function pull() {
   try {
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
 
-    // Try to determine the correct branch (main or master)
+    // Determine current/target branch
     let branch = 'main';
     try {
-      // Try to list refs to see what branches exist on remote
-      const refs = await git.listRemotes({ fs, dir: GIT_DIR, remote: 'origin' });
-      const hasMain = refs.some(ref => ref === 'main' || ref === 'refs/heads/main');
-      const hasMaster = refs.some(ref => ref === 'master' || ref === 'refs/heads/master');
+      const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR, fullname: false });
+      if (currentBranch) branch = currentBranch;
+    } catch {}
 
-      if (hasMaster && !hasMain) {
-        branch = 'master';
+    // Try pulling from the current branch
+    try {
+      await git.pull({
+        fs,
+        http: window.GitHttp,
+        dir: GIT_DIR,
+        remote: 'origin',
+        ref: branch,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        onAuth: () => ({ username: settings.username, password: settings.token }),
+        author: {
+          name: settings.author || 'Training Parser',
+          email: 'training@local',
+        },
+      });
+      return { ok: true };
+    } catch (pullError) {
+      // If pulling from main failed, try master
+      const pullMsg = pullError.message || String(pullError);
+
+      if ((pullMsg.includes('Could not find') || pullMsg.includes('not found') || pullMsg.includes('no matching')) && branch === 'main') {
+        try {
+          await git.pull({
+            fs,
+            http: window.GitHttp,
+            dir: GIT_DIR,
+            remote: 'origin',
+            ref: 'master',
+            corsProxy: 'https://cors.isomorphic-git.org',
+            onAuth: () => ({ username: settings.username, password: settings.token }),
+            author: {
+              name: settings.author || 'Training Parser',
+              email: 'training@local',
+            },
+          });
+          return { ok: true };
+        } catch (masterError) {
+          throw pullError;  // Return original error
+        }
+      } else {
+        throw pullError;
       }
-    } catch (e) {
-      // If listRemotes fails, try to check current branch or use main
-      try {
-        const currentBranch = await git.currentBranch({ fs, dir: GIT_DIR });
-        if (currentBranch) branch = currentBranch;
-      } catch {}
     }
-
-    await git.pull({
-      fs,
-      http: window.GitHttp,
-      dir: GIT_DIR,
-      remote: 'origin',
-      ref: branch,
-      corsProxy: 'https://cors.isomorphic-git.org',
-      onAuth: () => ({ username: settings.username, password: settings.token }),
-      author: {
-        name: settings.author || 'Training Parser',
-        email: 'training@local',
-      },
-    });
-    return { ok: true };
   } catch (e) {
     const msg = e.message || String(e);
-    if (msg.includes('Could not find') || msg.includes('not found')) {
+    if (msg.includes('Could not find') || msg.includes('not found') || msg.includes('no matching')) {
       return {
         ok: false,
-        message: 'Nothing to pull. Push your workouts first, or create a README on remote.'
+        message: 'Nothing to pull. Repository is empty. Push workouts from another device first.'
+      };
+    }
+    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+      return {
+        ok: false,
+        message: 'Authentication failed. Check your token and username.'
       };
     }
     return { ok: false, message: msg };
