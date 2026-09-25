@@ -9,6 +9,18 @@ const SETTINGS_KEY = 'git_settings';
 let fs = null;
 let gitReady = false;
 
+// Detect development environment and use local CORS proxy if available
+function getCorsProxy() {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Development: Use local cors-anywhere on port 8081
+    console.log('[git-sync] Using local CORS proxy: http://localhost:8081');
+    return 'http://localhost:8081';
+  }
+  // Production: Use public CORS proxy
+  console.log('[git-sync] Using public CORS proxy: https://cors.isomorphic-git.org');
+  return 'https://cors.isomorphic-git.org';
+}
+
 export function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
   return raw ? JSON.parse(raw) : { remoteUrl: '', username: '', token: '', author: 'Training Parser' };
@@ -89,7 +101,7 @@ export async function testConnection() {
         const refs = await git.listServerRefs({
           http: window.GitHttp,
           url: settings.remoteUrl,
-          corsProxy: 'https://cors.isomorphic-git.org',
+          corsProxy: getCorsProxy(),
           onAuth: () => {
             console.log('[git-sync:test] Auth requested (via proxy) for user:', settings.username);
             return { username: settings.username, password: settings.token };
@@ -387,7 +399,7 @@ export async function push() {
         dir: GIT_DIR,
         remote: 'origin',
         ref: branch,
-        corsProxy: 'https://cors.isomorphic-git.org',
+        corsProxy: getCorsProxy(),
         onAuth: () => {
           console.log('[git-sync:push] Auth requested for user:', settings.username);
           return { username: settings.username, password: settings.token };
@@ -410,7 +422,7 @@ export async function push() {
             remote: 'origin',
             ref: branch,
             force: true,
-            corsProxy: 'https://cors.isomorphic-git.org',
+            corsProxy: getCorsProxy(),
             onAuth: () => ({ username: settings.username, password: settings.token }),
           });
           console.log('[git-sync:push] Push successful with force flag');
@@ -431,7 +443,7 @@ export async function push() {
                 remote: 'origin',
                 ref: alternateBranch,
                 force: true,
-                corsProxy: 'https://cors.isomorphic-git.org',
+                corsProxy: getCorsProxy(),
                 onAuth: () => ({ username: settings.username, password: settings.token }),
               });
               console.log('[git-sync:push] Push successful to', alternateBranch, 'branch');
@@ -533,7 +545,7 @@ export async function pull() {
         dir: GIT_DIR,
         remote: 'origin',
         ref: branch,
-        corsProxy: 'https://cors.isomorphic-git.org',
+        corsProxy: getCorsProxy(),
         onAuth: () => {
           console.log('[git-sync:pull] Auth requested for user:', settings.username);
           return { username: settings.username, password: settings.token };
@@ -560,7 +572,7 @@ export async function pull() {
             dir: GIT_DIR,
             remote: 'origin',
             ref: alternateBranch,
-            corsProxy: 'https://cors.isomorphic-git.org',
+            corsProxy: getCorsProxy(),
             onAuth: () => ({ username: settings.username, password: settings.token }),
             author: {
               name: settings.author || 'Training Parser',
