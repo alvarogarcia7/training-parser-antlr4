@@ -20,21 +20,29 @@ export function saveSettings(settings) {
 
 async function detectRemoteDefaultBranch() {
   try {
+    console.log('[git-sync:detect] Querying remote refs...');
     const refs = await git.listServerRefs({
       http: window.GitHttp,
       url: loadSettings().remoteUrl,
       corsProxy: 'https://cors.isomorphic-git.org',
     });
 
+    console.log('[git-sync:detect] Remote refs:', refs.length, 'found');
+    if (refs.length === 0) {
+      console.log('[git-sync:detect] Remote repository is empty (no refs)');
+      return null;
+    }
+
     // Look for HEAD ref which points to default branch
     const headRef = refs.find(ref => ref.ref === 'HEAD');
     if (headRef && headRef.target) {
       const match = headRef.target.match(/refs\/heads\/(.+)$/);
       if (match) {
-        console.log('[git-sync:detect] Remote default branch:', match[1]);
+        console.log('[git-sync:detect] Remote default branch detected:', match[1]);
         return match[1];
       }
     }
+    console.log('[git-sync:detect] HEAD ref found but no branch target');
   } catch (e) {
     console.log('[git-sync:detect] Could not detect remote default branch:', e.message);
   }
@@ -272,7 +280,7 @@ export async function push() {
       console.error('[git-sync:push] Diagnosis: Repository not initialized or empty');
       return {
         ok: false,
-        message: 'Remote repository is empty. On GitHub: Add a README file to initialize the main branch, then try pushing again.'
+        message: 'Remote repository has no branches. On GitHub: Add a README file (or any file) to create an initial commit, then retry push.'
       };
     }
     if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
