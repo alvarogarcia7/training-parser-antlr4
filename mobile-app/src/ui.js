@@ -391,11 +391,12 @@ async function saveWorkout() {
 
   const settings = gitSync.loadSettings();
   if (!settings.remoteUrl) {
-    setStatus('Git not configured — offline mode only', 'idle');
+    setStatus('Git not configured — save locally only', 'idle');
     return;
   }
 
   const dateStr = document.getElementById('workout-date').value || new Date().toISOString().split('T')[0];
+  const workoutText = document.getElementById('workout-input').value;
 
   try {
     setStatus('Saving...', 'loading');
@@ -403,9 +404,17 @@ async function saveWorkout() {
       exercisesJson: JSON.stringify(lastParseResult.exercises),
       dateStr,
     });
+
     await gitSync.initGit();
-    await gitSync.saveWorkout(dateStr, serialized);
-    setStatus('Saved locally (will sync when online)', 'ready');
+    const envelope = {
+      date: dateStr,
+      original_text: workoutText,
+      generated_json: serialized,
+      timestamp: new Date().toISOString()
+    };
+
+    await gitSync.saveWorkout(dateStr, envelope);
+    setStatus('Saved to local repo (push to sync)', 'ready');
     refreshHistory();
   } catch (e) {
     setStatus('Save error: ' + e.message, 'error');
@@ -422,9 +431,31 @@ async function syncNow() {
   setStatus('Pushing to remote...', 'loading');
   const result = await gitSync.push();
   if (result.ok) {
-    setStatus('Synced to remote', 'ready');
+    setStatus('✓ Pushed to remote', 'ready');
+    refreshHistory();
   } else {
-    setStatus('Sync failed: ' + result.message, 'error');
+    setStatus('Push failed: ' + result.message, 'error');
+  }
+}
+
+async function pullFromRemote() {
+  const settings = gitSync.loadSettings();
+  if (!settings.remoteUrl) {
+    setStatus('Git not configured', 'error');
+    return;
+  }
+
+  try {
+    setStatus('Pulling from remote...', 'loading');
+    const result = await gitSync.pull();
+    if (result.ok) {
+      setStatus('✓ Pulled from remote', 'ready');
+      refreshHistory();
+    } else {
+      setStatus('Pull failed: ' + result.message, 'error');
+    }
+  } catch (e) {
+    setStatus('Pull error: ' + e.message, 'error');
   }
 }
 
@@ -453,15 +484,29 @@ async function refreshHistory() {
 
 async function loadHistoryEntry(filename) {
   const data = await gitSync.loadWorkout(filename);
-  document.getElementById('workout-input').value = `# Loaded: ${filename}\n# (view-only)`;
+
+  // Handle new envelope format with original_text and generated_json
+  const envelope = data.generated_json || data;
+  const originalText = data.original_text || '';
+
+  if (originalText) {
+    document.getElementById('workout-input').value = originalText;
+  } else {
+    document.getElementById('workout-input').value = `# Loaded: ${filename}\n# (view-only)`;
+  }
+
+  // Extract exercises from envelope format
+  const exercises = envelope.payload?.exercises || envelope.exercises || [];
+
   lastParseResult = {
-    exercises: data.exercises || [],
+    exercises,
     errors: [],
     is_valid: true,
-    total_exercises: (data.exercises || []).length,
-    total_sets: (data.exercises || []).reduce((a, ex) => a + (ex.sets || []).length, 0),
+    total_exercises: exercises.length,
+    total_sets: exercises.reduce((a, ex) => a + (ex.sets_ || ex.sets || []).length, 0),
   };
   renderParseResult(lastParseResult);
+  setStatus(`✓ Loaded ${filename}`, 'ready');
 }
 
 // --- Share ---
@@ -549,6 +594,7 @@ export async function init() {
     if (tsv) copyToClipboard(tsv);
   });
   document.getElementById('save-btn').addEventListener('click', saveWorkout);
+  document.getElementById('pull-btn').addEventListener('click', pullFromRemote);
   document.getElementById('sync-btn').addEventListener('click', syncNow);
   document.getElementById('share-btn').addEventListener('click', shareCurrentResults);
   console.log('[init] Setting up event listeners...');
@@ -632,6 +678,7 @@ export async function init() {
   const settings = gitSync.loadSettings();
   const hasSyncConfig = !!settings.remoteUrl;
   document.getElementById('save-btn').hidden = !hasSyncConfig;
+  document.getElementById('pull-btn').hidden = !hasSyncConfig;
   document.getElementById('sync-btn').hidden = !hasSyncConfig;
 
   // Pre-fetch history if git is configured
