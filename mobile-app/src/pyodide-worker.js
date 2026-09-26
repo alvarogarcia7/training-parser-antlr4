@@ -19,7 +19,6 @@ function log(msg, level = 'INFO') {
 console.log('[worker] Script starting, about to load Pyodide...');
 log('Worker script started', 'DEBUG');
 
-// D256BDE4-FCD7-4B41-8346-7CAB66B2BEDE: try loading first from local environment: either github/gitlab pages or local server. if that fails, load from CDN.
 try {
   // Try loading from local environment first (GitHub Pages or same-domain deployment)
   const localPyodidePaths = [
