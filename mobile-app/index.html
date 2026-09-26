@@ -324,6 +324,10 @@
       <button class="btn-icon" id="settings-cancel-btn" title="Close" style="font-size:1.4rem; padding:2px 8px;">✕</button>
     </div>
 
+    <div id="config-loaded-indicator" hidden style="background:rgba(74,222,128,0.1); border:1px solid var(--ok); border-radius:6px; padding:8px; margin-bottom:12px; font-size:0.85rem; color:var(--ok);">
+      ✓ Configuration loaded from environment
+    </div>
+
     <div class="form-group">
       <label for="settings-remote">Git remote URL (GitHub/GitLab/Gitea)</label>
       <input type="url" id="settings-remote" placeholder="https://github.com/user/workout-data.git">
@@ -345,6 +349,9 @@
       Token is stored locally in this browser. Commits are pushed via
       <a href="https://cors.isomorphic-git.org" style="color:var(--accent);">cors.isomorphic-git.org</a>
       CORS proxy.
+      <br><br>
+      <strong>Environment Setup:</strong> Configure credentials in <code>.env.local</code>, then load in developer console:
+      <br><code>Config.loadEnvDefaults({git_url: '...', git_user: '...', git_token: '...'})</code>
     </p>
 
     <div class="row">

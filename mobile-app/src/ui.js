@@ -2,6 +2,7 @@
 
 import { getSharedTextFromUrl, shareResults, onSharedText } from './share.js';
 import * as gitSync from './git-sync.js';
+import { Config } from './config.js';
 
 let worker = null;
 let pendingRequests = {};
@@ -573,11 +574,30 @@ async function shareCurrentResults() {
 
 function openSettings() {
   console.log('[openSettings] Opening settings modal...');
-  const settings = gitSync.loadSettings();
-  document.getElementById('settings-remote').value = settings.remoteUrl || '';
-  document.getElementById('settings-username').value = settings.username || '';
-  document.getElementById('settings-token').value = settings.token || '';
-  document.getElementById('settings-author').value = settings.author || '';
+  // Load from git-sync (user-saved settings) and Config (environment/defaults)
+  const savedSettings = gitSync.loadSettings();
+  const configSettings = Config.getGitSettings();
+
+  // Use saved settings if available, otherwise use config defaults
+  const remoteUrl = savedSettings.remoteUrl || configSettings.remoteUrl || '';
+  const username = savedSettings.username || configSettings.username || '';
+  const token = savedSettings.token || configSettings.token || '';
+  const author = savedSettings.author || configSettings.author || 'Training Parser';
+
+  document.getElementById('settings-remote').value = remoteUrl;
+  document.getElementById('settings-username').value = username;
+  document.getElementById('settings-token').value = token;
+  document.getElementById('settings-author').value = author;
+
+  // Show if values are loaded from config (for UX feedback)
+  const configIndicator = document.getElementById('config-loaded-indicator');
+  if (configIndicator && (configSettings.remoteUrl || configSettings.username)) {
+    configIndicator.hidden = false;
+    console.log('[openSettings] Config values loaded from environment');
+  } else if (configIndicator) {
+    configIndicator.hidden = true;
+  }
+
   const modal = document.getElementById('settings-modal');
   modal.hidden = false;
   console.log('[openSettings] Modal opened:', { hidden: modal.hidden, display: modal.style.display });
@@ -596,12 +616,19 @@ function closeModal() {
 
 function saveSettingsFromForm() {
   console.log('[saveSettingsFromForm] Saving settings...');
-  gitSync.saveSettings({
+  const settings = {
     remoteUrl: document.getElementById('settings-remote').value.trim(),
     username: document.getElementById('settings-username').value.trim(),
     token: document.getElementById('settings-token').value.trim(),
     author: document.getElementById('settings-author').value.trim() || 'Training Parser',
-  });
+  };
+
+  // Save to git-sync (primary storage)
+  gitSync.saveSettings(settings);
+
+  // Also save to Config for consistency
+  Config.setGitSettings(settings);
+
   console.log('[saveSettingsFromForm] Calling closeModal...');
   closeModal();
   setStatus('Settings saved', 'ready');
