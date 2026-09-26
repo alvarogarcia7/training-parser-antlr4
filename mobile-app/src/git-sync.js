@@ -547,6 +547,9 @@ export async function push() {
     }
 
     console.log('[git-sync:push] Adding remote origin');
+    console.log('[git-sync:push] Remote URL (masked):', remoteUrl.replace(/https?:\/\/.*@/, 'https://***@').replace(/:[a-zA-Z0-9_-]+@/, ':***@'));
+    console.log('[git-sync:push] Original URL:', settings.remoteUrl);
+    console.log('[git-sync:push] URLs match?', remoteUrl === settings.remoteUrl);
     await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: remoteUrl, force: true });
     console.log('[git-sync:push] Remote added successfully');
 
@@ -587,30 +590,46 @@ export async function push() {
 
     try {
       console.log('[git-sync:push] First attempt: push as-is');
+
+      // Determine if we have credentials embedded in URL
+      const credentialsEmbedded = corsProxy.includes('cors.isomorphic-git.org') && remoteUrl.includes('@');
+      console.log('[git-sync:push] Credentials embedded in URL?', credentialsEmbedded);
+
       console.log('[git-sync:push] git.push() call with params:', {
         dir: GIT_DIR,
         remote: 'origin',
         ref: branch,
-        corsProxy: getCorsProxy().substring(0, 30) + '...',
+        corsProxy: corsProxy.substring(0, 30) + '...',
+        credentialsEmbedded: credentialsEmbedded,
       });
 
       console.log('[git-sync:push] About to call git.push()...');
       const beforeTime = performance.now();
 
-      const pushResult = await git.push({
+      const pushParams = {
         fs,
         http: window.GitHttp,
         dir: GIT_DIR,
         remote: 'origin',
         ref: branch,
-        corsProxy: getCorsProxy(),
-        onAuth: () => {
+        corsProxy: corsProxy,
+      };
+
+      // Only use onAuth if credentials are NOT embedded in URL
+      // to avoid conflicts between URL credentials and auth callback
+      if (!credentialsEmbedded) {
+        console.log('[git-sync:push] Adding onAuth callback (no embedded credentials)');
+        pushParams.onAuth = () => {
           console.log('[git-sync:push] ⚠️  Auth callback invoked during push');
           console.log('[git-sync:push]   Returning username:', settings.username);
           console.log('[git-sync:push]   Token length:', settings.token?.length || 0);
           return { username: settings.username, password: settings.token };
-        },
-      });
+        };
+      } else {
+        console.log('[git-sync:push] Skipping onAuth (using embedded credentials in URL)');
+      }
+
+      const pushResult = await git.push(pushParams);
 
       const afterTime = performance.now();
       console.log('[git-sync:push] ✓ git.push() returned without error (took', (afterTime - beforeTime).toFixed(0), 'ms)');
@@ -619,6 +638,18 @@ export async function push() {
       console.log('[git-sync:push] Push result value:', pushResult);
       console.log('[git-sync:push] Push result keys:', pushResult ? Object.keys(pushResult) : 'null');
       console.log('[git-sync:push] Push result JSON:', JSON.stringify(pushResult));
+
+      // Check if result indicates an error (empty array, undefined, null, or contains error marker)
+      const isResultEmpty = !pushResult || (Array.isArray(pushResult) && pushResult.length === 0) || (typeof pushResult === 'object' && Object.keys(pushResult).length === 0);
+      const hasErrorMarker = pushResult && (pushResult.error || pushResult.failed || pushResult.skipped);
+      console.log('[git-sync:push] Result appears empty?', isResultEmpty);
+      console.log('[git-sync:push] Result has error marker?', hasErrorMarker);
+      if (isResultEmpty) {
+        console.warn('[git-sync:push] ⚠️  Push returned empty result - this usually means nothing was pushed');
+      }
+      if (hasErrorMarker) {
+        console.error('[git-sync:push] ⚠️  Push result contains error marker:', pushResult);
+      }
 
       // Verify push actually succeeded by checking remote
       // Use the same remoteUrl (with embedded credentials if needed) that was used for push
