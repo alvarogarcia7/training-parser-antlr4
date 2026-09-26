@@ -374,6 +374,44 @@ export async function loadWorkout(filename) {
   return JSON.parse(content);
 }
 
+async function verifyPushSuccess(branch, settings, corsProxy) {
+  // Verify that the push actually succeeded by checking remote commits
+  console.log('[git-sync] Verifying push to remote...');
+  try {
+    const remoteUrl = settings.remoteUrl;
+    const remoteRefs = await git.listServerRefs({
+      http: window.GitHttp,
+      url: remoteUrl,
+      corsProxy: corsProxy,
+      onAuth: () => ({
+        username: settings.username,
+        password: settings.token,
+      }),
+    });
+
+    console.log('[git-sync:verify] Remote refs received:', remoteRefs ? Object.keys(remoteRefs).length : 0);
+
+    if (!remoteRefs || Object.keys(remoteRefs).length === 0) {
+      console.warn('[git-sync:verify] No remote refs found - push may have failed');
+      return false;
+    }
+
+    // Check if our branch is in the remote refs
+    const expectedRef = `refs/heads/${branch}`;
+    if (remoteRefs[expectedRef]) {
+      console.log('[git-sync:verify] ✓ Branch found on remote:', branch);
+      return true;
+    } else {
+      console.warn('[git-sync:verify] Branch not found on remote:', branch);
+      console.log('[git-sync:verify] Available refs:', Object.keys(remoteRefs).filter(r => r.startsWith('refs/heads/')));
+      return false;
+    }
+  } catch (e) {
+    console.warn('[git-sync:verify] Could not verify push:', e.message);
+    return false;
+  }
+}
+
 function buildUrlWithEmbeddedAuth(url, username, token, corsProxy) {
   // For local CORS proxy, rely on Authorization headers (onAuth callback)
   if (corsProxy && corsProxy.includes('localhost')) {
@@ -514,7 +552,7 @@ export async function push() {
     console.log('[git-sync:push] Attempting push to branch:', branch);
     try {
       console.log('[git-sync:push] First attempt: push as-is');
-      await git.push({
+      const pushResult = await git.push({
         fs,
         http: window.GitHttp,
         dir: GIT_DIR,
@@ -526,8 +564,18 @@ export async function push() {
           return { username: settings.username, password: settings.token };
         },
       });
+      console.log('[git-sync:push] Push returned:', pushResult);
+
+      // Verify push actually succeeded by checking remote
+      const corsProxy = getCorsProxy();
+      const verified = await verifyPushSuccess(branch, settings, corsProxy);
+      if (!verified) {
+        console.warn('[git-sync:push] Push verification failed - commits may not be on remote');
+        return { ok: false, message: 'Push appeared successful but commits not found on remote. Check network connection and credentials.' };
+      }
+
       console.log('[git-sync:push] Push successful on first attempt');
-      return { ok: true };
+      return { ok: true, result: pushResult };
     } catch (pushError) {
       const pushMsg = pushError.message || String(pushError);
       console.warn('[git-sync:push] First push attempt failed:', pushMsg);
