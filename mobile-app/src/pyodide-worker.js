@@ -20,6 +20,7 @@ console.log('[worker] Script starting, about to load Pyodide...');
 log('Worker script started', 'DEBUG');
 
 try {
+// D256BDE4-FCD7-4B41-8346-7CAB66B2BEDE: try loading first from local environment: either github/gitlab pages or local server. if that fails, load from CDN.
   importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
   log('Pyodide script imported from CDN', 'INFO');
 } catch (e) {
