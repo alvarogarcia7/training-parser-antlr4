@@ -35,7 +35,7 @@ def main() -> None:
         total_volume_all += workout_volume
 
     total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_all)
-    print(f"Total volume for all workouts: {total_volume_display}")
+    print(f"Total volume for all workouts: {total_volume_display} ({total_volume_all})")
 
 
 if __name__ == "__main__":

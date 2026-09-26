@@ -2,6 +2,7 @@
 from typing import Any
 
 from parser.model import Exercise, Set_, Weight
+from src.data_access import VolumeFormatter
 
 
 def reconstruct_exercise(exercise_data: dict[str, Any]) -> Exercise:
@@ -60,13 +61,13 @@ def print_workout(workout: dict[str, Any]) -> float:
         total_volume += exercise_volume
         # Format volume as int if it's a whole number, otherwise as float
         volume_display = int(exercise_volume) if exercise_volume == int(exercise_volume) else exercise_volume
-        print(f"  {exercise.__repr__()}; subtotal: {volume_display}")
+        print(f"  {exercise.__repr__()}; subtotal: {VolumeFormatter.format_volume_thousands(volume_display)} ({exercise_volume})")
 
     exercise_count = len(workout['exercises'])
     print(f"  # Stats for this session")
     print(f"  Total number of exercises: {exercise_count}")
     # Format total volume as int if it's a whole number, otherwise as float
     total_volume_display = int(total_volume) if total_volume == int(total_volume) else total_volume
-    print(f"  Total volume this workout: {total_volume_display}")
+    print(f"  Total volume this workout: {VolumeFormatter.format_volume_thousands(total_volume_display)} ({total_volume})")
 
     return total_volume

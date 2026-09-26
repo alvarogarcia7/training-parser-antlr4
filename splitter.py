@@ -39,18 +39,21 @@ class Splitter:
 
             for exercise in workout['parsed']:
                 volume = exercise.total_volume()
+                volume = int(volume) if volume == int(volume) else volume
                 volume_display = VolumeFormatter.format_volume_thousands(volume)
-                print(f"  {exercise.__repr__()}; subtotal: {volume_display}")
+                print(f"  {exercise.__repr__()}; subtotal: {volume_display} ({volume})")
                 total_volume_for_workout += volume
                 total_volume += volume
             print(f"  # Stats for this session")
 
             print(f"  Total number of exercises: {len(workout['parsed'])}")
+            total_volume_for_workout = int(total_volume_for_workout) if total_volume_for_workout == int(total_volume_for_workout) else total_volume_for_workout
             total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_for_workout)
-            print(f"  Total volume this workout: {total_volume_display}")
+            print(f"  Total volume this workout: {total_volume_display} ({total_volume_for_workout})")
 
+        total_volume = int(total_volume) if total_volume == int(total_volume) else total_volume
         total_volume_all = VolumeFormatter.format_volume_thousands(total_volume)
-        print(f"Total volume for all workouts: {total_volume_all}")
+        print(f"Total volume for all workouts: {total_volume_all} ({total_volume})")
 
 
 def main() -> None:
