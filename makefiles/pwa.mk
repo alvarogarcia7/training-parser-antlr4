@@ -10,10 +10,24 @@ pwa-build: check-virtual-env
 	@cp -r src dist/pwa/
 	@cp -r dist dist/pwa/
 	@cp -r data dist/pwa/
+	@if [ -d mobile-app/pyodide ]; then \
+		echo "Copying Pyodide to PWA..."; \
+		cp -r mobile-app/pyodide dist/pwa/; \
+	fi
 	@echo "PWA packaged to dist/pwa/"
 	@echo "To test locally: python3 -m http.server -d dist/pwa 8080"
 	@echo "Open: http://localhost:8080/"
 .PHONY: pwa-build
+
+download-pyodide:
+	@echo "Downloading Pyodide for offline support..."
+	@chmod +x scripts/download-pyodide.sh
+	@./scripts/download-pyodide.sh
+.PHONY: download-pyodide
+
+pwa-build-offline: download-pyodide pwa-build
+	@echo "✓ PWA ready for offline deployment (includes local Pyodide)"
+.PHONY: pwa-build-offline
 
 pwa-publish: pwa-build
 	@echo "Publishing PWA to github-pages branch..."

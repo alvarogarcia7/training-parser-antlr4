@@ -107,3 +107,4 @@ trainingLexer.interp
 creds.txt
 .env
 .env.local
+mobile-app/pyodide/
