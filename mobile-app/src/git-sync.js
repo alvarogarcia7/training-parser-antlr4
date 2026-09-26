@@ -374,6 +374,58 @@ export async function loadWorkout(filename) {
   return JSON.parse(content);
 }
 
+async function ensureInitializedBranch(branch = 'main') {
+  console.log('[git-sync] Ensuring branch initialized:', branch);
+  try {
+    // Check if we have any commits
+    const log = await git.log({ fs, dir: GIT_DIR, ref: branch });
+    if (log && log.length > 0) {
+      console.log('[git-sync] Branch has commits, not initializing');
+      return true;
+    }
+  } catch (e) {
+    console.log('[git-sync] Could not read branch log, will initialize:', e.message);
+  }
+
+  // Try to check out the branch, if it doesn't exist, create it
+  try {
+    await git.checkout({ fs, dir: GIT_DIR, ref: branch, force: true });
+    console.log('[git-sync] Checked out branch:', branch);
+  } catch (e) {
+    console.log('[git-sync] Could not checkout branch, creating:', e.message);
+    try {
+      await git.checkout({ fs, dir: GIT_DIR, ref: branch, create: true });
+      console.log('[git-sync] Created new branch:', branch);
+    } catch (e2) {
+      console.log('[git-sync] Could not create branch:', e2.message);
+      return false;
+    }
+  }
+
+  // Create initial empty commit if no commits exist
+  try {
+    const log = await git.log({ fs, dir: GIT_DIR, ref: branch });
+    if (!log || log.length === 0) {
+      console.log('[git-sync] No commits found, creating initial commit');
+      await git.commit({
+        fs,
+        dir: GIT_DIR,
+        message: 'Initial commit from Training Parser PWA',
+        author: {
+          name: 'Training Parser',
+          email: 'training@local',
+        },
+      });
+      console.log('[git-sync] Initial commit created');
+    }
+  } catch (e) {
+    console.log('[git-sync] Could not create initial commit:', e.message);
+    return false;
+  }
+
+  return true;
+}
+
 export async function push() {
   console.log('[git-sync:push] Starting push operation');
   if (!gitReady) {
@@ -416,6 +468,14 @@ export async function push() {
       } catch (e) {
         console.log('[git-sync:push] Could not detect branch, using default: main', e.message);
       }
+    }
+
+    // For new/empty repositories, ensure we have a local branch with at least one commit
+    console.log('[git-sync:push] Ensuring local branch is initialized:', branch);
+    const branchReady = await ensureInitializedBranch(branch);
+    if (!branchReady) {
+      console.warn('[git-sync:push] Could not initialize branch');
+      return { ok: false, message: 'Could not initialize local branch. Try again.' };
     }
 
     // Try pushing to the current branch
