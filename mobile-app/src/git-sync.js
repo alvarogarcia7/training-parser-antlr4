@@ -61,18 +61,25 @@ export async function testConnection() {
 
     let branches = [];
     let usedDirect = false;
+    let useProxyFirst = settings.remoteUrl.includes('github.com');
 
     // Method 1: Try direct access first (no proxy - works for private instances)
-    console.log('[git-sync:test] Attempting direct connection...');
-    try {
-      const refs = await git.listServerRefs({
-        http: window.GitHttp,
-        url: settings.remoteUrl,
-        onAuth: () => {
-          console.log('[git-sync:test] Auth requested (direct, no proxy) for user:', settings.username);
-          return { username: settings.username, password: settings.token };
-        },
-      });
+    if (useProxyFirst) {
+      console.log('[git-sync:test] GitHub detected - using CORS proxy directly');
+    } else {
+      console.log('[git-sync:test] Attempting direct connection...');
+    }
+
+    if (!useProxyFirst) {
+      try {
+        const refs = await git.listServerRefs({
+          http: window.GitHttp,
+          url: settings.remoteUrl,
+          onAuth: () => {
+            console.log('[git-sync:test] Auth requested (direct, no proxy) for user:', settings.username);
+            return { username: settings.username, password: settings.token };
+          },
+        });
 
       console.log('[git-sync:test] Direct listServerRefs returned');
       console.log('[git-sync:test] Response type:', typeof refs);
@@ -101,13 +108,17 @@ export async function testConnection() {
         branches = [];
       }
 
-      console.log('[git-sync:test] Successfully connected (direct). Branches found:', branches.length);
-    } catch (directError) {
-      console.log('[git-sync:test] Direct access failed:', directError.message);
-      console.log('[git-sync:test] Error details:', directError);
+        console.log('[git-sync:test] Successfully connected (direct). Branches found:', branches.length);
+      } catch (directError) {
+        console.log('[git-sync:test] Direct access failed:', directError.message);
+        console.log('[git-sync:test] Error details:', directError);
+        useProxyFirst = true;
+      }
+    }
 
-      // Method 2: Fall back to CORS proxy
-      console.log('[git-sync:test] Falling back to CORS proxy...');
+    // Method 2: Use CORS proxy if direct failed or GitHub detected
+    if (useProxyFirst || branches.length === 0) {
+      console.log('[git-sync:test] Using CORS proxy...');
       try {
         const refs = await git.listServerRefs({
           http: window.GitHttp,
