@@ -374,6 +374,30 @@ export async function loadWorkout(filename) {
   return JSON.parse(content);
 }
 
+function buildUrlWithEmbeddedAuth(url, username, token, corsProxy) {
+  // For local CORS proxy, rely on Authorization headers (onAuth callback)
+  if (corsProxy && corsProxy.includes('localhost')) {
+    return url;
+  }
+
+  // For public CORS proxy, embed credentials in URL since it doesn't forward Authorization headers properly
+  if (corsProxy && corsProxy.includes('cors.isomorphic-git.org')) {
+    try {
+      const parsed = new URL(url);
+      if (username && token) {
+        parsed.username = username;
+        parsed.password = token;
+      }
+      return parsed.toString();
+    } catch (e) {
+      console.log('[git-sync] Could not parse URL for credential embedding:', e.message);
+      return url;
+    }
+  }
+
+  return url;
+}
+
 async function ensureInitializedBranch(branch = 'main') {
   console.log('[git-sync] Ensuring branch initialized:', branch);
   try {
@@ -443,8 +467,16 @@ export async function push() {
   console.log('[git-sync:push] Username:', settings.username);
 
   try {
+    // For public CORS proxy, embed credentials in URL since it doesn't forward Authorization headers
+    const corsProxy = getCorsProxy();
+    let remoteUrl = settings.remoteUrl;
+    if (corsProxy.includes('cors.isomorphic-git.org') && settings.username && settings.token) {
+      console.log('[git-sync:push] Using public CORS proxy, embedding credentials in URL');
+      remoteUrl = buildUrlWithEmbeddedAuth(remoteUrl, settings.username, settings.token, corsProxy);
+    }
+
     console.log('[git-sync:push] Adding remote origin');
-    await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+    await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: remoteUrl, force: true });
     console.log('[git-sync:push] Remote added successfully');
 
     // Determine current/target branch
@@ -561,11 +593,15 @@ export async function push() {
         message: 'Remote repository has no branches. On GitHub: Add a README file (or any file) to create an initial commit, then retry push.'
       };
     }
-    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403')) {
+    if (msg.includes('authentication') || msg.includes('Unauthorized') || msg.includes('403') || msg.includes('401')) {
       console.error('[git-sync:push] Diagnosis: Authentication error');
+      const corsProxy = getCorsProxy();
+      const suggestion = corsProxy.includes('cors.isomorphic-git.org')
+        ? ' Try using local CORS proxy: make pwa-cors-proxy'
+        : '';
       return {
         ok: false,
-        message: 'Authentication failed. Check your token and username.'
+        message: `Authentication failed. Check your token and username.${suggestion}`
       };
     }
     if (msg.includes('CORS') || msg.includes('cors') || msg.includes('Access-Control-Allow-Origin')) {
@@ -597,8 +633,16 @@ export async function pull() {
   console.log('[git-sync:pull] Username:', settings.username);
 
   try {
+    // For public CORS proxy, embed credentials in URL since it doesn't forward Authorization headers
+    const corsProxy = getCorsProxy();
+    let remoteUrl = settings.remoteUrl;
+    if (corsProxy.includes('cors.isomorphic-git.org') && settings.username && settings.token) {
+      console.log('[git-sync:pull] Using public CORS proxy, embedding credentials in URL');
+      remoteUrl = buildUrlWithEmbeddedAuth(remoteUrl, settings.username, settings.token, corsProxy);
+    }
+
     console.log('[git-sync:pull] Adding remote origin');
-    await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: settings.remoteUrl, force: true });
+    await git.addRemote({ fs, dir: GIT_DIR, remote: 'origin', url: remoteUrl, force: true });
     console.log('[git-sync:pull] Remote added successfully');
 
     // Determine current/target branch
