@@ -5,6 +5,22 @@ from parser.model import Exercise, Set_, Weight
 from src.data_access import VolumeFormatter
 
 
+def format_volume_for_display(total_volume: float) -> tuple[str, int | float]:
+  """Format volume for display output.
+
+  Converts float volumes that are whole numbers to integers, then formats with thousands separator.
+
+  Args:
+    total_volume: The raw volume as a float
+
+  Returns:
+    Tuple of (formatted_display, raw_value_for_parentheses)
+  """
+  total_volume_for_workout = int(total_volume) if total_volume == int(total_volume) else total_volume
+  total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_for_workout)
+  return total_volume_display, total_volume_for_workout
+
+
 def reconstruct_exercise(exercise_data: dict[str, Any]) -> Exercise:
     """Reconstruct an Exercise object from serialized JSON dict."""
     sets = []
@@ -59,15 +75,13 @@ def print_workout(workout: dict[str, Any]) -> float:
         exercise = reconstruct_exercise(exercise_data)
         exercise_volume = exercise.total_volume()
         total_volume += exercise_volume
-        # Format volume as int if it's a whole number, otherwise as float
-        volume_display = int(exercise_volume) if exercise_volume == int(exercise_volume) else exercise_volume
-        print(f"  {exercise.__repr__()}; subtotal: {VolumeFormatter.format_volume_thousands(volume_display)} ({exercise_volume})")
+        volume_display, volume_raw = format_volume_for_display(exercise_volume)
+        print(f"  {exercise.__repr__()}; subtotal: {volume_display} ({volume_raw})")
 
     exercise_count = len(workout['exercises'])
     print(f"  # Stats for this session")
     print(f"  Total number of exercises: {exercise_count}")
-    # Format total volume as int if it's a whole number, otherwise as float
-    total_volume_display = int(total_volume) if total_volume == int(total_volume) else total_volume
-    print(f"  Total volume this workout: {VolumeFormatter.format_volume_thousands(total_volume_display)} ({total_volume})")
+    total_volume_display, total_volume_raw = format_volume_for_display(total_volume)
+    print(f"  Total volume this workout: {total_volume_display} ({total_volume_raw})")
 
     return total_volume

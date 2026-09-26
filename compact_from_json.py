@@ -10,8 +10,7 @@ Step 2 of 2-step process:
 import json
 import sys
 
-from parser.display import print_workout
-from src.data_access import VolumeFormatter
+from parser.display import print_workout, format_volume_for_display
 
 
 def main() -> None:
@@ -34,8 +33,8 @@ def main() -> None:
         workout_volume = print_workout(workout)
         total_volume_all += workout_volume
 
-    total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_all)
-    print(f"Total volume for all workouts: {total_volume_display} ({total_volume_all})")
+    total_volume_display, total_volume_raw = format_volume_for_display(total_volume_all)
+    print(f"Total volume for all workouts: {total_volume_display} ({total_volume_raw})")
 
 
 if __name__ == "__main__":
