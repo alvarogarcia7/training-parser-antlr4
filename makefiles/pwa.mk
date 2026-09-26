@@ -165,6 +165,13 @@ PWA_SERVER_PID?=.pwa-server.pid
 PWA_PORT?=8080
 
 test-e2e: check-virtual-env
+	@echo "Checking dependencies..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@echo "Installing Playwright browsers (chromium)..."
+	@npx playwright install --with-deps chromium > /dev/null 2>&1
 	@echo "Starting PWA server for E2E tests..."
 	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
 		echo "✓ PWA server already running (PID: $$(cat $(PWA_SERVER_PID)))"; \
@@ -194,20 +201,28 @@ test-e2e: check-virtual-env
 			exit 1; \
 		fi; \
 	fi
-	@echo "Running E2E tests..."
-	@npm run test:e2e || TEST_RESULT=$$?
-	@echo "Stopping PWA server..."
-	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+	@echo "Running E2E tests..."; \
+	TEST_RESULT=0; \
+	npm run test:e2e || TEST_RESULT=$$?; \
+	echo "Stopping PWA server..."; \
+	if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
 		kill $$(cat $(PWA_SERVER_PID)); \
 		sleep 1; \
 		echo "✓ PWA server stopped"; \
-	fi
-	@rm -f $(PWA_SERVER_PID)
-	@if [ -n "$$TEST_RESULT" ]; then exit $$TEST_RESULT; fi
-	@echo "✅ E2E tests completed"
+	fi; \
+	rm -f $(PWA_SERVER_PID); \
+	if [ $$TEST_RESULT -ne 0 ]; then exit $$TEST_RESULT; fi; \
+	echo "✅ E2E tests completed"
 .PHONY: test-e2e
 
 test-e2e-debug: check-virtual-env
+	@echo "Checking dependencies..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@echo "Installing Playwright browsers (chromium)..."
+	@npx playwright install --with-deps chromium > /dev/null 2>&1
 	@echo "Starting PWA server for E2E debug..."
 	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
 		echo "✓ PWA server already running"; \

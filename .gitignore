@@ -108,3 +108,9 @@ creds.txt
 .env
 .env.local
 mobile-app/pyodide/
+
+# E2E testing
+playwright-report/
+test-results/
+test-results.json
+.pwa-server.pid
