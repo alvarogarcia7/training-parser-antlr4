@@ -4,25 +4,28 @@ This guide explains how to configure git credentials for PWA testing.
 
 ## Quick Start
 
-1. **Edit `.env.local`** with your credentials:
+1. **Copy the template**:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+2. **Edit `.env.local`** with your credentials:
    ```
    GITHUB_URL=https://github.com/YOUR_USERNAME/YOUR_REPO.git
    GITHUB_USER=YOUR_USERNAME
    GITHUB_TOKEN=ghp_XXXXXXXXXXXXXXXXXXXX
    ```
 
-2. **Open PWA**: http://localhost:8080
-
-3. **In browser console**, load the credentials:
-   ```javascript
-   Config.loadEnvDefaults({
-     git_url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git',
-     git_user: 'YOUR_USERNAME',
-     git_token: 'YOUR_TOKEN'
-   })
+3. **Start the development server**:
+   ```bash
+   make pwa-serve
    ```
 
-4. **Open Settings** → credentials will be pre-filled → **Test Connection**
+4. **Open PWA**: http://localhost:8080
+
+5. **Open Settings** → credentials are automatically pre-filled → **Test Connection**
+
+Configuration is automatically loaded from `.env.local` by the development server.
 
 ## Available Configuration Variables
 
@@ -65,14 +68,14 @@ LOCAL_GIT_SERVER_TOKEN=test
 ## How It Works
 
 ### Setup Phase (One-time)
-1. Developer adds credentials to `.env.local`
-2. PWA loads, but doesn't have access to .env file (browser security)
+1. Developer copies `.env.local.example` to `.env.local`
+2. Adds credentials to `.env.local`
 
 ### Runtime Phase
-1. Developer opens browser console
-2. Calls `Config.loadEnvDefaults({...})` with credentials from .env.local
-3. Credentials stored in browser localStorage
-4. Settings modal shows pre-filled fields
+1. Developer runs `make pwa-serve` (development server)
+2. Server reads `.env.local` and injects configuration into index.html
+3. PWA automatically loads configuration on startup
+4. Settings modal shows pre-filled credentials
 5. Developer tests connection or proceeds with sync
 
 ### Storage
@@ -80,24 +83,20 @@ LOCAL_GIT_SERVER_TOKEN=test
 - Persists across page reloads
 - Single browser only (private)
 - Can be cleared with `Config.clear()`
+- Injected config cleared from memory after loading for security
 
 ## Developer Console Commands
 
-```javascript
-// Load environment defaults
-Config.loadEnvDefaults({
-  git_url: 'https://github.com/user/repo.git',
-  git_user: 'username',
-  git_token: 'token'
-})
+Configuration is automatically loaded from `.env.local`. For manual adjustments in the browser console:
 
+```javascript
 // View current configuration
 Config.export()
 
-// Clear all stored configuration
+// Clear all stored configuration (to reset)
 Config.clear()
 
-// Set individual values
+// Set individual value manually (not recommended - use .env.local instead)
 Config.set('git_url', 'https://github.com/user/repo.git')
 
 // Get individual value
@@ -105,96 +104,128 @@ Config.get('git_url')
 
 // Get all git settings as object
 Config.getGitSettings()
+
+// Reload page (after editing .env.local)
+location.reload()
 ```
+
+**Note:** Configuration is loaded by the development server from `.env.local` when you start `make pwa-serve`. Manual console entry is not needed in normal workflow.
 
 ## Security Considerations
 
 ### ✓ Safe
-- Credentials stored in browser localStorage (not sent to server)
-- .env.local is in .gitignore (never committed)
+- Credentials loaded at startup from `.env.local` (server-side)
+- `.env.local` is in .gitignore (never committed)
+- Injected config cleared from window after loading
 - Only affects single browser session
+- Local development only
 
 ### ⚠️ Be Careful
 - Browser developer tools expose localStorage
 - Don't share browser screen/recording with credentials loaded
 - Clear config when done: `Config.clear()`
 - Use read-only tokens when possible (scope limits)
+- `.env.local` contains secrets - keep it private
 
 ## Workflow Example
 
 ```bash
-# 1. Create GitHub personal access token
+# 1. Copy template
+cp .env.local.example .env.local
+
+# 2. Create GitHub personal access token
 # https://github.com/settings/tokens → Generate new token
 # Scopes: repo, read:user
-# Copy token to clipboard
 
-# 2. Edit .env.local
-echo "GITHUB_TOKEN=ghp_YOUR_TOKEN_HERE" >> .env.local
+# 3. Edit .env.local with your credentials
+GITHUB_URL=https://github.com/alvarogarcia7/training-data.git
+GITHUB_USER=alvarogarcia7
+GITHUB_TOKEN=ghp_YOUR_TOKEN_HERE
 
-# 3. Start all services
-make setup-local-git-server
-make pwa-cors-proxy &
+# 4. Start development server
 make pwa-serve
 
-# 4. In browser console (developer tools F12)
-Config.loadEnvDefaults({
-  git_url: 'https://github.com/alvarogarcia7/training-data.git',
-  git_user: 'alvarogarcia7',
-  git_token: 'ghp_YOUR_TOKEN_HERE'
-})
-
-# 5. Open Settings modal → credentials pre-filled
-# 6. Click "Test Connection"
-# 7. Proceed with git sync
+# 5. Open http://localhost:8080
+# 6. Open Settings modal → credentials already filled automatically
+# 7. Click "Test Connection" → should succeed
+# 8. Proceed with git sync
 ```
 
 ## Troubleshooting
 
-### "Config is not defined"
-- Make sure you're in the browser console (F12)
-- Config is exposed via `window.Config` in mobile-app/src/config.js
-- Try: `window.Config.export()`
+### "Configuration not loading"
+- Check that `.env.local` exists (not `.env.local.example`)
+- Restart the development server: `make pwa-serve`
+- Check browser console for logs: `[Config] Environment configuration loaded`
 
 ### Settings not pre-filling
-- Check that config values were loaded: `Config.export()`
-- Make sure you opened Settings *after* loading config
-- Clear and reload: `Config.clear()` then refresh page
+- Verify `.env.local` has correct format: `KEY=VALUE`
+- Check server logs for parsing errors
+- Open Settings *after* page fully loads
+- Try refresh: `location.reload()`
 
-### "Failed to connect" after loading config
+### "Failed to connect" after credentials load
 - Verify token is valid: check git server access from terminal
 - Check CORS proxy is running: `make pwa-cors-proxy`
 - For GitHub: requires CORS proxy, can't use direct access from localhost
 
 ### Token exposed in git history
-- .env.local is in .gitignore, won't be committed
+- `.env.local` is in .gitignore, won't be committed
 - If accidentally committed: rotate the token immediately
-- Tokens are masked in Config.export() output
+- Tokens are masked in `Config.export()` output (first 10 chars only)
 
 ## Testing Different Scenarios
 
 ### Local Test Server (no auth)
-```javascript
-Config.loadEnvDefaults({
-  git_url: 'http://localhost:8888/test-repo.git',
-  git_user: 'test',
-  git_token: 'test'
-})
+Edit `.env.local`:
 ```
+LOCAL_GIT_SERVER_URL=http://localhost:8888/test-repo.git
+LOCAL_GIT_SERVER_USER=test
+LOCAL_GIT_SERVER_TOKEN=test
+```
+Restart server, open PWA → credentials auto-filled.
 
 ### GitHub (public repo, needs auth for pushes)
-```javascript
-Config.loadEnvDefaults({
-  git_url: 'https://github.com/alvarogarcia7/training-data.git',
-  git_user: 'alvarogarcia7',
-  git_token: 'ghp_YOUR_TOKEN'
-})
 ```
+GITHUB_URL=https://github.com/alvarogarcia7/training-data.git
+GITHUB_USER=alvarogarcia7
+GITHUB_TOKEN=ghp_YOUR_TOKEN
+```
+Restart server, open PWA → credentials auto-filled.
 
 ### GitLab (private repo)
-```javascript
-Config.loadEnvDefaults({
-  git_url: 'https://gitlab.com/your_username/your_repo.git',
-  git_user: 'your_username',
-  git_token: 'glpat_YOUR_TOKEN'
-})
 ```
+GITLAB_URL=https://gitlab.com/your_username/your_repo.git
+GITLAB_USER=your_username
+GITLAB_TOKEN=glpat_YOUR_TOKEN
+```
+Restart server, open PWA → credentials auto-filled.
+
+## How Configuration Loading Works
+
+1. **Development Server** (`serve.py`):
+   - Reads `.env.local` on each request for index.html
+   - Parses KEY=VALUE pairs (skips comments and empty lines)
+   - Maps environment variables to app keys:
+     - `GITHUB_*` → `git_url`, `git_user`, `git_token`
+     - `GITLAB_*` → same mapping
+     - `LOCAL_GIT_SERVER_*` → same mapping
+   - Injects configuration into `index.html` as JavaScript
+
+2. **PWA Startup** (`ui.js` init):
+   - Calls `autoLoadConfig()` on page load
+   - Detects injected configuration
+   - Loads values into `localStorage` via `Config` module
+   - Clears injected config from memory for security
+
+3. **Settings Modal** (`openSettings()`):
+   - Reads from both saved settings (git-sync) and environment config
+   - Pre-fills form fields with loaded credentials
+   - Shows "Configuration loaded from environment" indicator
+
+Benefits:
+- ✅ No manual console commands needed
+- ✅ Secure - server-side injection, cleared after loading
+- ✅ Easy - edit `.env.local`, restart server, credentials auto-load
+- ✅ Safe - won't be committed, cannot be executed by users
+- ✅ User-proof - not dependent on user manually entering config

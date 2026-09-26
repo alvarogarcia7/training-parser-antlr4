@@ -2,7 +2,7 @@
 
 import { getSharedTextFromUrl, shareResults, onSharedText } from './share.js';
 import * as gitSync from './git-sync.js';
-import { Config } from './config.js';
+import { Config, autoLoadConfig } from './config.js';
 
 let worker = null;
 let pendingRequests = {};
@@ -637,6 +637,9 @@ function saveSettingsFromForm() {
 // --- Init ---
 
 export async function init() {
+  // Auto-load configuration from environment (.env.local)
+  autoLoadConfig();
+
   // Service Worker (relative to current page at /mobile-app/index.html)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(e => {

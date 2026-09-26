@@ -115,3 +115,26 @@ export class Config {
 // Expose to window for developer console access
 window.Config = Config;
 window.CONFIG_KEYS = CONFIG_KEYS;
+
+// Auto-load configuration from environment on startup
+export function autoLoadConfig() {
+  if (window.__DEV_CONFIG__ && typeof window.__DEV_CONFIG__ === 'object') {
+    console.log('[Config] Loading configuration from environment');
+    const config = window.__DEV_CONFIG__;
+
+    // Map environment config to Config keys
+    if (config.git_url) Config.set(CONFIG_KEYS.GIT_URL, config.git_url);
+    if (config.git_user) Config.set(CONFIG_KEYS.GIT_USER, config.git_user);
+    if (config.git_token) Config.set(CONFIG_KEYS.GIT_TOKEN, config.git_token);
+    if (config.cors_proxy_dev) Config.set(CONFIG_KEYS.CORS_PROXY_URL, config.cors_proxy_dev);
+
+    // Log what was loaded
+    const loaded = Config.export();
+    console.log('[Config] Environment configuration loaded:', loaded);
+
+    // Clear the injected config from window for security
+    delete window.__DEV_CONFIG__;
+    return true;
+  }
+  return false;
+}
