@@ -1,5 +1,16 @@
 {
+  "name": "training-parser",
+  "version": "1.0.0",
+  "description": "PWA for parsing and syncing training workouts",
   "dependencies": {
     "backlog.md": "^1.44.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   }
 }
