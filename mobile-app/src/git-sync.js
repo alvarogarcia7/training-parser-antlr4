@@ -374,18 +374,18 @@ export async function loadWorkout(filename) {
   return JSON.parse(content);
 }
 
-async function verifyPushSuccess(branch, settings, corsProxy) {
+async function verifyPushSuccess(branch, remoteUrl, corsProxy, settings) {
   // Verify that the push actually succeeded by checking remote commits
   console.log('[git-sync:verify] ========== VERIFICATION START ==========');
   console.log('[git-sync:verify] Checking if branch exists on remote:', branch);
-  console.log('[git-sync:verify] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
+  console.log('[git-sync:verify] Remote URL:', remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
   console.log('[git-sync:verify] CORS proxy:', corsProxy.substring(0, 30) + '...');
 
   try {
     console.log('[git-sync:verify] Calling git.listServerRefs...');
     const remoteRefs = await git.listServerRefs({
       http: window.GitHttp,
-      url: settings.remoteUrl,
+      url: remoteUrl,
       corsProxy: corsProxy,
       onAuth: () => {
         console.log('[git-sync:verify] Auth callback invoked');
@@ -594,6 +594,9 @@ export async function push() {
         corsProxy: getCorsProxy().substring(0, 30) + '...',
       });
 
+      console.log('[git-sync:push] About to call git.push()...');
+      const beforeTime = performance.now();
+
       const pushResult = await git.push({
         fs,
         http: window.GitHttp,
@@ -602,21 +605,24 @@ export async function push() {
         ref: branch,
         corsProxy: getCorsProxy(),
         onAuth: () => {
-          console.log('[git-sync:push] ⚠️  Auth callback invoked');
+          console.log('[git-sync:push] ⚠️  Auth callback invoked during push');
           console.log('[git-sync:push]   Returning username:', settings.username);
           console.log('[git-sync:push]   Token length:', settings.token?.length || 0);
           return { username: settings.username, password: settings.token };
         },
       });
 
-      console.log('[git-sync:push] ✓ git.push() returned without error');
+      const afterTime = performance.now();
+      console.log('[git-sync:push] ✓ git.push() returned without error (took', (afterTime - beforeTime).toFixed(0), 'ms)');
       console.log('[git-sync:push] Push result type:', typeof pushResult);
-      console.log('[git-sync:push] Push result:', pushResult);
+      console.log('[git-sync:push] Push result is null/undefined?', pushResult == null);
+      console.log('[git-sync:push] Push result value:', pushResult);
       console.log('[git-sync:push] Push result keys:', pushResult ? Object.keys(pushResult) : 'null');
+      console.log('[git-sync:push] Push result JSON:', JSON.stringify(pushResult));
 
       // Verify push actually succeeded by checking remote
-      const corsProxy = getCorsProxy();
-      const verified = await verifyPushSuccess(branch, settings, corsProxy);
+      // Use the same remoteUrl (with embedded credentials if needed) that was used for push
+      const verified = await verifyPushSuccess(branch, remoteUrl, corsProxy, settings);
       if (!verified) {
         console.warn('[git-sync:push] Push verification failed - commits may not be on remote');
         return { ok: false, message: 'Push appeared successful but commits not found on remote. Check network connection and credentials.' };
