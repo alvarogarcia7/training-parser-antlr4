@@ -55,3 +55,91 @@ pwa-clean:
 	@rm -rf dist/pwa
 	@echo "✓ PWA build artifacts removed"
 .PHONY: pwa-clean
+
+# CORS Proxy for development
+# Used to handle CORS restrictions when testing git sync with cross-origin servers
+
+CORS_PORT?=8081
+CORS_PROXY_PID?=.cors-proxy.pid
+
+pwa-cors-proxy:
+	@if [ -f $(CORS_PROXY_PID) ] && kill -0 $$(cat $(CORS_PROXY_PID)) 2>/dev/null; then \
+		echo "✓ CORS proxy already running (PID: $$(cat $(CORS_PROXY_PID)))"; \
+	else \
+		echo "Starting CORS proxy on http://localhost:$(CORS_PORT)"; \
+		node /tmp/cors-proxy.js > /tmp/cors-proxy.log 2>&1 & \
+		echo $$! > $(CORS_PROXY_PID); \
+		sleep 2; \
+		if curl -s http://localhost:$(CORS_PORT) > /dev/null 2>&1; then \
+			echo "✅ CORS proxy running"; \
+		else \
+			echo "❌ Failed to start CORS proxy"; \
+			exit 1; \
+		fi; \
+	fi
+.PHONY: pwa-cors-proxy
+
+pwa-cors-proxy-stop:
+	@if [ -f $(CORS_PROXY_PID) ]; then \
+		if kill -0 $$(cat $(CORS_PROXY_PID)) 2>/dev/null; then \
+			kill $$(cat $(CORS_PROXY_PID)); \
+			echo "✓ CORS proxy stopped"; \
+		fi; \
+		rm $(CORS_PROXY_PID); \
+	else \
+		echo "CORS proxy not running"; \
+	fi
+.PHONY: pwa-cors-proxy-stop
+
+pwa-serve: pwa-serve-http
+	@echo "💡 Tip: Run 'make pwa-cors-proxy' in another terminal for CORS proxy support"
+	@echo "💡 For local git testing, also run: make local-git-server"
+.PHONY: pwa-serve
+
+pwa-serve-http:
+	@echo "Starting PWA on http://localhost:8080/mobile-app/"
+	uv run python3 serve.py
+.PHONY: pwa-serve-http
+
+# Local Git Server for Testing
+# Serves git repositories over HTTP with CORS headers for PWA testing
+
+local-git-server:
+	@if [ ! -f /tmp/git-server/git-http-server.js ]; then \
+		echo "❌ Git server script not found at /tmp/git-server/git-http-server.js"; \
+		echo "Run: setup-local-git-server"; \
+		exit 1; \
+	fi
+	@echo "Starting local git server on http://localhost:8888/"
+	@echo "Repository: http://localhost:8888/test-repo.git"
+	cd /tmp/git-server && nohup node git-http-server.js > /tmp/git-server.log 2>&1 &
+	@echo "✅ Git server started (logs: /tmp/git-server.log)"
+.PHONY: local-git-server
+
+setup-local-git-server:
+	@echo "Setting up local git server..."
+	@mkdir -p /tmp/git-server
+	@if [ ! -f /tmp/git-server/git-http-server.js ]; then \
+		cp scripts/git-http-server.js /tmp/git-server/; \
+		echo "✓ Copied git HTTP server"; \
+	fi
+	@if [ ! -f /tmp/cors-proxy.js ]; then \
+		cp scripts/cors-proxy.js /tmp/cors-proxy.js; \
+		echo "✓ Copied CORS proxy"; \
+	fi
+	@if [ ! -d /tmp/git-server/test-repo.git ]; then \
+		cd /tmp/git-server && git init --bare test-repo.git; \
+		mkdir temp-setup && cd temp-setup && \
+		git clone ../test-repo.git . && \
+		echo "# Test Training Workout" > README.md && \
+		git config user.email "test@local" && \
+		git config user.name "Test User" && \
+		git add README.md && \
+		git commit -m "Initial workout data" && \
+		git push -u origin main && \
+		cd /tmp/git-server && rm -rf temp-setup; \
+		echo "✓ Created test repository"; \
+	fi
+	@echo "✅ Local git server setup complete"
+	@echo "   Run: make local-git-server"
+.PHONY: setup-local-git-server

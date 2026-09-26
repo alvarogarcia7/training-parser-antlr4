@@ -11,6 +11,13 @@ let gitReady = false;
 
 // Detect development environment and use local CORS proxy if available
 function getCorsProxy() {
+  // Check for override in localStorage (set by admin/developer)
+  const overrideProxy = localStorage.getItem('cors_proxy_url');
+  if (overrideProxy) {
+    console.log('[git-sync] Using override CORS proxy:', overrideProxy);
+    return overrideProxy;
+  }
+
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     // Development: Use local cors-anywhere on port 8081
     console.log('[git-sync] Using local CORS proxy: http://localhost:8081');
