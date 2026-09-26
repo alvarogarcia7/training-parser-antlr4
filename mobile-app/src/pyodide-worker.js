@@ -19,10 +19,19 @@ function log(msg, level = 'INFO') {
 console.log('[worker] Script starting, about to load Pyodide...');
 log('Worker script started', 'DEBUG');
 
-try {
 // D256BDE4-FCD7-4B41-8346-7CAB66B2BEDE: try loading first from local environment: either github/gitlab pages or local server. if that fails, load from CDN.
-  importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
-  log('Pyodide script imported from CDN', 'INFO');
+try {
+  // Try loading from local environment first (GitHub Pages or same-domain deployment)
+  const localPyodide = './pyodide/pyodide.js';
+  try {
+    importScripts(localPyodide);
+    log('Pyodide script imported from local environment', 'INFO');
+  } catch (localError) {
+    log(`Local Pyodide not found (${localPyodide}), falling back to CDN...`, 'DEBUG');
+    // Fall back to CDN
+    importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
+    log('Pyodide script imported from CDN', 'INFO');
+  }
 } catch (e) {
   log(`Failed to import Pyodide script: ${e.message}`, 'ERROR');
   self.postMessage({ type: 'error', message: 'Failed to load Pyodide: ' + e.message });
