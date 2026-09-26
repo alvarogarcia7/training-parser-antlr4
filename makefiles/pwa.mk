@@ -157,3 +157,65 @@ setup-local-git-server:
 	@echo "✅ Local git server setup complete"
 	@echo "   Run: make local-git-server"
 .PHONY: setup-local-git-server
+
+# E2E Testing
+# Starts the dev server, waits for it to be ready, runs tests, then cleans up
+
+PWA_SERVER_PID?=.pwa-server.pid
+PWA_PORT?=8080
+
+test-e2e: check-virtual-env
+	@echo "Starting PWA server for E2E tests..."
+	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+		echo "✓ PWA server already running (PID: $$(cat $(PWA_SERVER_PID)))"; \
+	else \
+		echo "Starting new PWA server on http://localhost:$(PWA_PORT)"; \
+		uv run python3 serve.py > /tmp/pwa-server.log 2>&1 & \
+		echo $$! > $(PWA_SERVER_PID); \
+		\
+		echo "Waiting for server to be ready (max 30 seconds)..."; \
+		MAX_ATTEMPTS=30; \
+		ATTEMPT=0; \
+		while [ $$ATTEMPT -lt $$MAX_ATTEMPTS ]; do \
+			if curl -s http://localhost:$(PWA_PORT) > /dev/null 2>&1; then \
+				echo "✅ PWA server is ready"; \
+				break; \
+			fi; \
+			ATTEMPT=$$((ATTEMPT + 1)); \
+			echo "  Attempt $$ATTEMPT/$$MAX_ATTEMPTS..."; \
+			sleep 1; \
+		done; \
+		\
+		if [ $$ATTEMPT -eq $$MAX_ATTEMPTS ]; then \
+			echo "❌ PWA server failed to start"; \
+			kill $$(cat $(PWA_SERVER_PID)) 2>/dev/null || true; \
+			rm $(PWA_SERVER_PID); \
+			tail -20 /tmp/pwa-server.log; \
+			exit 1; \
+		fi; \
+	fi
+	@echo "Running E2E tests..."
+	@npm run test:e2e || TEST_RESULT=$$?
+	@echo "Stopping PWA server..."
+	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+		kill $$(cat $(PWA_SERVER_PID)); \
+		sleep 1; \
+		echo "✓ PWA server stopped"; \
+	fi
+	@rm -f $(PWA_SERVER_PID)
+	@if [ -n "$$TEST_RESULT" ]; then exit $$TEST_RESULT; fi
+	@echo "✅ E2E tests completed"
+.PHONY: test-e2e
+
+test-e2e-debug: check-virtual-env
+	@echo "Starting PWA server for E2E debug..."
+	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+		echo "✓ PWA server already running"; \
+	else \
+		uv run python3 serve.py > /tmp/pwa-server.log 2>&1 & \
+		echo $$! > $(PWA_SERVER_PID); \
+		sleep 3; \
+	fi
+	@echo "Starting E2E tests in debug mode..."
+	@npm run test:e2e:debug
+.PHONY: test-e2e-debug
