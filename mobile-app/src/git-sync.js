@@ -376,38 +376,48 @@ export async function loadWorkout(filename) {
 
 async function verifyPushSuccess(branch, settings, corsProxy) {
   // Verify that the push actually succeeded by checking remote commits
-  console.log('[git-sync] Verifying push to remote...');
+  console.log('[git-sync:verify] ========== VERIFICATION START ==========');
+  console.log('[git-sync:verify] Checking if branch exists on remote:', branch);
+  console.log('[git-sync:verify] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
+  console.log('[git-sync:verify] CORS proxy:', corsProxy.substring(0, 30) + '...');
+
   try {
-    const remoteUrl = settings.remoteUrl;
+    console.log('[git-sync:verify] Calling git.listServerRefs...');
     const remoteRefs = await git.listServerRefs({
       http: window.GitHttp,
-      url: remoteUrl,
+      url: settings.remoteUrl,
       corsProxy: corsProxy,
-      onAuth: () => ({
-        username: settings.username,
-        password: settings.token,
-      }),
+      onAuth: () => {
+        console.log('[git-sync:verify] Auth callback invoked');
+        return {
+          username: settings.username,
+          password: settings.token,
+        };
+      },
     });
 
-    console.log('[git-sync:verify] Remote refs received:', remoteRefs ? Object.keys(remoteRefs).length : 0);
+    console.log('[git-sync:verify] ✓ git.listServerRefs() succeeded');
+    console.log('[git-sync:verify] Remote refs count:', remoteRefs ? Object.keys(remoteRefs).length : 0);
 
     if (!remoteRefs || Object.keys(remoteRefs).length === 0) {
-      console.warn('[git-sync:verify] No remote refs found - push may have failed');
+      console.warn('[git-sync:verify] ❌ No remote refs found');
       return false;
     }
 
-    // Check if our branch is in the remote refs
+    const allBranches = Object.keys(remoteRefs).filter(r => r.startsWith('refs/heads/'));
+    console.log('[git-sync:verify] Branches on remote:', allBranches);
+
     const expectedRef = `refs/heads/${branch}`;
     if (remoteRefs[expectedRef]) {
-      console.log('[git-sync:verify] ✓ Branch found on remote:', branch);
+      console.log('[git-sync:verify] ✓ Branch found:', branch);
       return true;
     } else {
-      console.warn('[git-sync:verify] Branch not found on remote:', branch);
-      console.log('[git-sync:verify] Available refs:', Object.keys(remoteRefs).filter(r => r.startsWith('refs/heads/')));
+      console.warn('[git-sync:verify] ❌ Branch not found:', branch);
       return false;
     }
   } catch (e) {
-    console.warn('[git-sync:verify] Could not verify push:', e.message);
+    console.error('[git-sync:verify] ❌ Verification error:', e.message);
+    console.error('[git-sync:verify] Error details:', e);
     return false;
   }
 }
@@ -489,13 +499,22 @@ async function ensureInitializedBranch(branch = 'main') {
 }
 
 export async function push() {
-  console.log('[git-sync:push] Starting push operation');
+  console.log('[git-sync:push] ========== PUSH OPERATION START ==========');
+  console.log('[git-sync:push] Timestamp:', new Date().toISOString());
+
   if (!gitReady) {
     console.warn('[git-sync:push] Git not ready');
     return { ok: false, message: 'Git not ready' };
   }
 
   const settings = loadSettings();
+  console.log('[git-sync:push] Settings loaded:', {
+    hasRemoteUrl: !!settings.remoteUrl,
+    hasUsername: !!settings.username,
+    hasToken: !!settings.token,
+    author: settings.author,
+  });
+
   if (!settings.remoteUrl) {
     console.warn('[git-sync:push] No remote URL configured');
     return { ok: false, message: 'No remote URL configured' };
@@ -503,6 +522,20 @@ export async function push() {
 
   console.log('[git-sync:push] Remote URL:', settings.remoteUrl.replace(/https?:\/\/.*@/, 'https://***@'));
   console.log('[git-sync:push] Username:', settings.username);
+  console.log('[git-sync:push] Token provided:', !!settings.token, '(length:', settings.token?.length || 0, ')');
+
+  // Log local commits before push
+  try {
+    const localLog = await git.log({ fs, dir: GIT_DIR, depth: 10 });
+    console.log('[git-sync:push] Local commits (latest 10):', localLog.length, 'commits');
+    if (localLog.length > 0) {
+      localLog.slice(0, 3).forEach((commit, idx) => {
+        console.log(`  [${idx}] ${commit.oid.substring(0, 7)} - ${commit.commit.message}`);
+      });
+    }
+  } catch (e) {
+    console.warn('[git-sync:push] Could not read local log:', e.message);
+  }
 
   try {
     // For public CORS proxy, embed credentials in URL since it doesn't forward Authorization headers
@@ -550,8 +583,17 @@ export async function push() {
 
     // Try pushing to the current branch
     console.log('[git-sync:push] Attempting push to branch:', branch);
+    console.log('[git-sync:push] Using CORS proxy:', getCorsProxy());
+
     try {
       console.log('[git-sync:push] First attempt: push as-is');
+      console.log('[git-sync:push] git.push() call with params:', {
+        dir: GIT_DIR,
+        remote: 'origin',
+        ref: branch,
+        corsProxy: getCorsProxy().substring(0, 30) + '...',
+      });
+
       const pushResult = await git.push({
         fs,
         http: window.GitHttp,
@@ -560,11 +602,17 @@ export async function push() {
         ref: branch,
         corsProxy: getCorsProxy(),
         onAuth: () => {
-          console.log('[git-sync:push] Auth requested for user:', settings.username);
+          console.log('[git-sync:push] ⚠️  Auth callback invoked');
+          console.log('[git-sync:push]   Returning username:', settings.username);
+          console.log('[git-sync:push]   Token length:', settings.token?.length || 0);
           return { username: settings.username, password: settings.token };
         },
       });
-      console.log('[git-sync:push] Push returned:', pushResult);
+
+      console.log('[git-sync:push] ✓ git.push() returned without error');
+      console.log('[git-sync:push] Push result type:', typeof pushResult);
+      console.log('[git-sync:push] Push result:', pushResult);
+      console.log('[git-sync:push] Push result keys:', pushResult ? Object.keys(pushResult) : 'null');
 
       // Verify push actually succeeded by checking remote
       const corsProxy = getCorsProxy();
@@ -574,10 +622,15 @@ export async function push() {
         return { ok: false, message: 'Push appeared successful but commits not found on remote. Check network connection and credentials.' };
       }
 
-      console.log('[git-sync:push] Push successful on first attempt');
+      console.log('[git-sync:push] ✓ PUSH SUCCESSFUL');
+      console.log('[git-sync:push] ========== PUSH OPERATION END ==========');
       return { ok: true, result: pushResult };
     } catch (pushError) {
       const pushMsg = pushError.message || String(pushError);
+      console.error('[git-sync:push] ❌ First push attempt failed');
+      console.error('[git-sync:push] Error message:', pushMsg);
+      console.error('[git-sync:push] Error type:', pushError.constructor.name);
+      console.error('[git-sync:push] Full error:', pushError);
       console.warn('[git-sync:push] First push attempt failed:', pushMsg);
 
       // If push failed, try with force create for new repositories
@@ -632,6 +685,11 @@ export async function push() {
     }
   } catch (e) {
     const msg = e.message || String(e);
+    console.error('[git-sync:push] ========== PUSH OPERATION FAILED ==========');
+    console.error('[git-sync:push] Error message:', msg);
+    console.error('[git-sync:push] Error type:', e.constructor.name);
+    console.error('[git-sync:push] Full error:', e);
+    console.error('[git-sync:push] Error stack:', e.stack);
     console.error('[git-sync:push] Push operation failed:', msg);
 
     if (msg.includes('Could not find') || msg.includes('not found') || msg.includes('no matching')) {
