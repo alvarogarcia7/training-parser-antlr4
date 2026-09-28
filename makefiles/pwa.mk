@@ -258,3 +258,11 @@ test-git-watch: check-virtual-env
 	@make setup-local-git-server > /dev/null 2>&1
 	@npm run test:git:watch
 .PHONY: test-git-watch
+
+# CI Pipeline Babysitter
+# Monitor GitHub Actions workflow until completion
+
+ci-babysit:
+	@chmod +x scripts/babysit-ci.sh
+	@bash scripts/babysit-ci.sh
+.PHONY: ci-babysit
