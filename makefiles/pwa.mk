@@ -234,3 +234,27 @@ test-e2e-debug: check-virtual-env
 	@echo "Starting E2E tests in debug mode..."
 	@npm run test:e2e:debug
 .PHONY: test-e2e-debug
+
+# Git Integration Tests
+# Test git library against local repositories with different configurations
+
+test-git: check-virtual-env
+	@echo "Running git integration tests..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@echo "Setting up local git server..."
+	@make setup-local-git-server > /dev/null 2>&1
+	@npm run test:git
+.PHONY: test-git
+
+test-git-watch: check-virtual-env
+	@echo "Running git tests in watch mode..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@make setup-local-git-server > /dev/null 2>&1
+	@npm run test:git:watch
+.PHONY: test-git-watch
