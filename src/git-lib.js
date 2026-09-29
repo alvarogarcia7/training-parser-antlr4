@@ -18,9 +18,10 @@ if (isNode) {
   fs = require('fs');
   path = require('path');
 } else {
+  // Browser environment - these are loaded via script tags in index.html
   isomorphicGit = window.git;
   httpClient = window.GitHttp;
-  fs = require('lightning-fs');
+  fs = window.lightning; // LightningFS instance initialized by index.html
   path = '/';
 }
 

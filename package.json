@@ -5,8 +5,7 @@
   "type": "commonjs",
   "dependencies": {
     "backlog.md": "^1.44.0",
-    "isomorphic-git": "^1.25.0",
-    "lightning-fs": "^4.17.0"
+    "isomorphic-git": "^1.25.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0"
