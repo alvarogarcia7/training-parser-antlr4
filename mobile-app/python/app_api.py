@@ -3,7 +3,7 @@ import json
 import datetime
 from datetime import timezone
 
-from parser.parser import TrainingParser
+from parser.parser import Parser
 from parser.model import Exercise, Set_, Weight
 from parser.serializer import serialize_to_set_centric
 from src.statistics import StatisticsCalculator
@@ -12,8 +12,7 @@ from antlr4 import InputStream
 
 def _parse(text: str):
     """Return (exercises, errors_list) from raw text."""
-    from parser.parser import TrainingParser
-    p = TrainingParser(InputStream(text))
+    p = Parser(InputStream(text))
     result = p.parse()
     errors = [
         {"line": e.line, "column": e.column, "message": e.message}
