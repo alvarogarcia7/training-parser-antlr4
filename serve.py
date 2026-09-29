@@ -75,7 +75,7 @@ def inject_config_into_html(html: str, config: dict[str, str]) -> str:
     # Insert before the main app script
     insertion_point = html.find('<script type="module"')
     if insertion_point > 0:
-        html = html[:insertion_point] + f'<script nonce="training-parser-pwa">\n  {config_script}\n</script>\n  ' + html[insertion_point:]
+        html = html[:insertion_point] + f'<script nonce="dHJhaW5pbmctcGFyc2VyLXB3YQ==">\n  {config_script}\n</script>\n  ' + html[insertion_point:]
 
     return html
 
@@ -106,11 +106,12 @@ class PWAHandler(SimpleHTTPRequestHandler):
                 html = inject_config_into_html(html, config)
 
                 # Send response
+                body = html.encode()
                 self.send_response(200)
                 self.send_header("Content-type", "text/html; charset=utf-8")
-                self.send_header("Content-Length", str(len(html)))
+                self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
-                self.wfile.write(html.encode())
+                self.wfile.write(body)
                 return
             except Exception as e:
                 print(f"Error serving index.html: {e}", file=sys.stderr)
@@ -125,7 +126,23 @@ class PWAHandler(SimpleHTTPRequestHandler):
             super().log_message(fmt, *args)
 
 
+def ensure_antlr4_bundled() -> None:
+    """Copy antlr4 runtime from venv into mobile-app/python/antlr4/ if missing."""
+    dest = os.path.join("mobile-app", "python", "antlr4")
+    if os.path.isdir(dest):
+        return
+    try:
+        import antlr4
+        src = os.path.dirname(antlr4.__file__)
+        import shutil
+        shutil.copytree(src, dest)
+        print(f"  Bundled antlr4 runtime → {dest}")
+    except Exception as e:
+        print(f"  Warning: could not bundle antlr4: {e}", file=sys.stderr)
+
+
 def main() -> None:
+    ensure_antlr4_bundled()
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
     handler = partial(PWAHandler, directory=".")
     server = HTTPServer(("", port), handler)

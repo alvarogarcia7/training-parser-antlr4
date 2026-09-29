@@ -100,7 +100,13 @@ def parse_and_export(text: str, date_str: str = "") -> str:
     if ts is None:
         ts = datetime.datetime.now(timezone.utc)
 
-    payload = serialize_to_set_centric(exercises, ts)
+    totals = _compute_totals(exercises)
+    tsv = _make_tsv(exercises, date_str or ts.date().isoformat())
+
+    if exercises:
+        payload = serialize_to_set_centric(exercises, ts)
+    else:
+        payload = {"exercises": []}
 
     envelope = {
         "type": "set-centric.v1",
@@ -108,14 +114,11 @@ def parse_and_export(text: str, date_str: str = "") -> str:
         "payload": payload,
     }
 
-    totals = _compute_totals(exercises)
-    tsv = _make_tsv(exercises, date_str or ts.date().isoformat())
-
     result = {
         "envelope": envelope,
         "envelope_pretty": json.dumps(envelope, indent=2),
         "errors": errors,
-        "is_valid": len(errors) == 0,
+        "is_valid": len(errors) == 0 and bool(exercises),
         "totals": totals,
         "tsv": tsv,
     }
