@@ -89,6 +89,7 @@ data.txt
 output.csv
 output.json
 /data/workdir/
+/data/parsed/
 
 # VSCode extension build artifacts
 lsp/vscode-extension/node_modules/
@@ -98,3 +99,22 @@ trainingLexer.interp
 
 # StrictDoc
 /output/
+
+
+/certs/
+
+# Credentials and secrets
+creds.txt
+.env
+.env.local
+mobile-app/pyodide/
+
+# E2E testing
+playwright-report/
+test-results/
+test-results.json
+.pwa-server.pid
+
+# Generated Python files (only in gh-pages)
+mobile-app/python/
+

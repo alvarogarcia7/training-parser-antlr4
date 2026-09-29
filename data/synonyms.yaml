@@ -39,6 +39,10 @@ synonyms:
     synonyms:
       - lr
 
+  - clean: seated row
+    synonyms:
+      - sr
+
   - clean: row
     synonyms:
       - r
@@ -70,3 +74,11 @@ synonyms:
   - clean: smith machine
     synonyms:
       - sm
+
+  - clean: barbell
+    synonyms:
+      - bb
+
+  - clean: dumbbell
+    synonyms:
+      - db

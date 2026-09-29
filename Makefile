@@ -6,6 +6,7 @@ ANTLR_URL := https://www.antlr.org/download/${ANTLR_JAR}
 
 include makefiles/virtualenvironment.mk
 include makefiles/strictdocs.mk
+include makefiles/pwa.mk
 
 install: install-githooks install-antlr
 	@echo "Installation complete"
@@ -42,6 +43,8 @@ test: check-virtual-env
 	${MAKE} test-json-export
 	${MAKE} compare-v1-v2
 	${MAKE} test-lsp
+	${MAKE} test-bulk-parser
+	${MAKE} test-statistics
 .PHONY: test
 
 validate-datasets:
@@ -81,8 +84,23 @@ test-lsp: check-virtual-env
 	pytest lsp
 .PHONY: test-lsp
 
+test-bulk-parser: check-virtual-env
+	@echo "Testing bulk parser pipeline..."
+	pytest tests/test_bulk_parser.py -v
+.PHONY: test-bulk-parser
+
+test-statistics: check-virtual-env
+	@echo "Testing statistics module..."
+	pytest tests/test_statistics.py -v
+.PHONY: test-statistics
+
+test-webapp: check-virtual-env
+	@echo "Testing PWA loading and serving..."
+	uv run pytest mobile-app/tests/test_pwa_loading.py mobile-app/tests/test_pwa_serve_local.py -v
+.PHONY: test-webapp
+
 typecheck: check-virtual-env
-	uv run mypy --strict . --exclude venv --exclude .venv --exclude output
+	uv run mypy --strict . --exclude venv --exclude .venv --exclude mobile-app --exclude output
 .PHONY: typecheck
 
 examples: check-virtual-env
@@ -107,7 +125,7 @@ dist/trainingLexer.py: training.g4 $(ANTLR_JAR)
 compile-grammar: training.g4 $(ANTLR_JAR) dist/trainingLexer.py dist/trainingListener.py dist/trainingParser.py dist/trainingVisitor.py
 
 run: check-virtual-env
-	FILE=data.txt $(MAKE) output.csv
+	FILE=$${FILE:-data.txt} $(MAKE) output.csv-generic
 	$(MAKE) to-clipboard
 .PHONY: run
 
@@ -124,10 +142,11 @@ save-data:
 .PHONY: save-data
 
 
-run-splitter: output.csv
+run-splitter: check-virtual-env
+	${MAKE} FILE=$${FILE:-data.txt} output.csv-generic
 
 output.csv: check-virtual-env data.txt
-	FILE=data.txt $(MAKE) output.csv-generic
+	FILE=${FILE} $(MAKE) output.csv-generic
 
 output.csv-generic: check-virtual-env
 	# paste data into data.txt
@@ -150,7 +169,7 @@ validate-json: check-virtual-env
 .PHONY: validate-json
 
 to-clipboard:
-	@cat output.csv | pbcopy
+	@tail +2 output.csv | pbcopy # output.csv has headers - tail +2 skips them
 	@echo "The output is in your copy-paste clipboard."
 	@echo "Open https://docs.google.com/spreadsheets/d/1F1a95XZRIBLXj3TqpEZoIEB1-n17O8KYs65kf0s-HqA/edit#gid=1836141740"
 	@echo "Paste it in column Strength!F"
@@ -186,3 +205,14 @@ compare-v1-v2: check-virtual-env
 		exit 1; \
 	fi
 .PHONY: compare-v1-v2
+
+serve: check-virtual-env
+	@echo "Open: http://localhost:8080/mobile-app/"
+	uv run python3 serve.py
+.PHONY: serve
+
+stats: check-virtual-env
+	@echo "Calculate workout statistics from JSON data"
+	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
+	@echo ""
+	python3 scripts/workout_stats.py $(FILE) --time $(TIME)

@@ -17,6 +17,10 @@ class SingleMeasurementWeightParser:
         assert len(list) == 1
         return list[0]
 
+    def _select_last_element(self, list: list[Any]) -> Any:
+        assert len(list) >= 1
+        return list[-1]
+
     def _to_spanish_locale(self, value: str) -> str:
         return value.replace(',', '').replace('.', ',')
 
@@ -51,6 +55,36 @@ class SingleMeasurementWeightParser:
             pass
 
         assert bodv_score
+
+
+
+        if self.year == "2026":
+            # In 2026, the BMI appears as:
+            # BMI
+            # BMI XX.Y
+            function_parsing_bmi_when_bmi_appears_twice = chain(lines,
+                                                                lambda lines: list(
+                                                                    filter(lambda line: "BMI" in line, lines)),
+                                                                lambda ele: self._select_last_element(ele),
+                                                                lambda ele: ele.split()[-1],
+                                                                lambda ele: ele.strip(),
+                                                                lambda ele: self._to_spanish_locale(ele),
+                                                                lambda ele: str(ele)
+                                                                )
+            function_parsing_bmi = function_parsing_bmi_when_bmi_appears_twice
+        else:
+            # In other years, the BMI appears as:
+            # BMI BMI XX.Y
+            function_parsing_bmi_when_bmi_appears_once_only = chain(lines,
+                                                                    lambda lines: self.select_single_then_split(lines,
+                                                                                                                "BMI"),
+                                                                    lambda ele: self._select_before_space(ele),
+                                                                    lambda ele: self._to_spanish_locale(ele),
+                                                                    lambda ele: str(ele)
+                                                                    )
+            function_parsing_bmi = function_parsing_bmi_when_bmi_appears_once_only
+
+
         result: dict[str, str] = {'visceral fat': str(chain(lines,
                                                             lambda ele: self.select_single_then_split(ele,
                                                                                                       "Visceral fat")
@@ -85,12 +119,7 @@ class SingleMeasurementWeightParser:
                                                                                                      "Bone mass"),
                                                          lambda ele: self._select_before_space(ele),
                                                          lambda ele: self._to_spanish_locale(ele))),
-                                  'bmi': str(chain(lines,
-                                                   lambda lines: self.select_single_then_split(lines, "BMI"),
-                                                   lambda ele: self._select_before_space(ele),
-                                                   lambda ele: self._to_spanish_locale(ele),
-                                                   lambda ele: str(ele)
-                                                   )),
+                                  'bmi': str(function_parsing_bmi),
                                   'weight': str(chain(lines,
                                                       lambda ele: filter(lambda line: "Weight" in line, ele),
                                                       lambda ele: self._find_previous(ele, lines),

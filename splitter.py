@@ -1,7 +1,7 @@
 import csv
 import sys
 
-from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession
+from src.data_access import DataAccess, DataSerializer, ParsedWorkoutSession, VolumeFormatter
 
 
 class Splitter:
@@ -11,6 +11,12 @@ class Splitter:
     def main(self, file: str) -> list[ParsedWorkoutSession]:
         """Parse a multi-session training log file."""
         return self.data_access.parse_multi_session_file(file)
+
+    @staticmethod
+    def _read_all_lines(file_path: str) -> list[str]:
+        """Read all lines from a file."""
+        with open(file_path, 'r') as f:
+            return f.readlines()
 
     @staticmethod
     def _write_output(exercises: list[ParsedWorkoutSession], file_path_: str) -> None:
@@ -33,21 +39,21 @@ class Splitter:
 
             for exercise in workout['parsed']:
                 volume = exercise.total_volume()
-                # Format volume as int if it's a whole number, otherwise as float
-                volume_display = int(volume) if volume == int(volume) else volume
-                print(f"  {exercise.__repr__()}; subtotal: {volume_display}")
+                volume = int(volume) if volume == int(volume) else volume
+                volume_display = VolumeFormatter.format_volume_thousands(volume)
+                print(f"  {exercise.__repr__()}; subtotal: {volume_display} ({volume})")
                 total_volume_for_workout += volume
                 total_volume += volume
             print(f"  # Stats for this session")
 
             print(f"  Total number of exercises: {len(workout['parsed'])}")
-            # Format total volume as int if it's a whole number, otherwise as float
-            total_volume_display = int(total_volume_for_workout) if total_volume_for_workout == int(total_volume_for_workout) else total_volume_for_workout
-            print(f"  Total volume this workout: {total_volume_display}")
+            total_volume_for_workout = int(total_volume_for_workout) if total_volume_for_workout == int(total_volume_for_workout) else total_volume_for_workout
+            total_volume_display = VolumeFormatter.format_volume_thousands(total_volume_for_workout)
+            print(f"  Total volume this workout: {total_volume_display} ({total_volume_for_workout})")
 
-        # Format total volume as int if it's a whole number, otherwise as float
-        total_volume_all = int(total_volume) if total_volume == int(total_volume) else total_volume
-        print(f"Total volume for all workouts: {total_volume_all}")
+        total_volume = int(total_volume) if total_volume == int(total_volume) else total_volume
+        total_volume_all = VolumeFormatter.format_volume_thousands(total_volume)
+        print(f"Total volume for all workouts: {total_volume_all} ({total_volume})")
 
 
 def main() -> None:

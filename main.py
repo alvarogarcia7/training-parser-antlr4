@@ -17,7 +17,7 @@ def parse_file(file_path: str) -> ParseResult:
 
 def main() -> None:
     file_name: str = 'training-sample.txt'
-    result: ParseResult = parse_file(file_name)
+    result = parse_file(file_name)
 
     print("=== Parsed Exercises ===")
     pprint(result.exercises)

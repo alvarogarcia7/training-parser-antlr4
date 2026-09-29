@@ -10,7 +10,7 @@ Step 2 of 2-step process:
 import json
 import sys
 
-from parser.display import print_workout
+from parser.display import print_workout, format_volume_for_display
 
 
 def main() -> None:
@@ -33,9 +33,8 @@ def main() -> None:
         workout_volume = print_workout(workout)
         total_volume_all += workout_volume
 
-    # Format total volume as int if it's a whole number, otherwise as float
-    total_volume_display = int(total_volume_all) if total_volume_all == int(total_volume_all) else total_volume_all
-    print(f"Total volume for all workouts: {total_volume_display}")
+    total_volume_display, total_volume_raw = format_volume_for_display(total_volume_all)
+    print(f"Total volume for all workouts: {total_volume_display} ({total_volume_raw})")
 
 
 if __name__ == "__main__":
