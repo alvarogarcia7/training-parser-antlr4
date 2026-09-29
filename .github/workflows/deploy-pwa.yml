@@ -2,7 +2,7 @@ name: Deploy PWA to GitHub Pages
 
 on:
   push:
-    branches: [ master, main, c42c-the-github-pages ]
+    branches: [ master, main ]
     paths:
       - 'mobile-app/**'
       - 'parser/**'
