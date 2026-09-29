@@ -116,4 +116,4 @@ test-results.json
 .pwa-server.pid
 
 # Generated Python files (only in gh-pages)
-mobile-app/python/
+mobile-app/python/antlr4/
