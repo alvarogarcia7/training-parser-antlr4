@@ -65,7 +65,7 @@ synonyms:
 
 ## Validation Rules
 
-The configuration is validated on load to ensure:
+The configuration is validated when the application loads it (`StandardizeName`) to ensure:
 
 1. **No overlapping synonyms**: A synonym cannot appear in multiple entries
 2. **No duplicate clean names**: Each clean name must be unique
@@ -74,10 +74,7 @@ The configuration is validated on load to ensure:
    contains it again: `bench` -> `bench press` -> `bench press press` -> ...
 4. **Proper data types**: All values must be strings
 
-The same checks run when committing: the `validate-synonyms` pre-commit hook
-(`make validate-synonyms`, i.e. `python3 validate_synonyms_yaml.py [FILE ...]`)
-validates `data/synonyms.yaml` against the schema and then loads it with
-`StandardizeName`.
+The same checks run when committing (pre-commit hook), see [Validation](#validation).
 
 Invalid configurations will raise descriptive errors:
 
@@ -109,23 +106,49 @@ This directory includes:
 
 ## Validation
 
-The YAML file is validated against the JSON Schema defined in `schema/exercise_synonyms.schema.json`.
+`validate_synonyms_yaml.py` validates a synonyms file in two steps:
+
+1. **Structure**: against the JSON Schema in `schema/exercise_synonyms.schema.json`
+2. **Validation rules**: it loads the file with `StandardizeName`, so it runs
+   exactly the same checks as the application (see [Validation Rules](#validation-rules)),
+   including the recursive-expansion check
 
 To validate the YAML file yourself:
 
 ```bash
-python validate_synonyms_yaml.py
+python validate_synonyms_yaml.py                 # data/synonyms.yaml
+python validate_synonyms_yaml.py my-synonyms.yaml
+make validate-synonyms
 ```
 
-This ensures the configuration file structure is correct before use.
+It also runs automatically as the `validate-synonyms` pre-commit hook whenever
+`data/synonyms.yaml`, its schema, `parser/standardize_name.py` or the validator
+change, so an invalid configuration cannot be committed.
+
+Example of a rejected configuration:
+
+```yaml
+synonyms:
+  - clean: bench press
+    synonyms:
+      - bench   # 'bench' is part of 'bench press': expands recursively
+      - bp
+```
+
+```
+✗ Synonym configuration error in data/synonyms.yaml: Synonym 'bench' expands recursively: it is part of the clean name 'bench press'
+```
 
 ## Best Practices
 
 1. **Keep synonyms lowercase**: The matching is case-insensitive, but use lowercase for consistency
 2. **Avoid abbreviation conflicts**: Ensure short forms don't overlap (e.g., "bp" and "b")
-3. **Document your mappings**: Add comments in YAML files to explain mappings
-4. **Version control**: Commit configuration files to track changes over time
-5. **Test thoroughly**: Ensure all synonyms map correctly before deploying
+3. **Never use a word of a clean name as a synonym**: e.g. not `bench` or `press`
+   for `bench press`, nor for any other clean name containing that word
+   (`inclined bench press`); use an abbreviation such as `bp` instead
+4. **Document your mappings**: Add comments in YAML files to explain mappings
+5. **Version control**: Commit configuration files to track changes over time
+6. **Test thoroughly**: Ensure all synonyms map correctly before deploying
 
 ## Error Handling
 
@@ -136,7 +159,8 @@ Common errors and solutions:
 | `FileNotFoundError` | Config file doesn't exist | Check file path and spelling |
 | `ValueError: Unsupported file format` | Wrong file extension | Use `.yaml` or `.yml` |
 | `ValueError: 'synonyms' must be a list` | Invalid structure | Ensure synonyms is a list/array |
-| `AssertionError` | Overlapping synonyms | Check for duplicate synonyms across entries |
+| `AssertionError` | Overlapping synonyms or duplicate clean names | Check for duplicate synonyms / clean names across entries |
+| `AssertionError: Synonym '...' expands recursively` | A synonym is part of a clean name | Replace it with an abbreviation that is not a word of any clean name |
 
 ## Integration Example
 
