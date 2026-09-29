@@ -114,3 +114,5 @@ playwright-report/
 test-results/
 test-results.json
 .pwa-server.pid
+test-results/
+
