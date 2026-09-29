@@ -23,7 +23,6 @@ from typing import Any, Iterable
 
 import yaml
 
-from src.data_access import DataAccess
 from src.one_rep_max import BRZYCKI_MAX_REPS, brzycki_1rm, percentage_of_1rm
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "seasons.yaml"
@@ -312,54 +311,59 @@ def parse_date(value: str) -> datetime.date:
     return datetime.date.fromisoformat(match.group(1))
 
 
-def sessions_from_text_file(path: Path) -> list[TrainingSession]:
-    """Parse a multi-session training log (date line, exercises, blank line)."""
-    sessions = []
-    for parsed in DataAccess().parse_multi_session_file(str(path)):
-        sets = tuple(
-            TrainingSet(exercise.name, s.repetitions, float(s.weight.amount), s.weight.unit)
-            for exercise in parsed["parsed"]
-            for s in exercise.sets_
-        )
-        sessions.append(TrainingSession(parse_date(parsed["date"]), sets))
-    return sessions
+def session_from_set_centric(data: Any, source: str = "<json>") -> TrainingSession:
+    """Build a session from a set-centric workout, bare or wrapped in an envelope.
 
-
-def sessions_from_json(data: Any) -> list[TrainingSession]:
-    """Extract training sessions from JSON data.
-
-    Supported shapes:
-    - list of sessions with ``date`` and ``exercises`` (``cli.py batch --format json``)
-    - ``{"workouts": [...]}`` (database format)
-    - a single workout, optionally wrapped in an envelope (``{"payload": {...}}``)
+    Envelope: ``{"type": "set-centric.v1", "payload": {...}}``.
+    Workout: ``{"type": "set-centric", "date": ..., "exercises": [{"name", "sets": [...]}]}``.
     """
-    if isinstance(data, list):
-        return [session for item in data for session in sessions_from_json(item)]
-    if isinstance(data, dict):
-        if "workouts" in data:
-            return sessions_from_json(data["workouts"])
-        if "payload" in data and isinstance(data["payload"], dict):
-            return sessions_from_json(data["payload"])
-        if isinstance(data.get("date"), str):
-            sets = tuple(
-                TrainingSet(
-                    exercise["name"],
-                    int(s["repetitions"]),
-                    float(s.get("weight", {}).get("amount", 0)),
-                    str(s.get("weight", {}).get("unit", "")),
-                )
-                for exercise in data.get("exercises", [])
-                for s in exercise.get("sets", [])
+    if not isinstance(data, dict):
+        raise ValueError(f"{source}: expected a set-centric JSON object")
+    envelope_type = data.get("type")
+    if "payload" in data:
+        if not (isinstance(envelope_type, str) and envelope_type.startswith("set-centric")):
+            raise ValueError(f"{source}: not a set-centric envelope (type={envelope_type!r})")
+        data = data["payload"]
+        if not isinstance(data, dict):
+            raise ValueError(f"{source}: payload must be a JSON object")
+    if data.get("type", "set-centric") != "set-centric":
+        raise ValueError(f"{source}: not a set-centric workout (type={data.get('type')!r})")
+    if not isinstance(data.get("date"), str):
+        raise ValueError(f"{source}: missing workout 'date'")
+
+    try:
+        sets = tuple(
+            TrainingSet(
+                str(exercise["name"]),
+                int(s["repetitions"]),
+                float(s["weight"]["amount"]),
+                str(s["weight"]["unit"]),
             )
-            return [TrainingSession(parse_date(data["date"]), sets)]
-    return []
+            for exercise in data.get("exercises", [])
+            for s in exercise["sets"]
+        )
+    except (KeyError, TypeError) as e:
+        raise ValueError(f"{source}: malformed exercise or set ({e})") from e
+    return TrainingSession(parse_date(data["date"]), sets)
 
 
-def sessions_from_file(path: Path) -> list[TrainingSession]:
-    """Read training sessions from a training log (.txt) or JSON file."""
-    if path.suffix.lower() == ".json":
-        return sessions_from_json(json.loads(path.read_text(encoding="utf-8")))
-    return sessions_from_text_file(path)
+def sessions_from_directory(directory: Path) -> list[TrainingSession]:
+    """Read every set-centric JSON file (``*.json``) in a directory and its subdirectories.
+
+    Each file holds one set-centric workout, or a JSON array of them.
+    """
+    if not directory.is_dir():
+        raise NotADirectoryError(f"Input is not a directory: {directory}")
+    files = sorted(directory.rglob("*.json"))
+    if not files:
+        raise ValueError(f"No JSON files found in {directory}")
+
+    sessions: list[TrainingSession] = []
+    for path in files:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        workouts = data if isinstance(data, list) else [data]
+        sessions.extend(session_from_set_centric(workout, str(path)) for workout in workouts)
+    return sessions
 
 
 def format_report(report: SeasonReport) -> str:

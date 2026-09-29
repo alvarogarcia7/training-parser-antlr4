@@ -133,12 +133,15 @@ min_sessions: 1       # seasons with fewer sessions are reported as ignored
 max_reps_for_1rm: 10  # only sets with <= this many reps drive the 1RM estimate
 ```
 
+The input is a directory with one or more set-centric JSON files (searched
+recursively; each file holds one workout, enveloped or bare, or an array of
+workouts). Other JSON formats are rejected.
+
 ```bash
-# Multi-session training log (date line, exercises, blank line) or sessions JSON
-python scripts/detect_seasons.py data.txt.sample
-python scripts/detect_seasons.py data.txt.sample --format json
-python scripts/detect_seasons.py data.txt.sample --config my-seasons.yaml --min-break-days 30
-make seasons FILE=data.txt.sample
+python scripts/detect_seasons.py data/parsed/
+python scripts/detect_seasons.py data/parsed/ --format json
+python scripts/detect_seasons.py data/parsed/ --config my-seasons.yaml --min-break-days 30
+make seasons DIR=data/parsed/
 ```
 
 ## Phase 2: iOS-Friendly Keyboard Syntax

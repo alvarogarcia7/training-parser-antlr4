@@ -225,7 +225,7 @@ stats: check-virtual-env
 
 seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
-	@echo "Usage: make seasons FILE=data.txt.sample"
+	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
-	python3 scripts/detect_seasons.py $(FILE)
+	python3 scripts/detect_seasons.py $(DIR)
 .PHONY: seasons

@@ -8,8 +8,10 @@ session after the break starts a new season.
 For each season, every exercise gets an estimated 1RM (Brzycki formula, best
 set of the season) and each set is reported as a percentage of that 1RM.
 
+Input: a directory with one or more set-centric JSON files.
+
 Usage:
-    python scripts/detect_seasons.py <input_file> [--config FILE] [--min-break-days N]
+    python scripts/detect_seasons.py <input_directory> [--config FILE] [--min-break-days N]
                                      [--min-sessions N] [--format text|json]
 """
 
@@ -26,7 +28,7 @@ from src.seasons import (  # noqa: E402
     SeasonConfig,
     analyse_seasons,
     format_report,
-    sessions_from_file,
+    sessions_from_directory,
 )
 
 
@@ -37,17 +39,19 @@ def main(argv: list[str] | None = None) -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Seasons from a multi-session training log
-  python scripts/detect_seasons.py data.txt.sample
+  # Seasons from a directory of set-centric JSON files
+  python scripts/detect_seasons.py data/parsed/
 
   # Custom config file
-  python scripts/detect_seasons.py data.txt.sample --config my-seasons.yaml
+  python scripts/detect_seasons.py data/parsed/ --config my-seasons.yaml
 
   # Override the minimum break from the command line
-  python scripts/detect_seasons.py sessions.json --min-break-days 30 --format json
+  python scripts/detect_seasons.py data/parsed/ --min-break-days 30 --format json
         """,
     )
-    parser.add_argument("input", type=Path, help="Training log (.txt) or sessions JSON file")
+    parser.add_argument(
+        "input", type=Path, help="Directory with set-centric JSON files (searched recursively)"
+    )
     parser.add_argument(
         "--config",
         type=Path,
@@ -70,10 +74,8 @@ Examples:
             config = replace(config, min_sessions=args.min_sessions)
         if args.max_reps_for_1rm is not None:
             config = replace(config, max_reps_for_1rm=args.max_reps_for_1rm)
-        if not args.input.exists():
-            raise FileNotFoundError(f"Input file not found: {args.input}")
-        report = analyse_seasons(sessions_from_file(args.input), config)
-    except Exception as e:
+        report = analyse_seasons(sessions_from_directory(args.input), config)
+    except (OSError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 

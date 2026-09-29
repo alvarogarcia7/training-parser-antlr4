@@ -7,6 +7,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 
 from scripts.detect_seasons import main
 from src.one_rep_max import brzycki_1rm, percentage_of_1rm
@@ -19,8 +20,8 @@ from src.seasons import (
     exercise_intensities,
     format_report,
     rest_days,
-    sessions_from_json,
-    sessions_from_text_file,
+    session_from_set_centric,
+    sessions_from_directory,
 )
 
 
@@ -195,71 +196,127 @@ class TestExerciseIntensities(unittest.TestCase):
         self.assertEqual([s.percentage_1rm for s in second.sets], [100.0, 50.0])
 
 
-class TestSessionExtraction(unittest.TestCase):
-    """Test reading sessions from different inputs."""
+def set_centric(date: str, *exercises: tuple[str, list[tuple[int, float]]]) -> dict[str, Any]:
+    """Build an enveloped set-centric workout from (name, [(repetitions, kg), ...])."""
+    return {
+        "type": "set-centric.v1",
+        "schema": "http://com.trainingparser/set-centric_v1.schema.json",
+        "payload": {
+            "workout_id": f"w_{date}",
+            "type": "set-centric",
+            "date": f"{date}T18:00:00Z",
+            "exercises": [
+                {
+                    "name": name,
+                    "sets": [
+                        {"setNumber": n, "repetitions": reps, "weight": {"amount": kg, "unit": "kg"}}
+                        for n, (reps, kg) in enumerate(sets, start=1)
+                    ],
+                }
+                for name, sets in exercises
+            ],
+        },
+    }
 
-    def test_from_text_file(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            path = Path(tmp) / "log.txt"
-            path.write_text("2023-04-14\nDeadlift: 2x6x80k\n\n2023-04-19\nSquat: 1x10x40k\n")
-            sessions = sessions_from_text_file(path)
-        self.assertEqual([s.date for s in sessions], [d("2023-04-14"), d("2023-04-19")])
-        self.assertEqual(len(sessions[0].sets), 2)
-        self.assertEqual(sessions[0].sets[0].repetitions, 6)
-        self.assertEqual(sessions[0].sets[0].weight, 80)
 
-    def test_from_json_sessions_list(self) -> None:
-        data = [
-            {
-                "date": "2023-04-14",
-                "exercises": [
-                    {"name": "Deadlift", "sets": [{"repetitions": 6, "weight": {"amount": 80, "unit": "kg"}}]}
-                ],
-            },
-            {"date": "2023-04-19"},
-        ]
-        sessions = sessions_from_json(data)
-        self.assertEqual([s.date for s in sessions], [d("2023-04-14"), d("2023-04-19")])
-        self.assertEqual(sessions[0].sets, (TrainingSet("Deadlift", 6, 80.0, "kg"),))
+def write_workouts(directory: Path, workouts: dict[str, Any]) -> None:
+    """Write each workout as a JSON file (relative path -> content)."""
+    for name, content in workouts.items():
+        path = directory / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(content))
 
-    def test_from_json_database_and_envelope(self) -> None:
+
+class TestSetCentricInput(unittest.TestCase):
+    """Test reading sessions from set-centric JSON files."""
+
+    def test_enveloped_workout(self) -> None:
+        workout = set_centric("2023-04-14", ("Deadlift", [(6, 80), (6, 80)]))
+        result = session_from_set_centric(workout)
+        self.assertEqual(result.date, d("2023-04-14"))
+        self.assertEqual(result.sets, (TrainingSet("Deadlift", 6, 80.0, "kg"),) * 2)
+
+    def test_bare_workout(self) -> None:
+        workout = set_centric("2023-04-14", ("Squat", [(5, 100)]))["payload"]
         self.assertEqual(
-            [s.date for s in sessions_from_json({"workouts": [{"date": "2026-01-23T18:45:00Z"}]})],
-            [d("2026-01-23")],
+            session_from_set_centric(workout).sets, (TrainingSet("Squat", 5, 100.0, "kg"),)
         )
-        envelope = {"type": "set-centric.v1", "payload": {"date": "2026-01-23T18:45:00Z"}}
-        self.assertEqual([s.date for s in sessions_from_json(envelope)], [d("2026-01-23")])
+
+    def test_repository_example(self) -> None:
+        data = json.loads(Path("data/set-centric-example.json").read_text())
+        result = session_from_set_centric(data)
+        self.assertEqual(result.date, d("2026-01-23"))
+        self.assertIn(TrainingSet("Bench Press", 8, 65.0, "kg"), result.sets)
+
+    def test_rejects_other_formats(self) -> None:
+        with self.assertRaises(ValueError):
+            session_from_set_centric({"type": "bench-centric.v1", "payload": {"date": "2023-01-01"}})
+        with self.assertRaises(ValueError):
+            session_from_set_centric({"type": "bench-centric", "date": "2023-01-01"})
+        with self.assertRaises(ValueError):
+            session_from_set_centric({"type": "set-centric", "exercises": []})
+        with self.assertRaises(ValueError):
+            session_from_set_centric(
+                {"type": "set-centric", "date": "2023-01-01", "exercises": [{"name": "Squat"}]}
+            )
+
+    def test_directory_with_several_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            write_workouts(Path(tmp), {
+                "2023-04-19.json": set_centric("2023-04-19", ("Squat", [(10, 40)])),
+                "2023/2023-04-14.json": set_centric("2023-04-14", ("Deadlift", [(6, 80)])),
+                "notes.md": "not a workout",
+                "list.json": [set_centric("2023-05-01", ("Squat", [(5, 90)]))],
+            })
+            sessions = sessions_from_directory(Path(tmp))
+        self.assertEqual(
+            sorted(s.date for s in sessions), [d("2023-04-14"), d("2023-04-19"), d("2023-05-01")]
+        )
+
+    def test_directory_errors(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):
+                sessions_from_directory(Path(tmp))
+            with self.assertRaises(NotADirectoryError):
+                sessions_from_directory(Path(tmp) / "missing")
 
 
 class TestCli(unittest.TestCase):
     """Test the detect_seasons command line tool."""
 
-    def test_sample_file_json_output(self) -> None:
+    def test_directory_json_output(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
+            workouts = Path(tmp) / "workouts"
+            write_workouts(workouts, {
+                "a.json": set_centric("2023-01-01", ("Deadlift", [(10, 60)])),
+                "b.json": set_centric("2023-01-05", ("Deadlift", [(2, 120), (10, 60)])),
+                "c.json": set_centric("2023-03-01", ("Deadlift", [(1, 100), (5, 50)])),
+            })
             config = Path(tmp) / "seasons.yaml"
             config.write_text("min_break_days: 21\n")
             buffer = io.StringIO()
             with contextlib.redirect_stdout(buffer):
-                code = main(["data.txt.sample", "--config", str(config), "--format", "json"])
+                code = main([str(workouts), "--config", str(config), "--format", "json"])
         result = json.loads(buffer.getvalue())
 
         self.assertEqual(code, 0)
         self.assertEqual(result["config"]["min_break_days"], 21)
         self.assertEqual(
             [(s["start"], s["end"]) for s in result["seasons"]],
-            [
-                ("2022-09-09", "2022-09-09"),
-                ("2023-03-23", "2023-03-23"),
-                ("2023-04-14", "2023-05-04"),
-            ],
+            [("2023-01-01", "2023-01-05"), ("2023-03-01", "2023-03-01")],
         )
-        deadlift = next(e for e in result["seasons"][2]["exercises"] if e["exercise"] == "Deadlift")
+        first, second = (s["exercises"][0] for s in result["seasons"])
         # Best set: 120 kg x 2 -> 120 * 36 / 35
-        self.assertAlmostEqual(deadlift["one_rep_max"], 123.4)
-        self.assertEqual(deadlift["best_set"]["weight"], 120)
+        self.assertAlmostEqual(first["one_rep_max"], 123.4)
+        self.assertEqual(first["best_set"]["weight"], 120)
+        self.assertAlmostEqual(second["one_rep_max"], 100.0)
+        self.assertEqual([s["percentage_1rm"] for s in second["sets"]], [100.0, 50.0])
 
     def test_missing_input(self) -> None:
-        self.assertEqual(main(["does-not-exist.txt"]), 1)
+        self.assertEqual(main(["does-not-exist"]), 1)
+
+    def test_file_instead_of_directory(self) -> None:
+        self.assertEqual(main(["data/set-centric-example.json"]), 1)
 
     def test_format_report(self) -> None:
         sessions = [
