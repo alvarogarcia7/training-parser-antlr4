@@ -12,7 +12,7 @@ export default defineConfig({
     ['list']
   ],
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:8080/mobile-app',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },

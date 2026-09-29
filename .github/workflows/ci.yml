@@ -166,7 +166,7 @@ jobs:
 
         # Wait for server to start
         for i in {1..30}; do
-          if curl -s http://localhost:8080/mobile-app/ > /dev/null 2>&1; then
+          if curl -s http://localhost:8080/mobile-app/index.html > /dev/null 2>&1; then
             echo "✓ PWA server is ready on attempt $i"
             exit 0
           fi
