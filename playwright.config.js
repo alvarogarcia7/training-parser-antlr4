@@ -16,10 +16,10 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  webServer: {
+  webServer: process.env.CI ? undefined : {
     command: 'uv run python3 serve.py',
     url: 'http://localhost:8080',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120000,
   },
   projects: [
