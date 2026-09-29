@@ -45,6 +45,7 @@ test: check-virtual-env
 	${MAKE} test-lsp
 	${MAKE} test-bulk-parser
 	${MAKE} test-statistics
+	${MAKE} test-seasons
 .PHONY: test
 
 validate-datasets:
@@ -93,6 +94,11 @@ test-statistics: check-virtual-env
 	@echo "Testing statistics module..."
 	pytest tests/test_statistics.py -v
 .PHONY: test-statistics
+
+test-seasons: check-virtual-env
+	@echo "Testing season detection..."
+	pytest tests/test_seasons.py -v
+.PHONY: test-seasons
 
 test-webapp: check-virtual-env
 	@echo "Testing PWA loading and serving..."
@@ -216,3 +222,10 @@ stats: check-virtual-env
 	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
 	@echo ""
 	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
+
+seasons: check-virtual-env
+	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
+	@echo "Usage: make seasons FILE=data.txt.sample"
+	@echo ""
+	python3 scripts/detect_seasons.py $(FILE)
+.PHONY: seasons

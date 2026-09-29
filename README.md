@@ -116,6 +116,31 @@ standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
 
 See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation and [examples/](examples/) for usage examples.
 
+### Training Seasons and %1RM
+
+`scripts/detect_seasons.py` splits a training history into **seasons**: a season
+ends when there is a break of at least `min_break_days` days without a training
+session, and the next session starts a new season. For every season, each
+exercise gets an estimated 1RM using the **Brzycki** formula
+(`1RM = weight * 36 / (37 - reps)`, best set of the season) and each set is
+reported as a percentage of that 1RM (50 kg with a 100 kg 1RM -> 50%).
+
+Settings live in [config/seasons.yaml](config/seasons.yaml):
+
+```yaml
+min_break_days: 21    # days without training that end a season
+min_sessions: 1       # seasons with fewer sessions are reported as ignored
+max_reps_for_1rm: 10  # only sets with <= this many reps drive the 1RM estimate
+```
+
+```bash
+# Multi-session training log (date line, exercises, blank line) or sessions JSON
+python scripts/detect_seasons.py data.txt.sample
+python scripts/detect_seasons.py data.txt.sample --format json
+python scripts/detect_seasons.py data.txt.sample --config my-seasons.yaml --min-break-days 30
+make seasons FILE=data.txt.sample
+```
+
 ## Phase 2: iOS-Friendly Keyboard Syntax
 
 The parser now supports Phase 2 iOS-friendly alternatives to standard notation:
