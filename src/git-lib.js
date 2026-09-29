@@ -276,7 +276,7 @@ async function ensureInitialized(options) {
   console.log(`[git-lib] Ensuring repo initialized: ${dir}`);
 
   try {
-    // Check if we have any commits
+    // Check if repo is already initialized
     const log = await isomorphicGit.log({
       fs: isNode ? fs : fsInstance,
       dir,
@@ -288,29 +288,38 @@ async function ensureInitialized(options) {
       return { ok: true, message: 'Already initialized' };
     }
   } catch (e) {
-    console.log(`[git-lib] No commits found, will initialize`);
+    console.log(`[git-lib] Repository not yet initialized, will initialize ${branch}`);
   }
 
-  // Try to checkout branch
+  // Initialize git repo if needed
+  try {
+    const gitDir = isNode ? `${dir}/.git` : `${dir}/.git`;
+    const gitDirExists = isNode
+      ? fs.existsSync(gitDir)
+      : (fs && fs.existsSync && fs.existsSync(gitDir));
+
+    if (!gitDirExists) {
+      await isomorphicGit.init({
+        fs: isNode ? fs : fsInstance,
+        dir
+      });
+      console.log(`[git-lib] Initialized git repo`);
+    }
+  } catch (e) {
+    console.log(`[git-lib] Git init not needed or already done`);
+  }
+
+  // Try to checkout/create branch
   try {
     await isomorphicGit.checkout({
       fs: isNode ? fs : fsInstance,
       dir,
       ref: branch,
-      force: true
+      create: true
     });
+    console.log(`[git-lib] Checked out/created branch: ${branch}`);
   } catch (e) {
-    try {
-      await isomorphicGit.checkout({
-        fs: isNode ? fs : fsInstance,
-        dir,
-        ref: branch,
-        create: true
-      });
-    } catch (e2) {
-      console.error(`[git-lib] Could not create branch:`, e2.message);
-      return { ok: false, error: e2.message };
-    }
+    console.log(`[git-lib] Branch checkout issue (will try to commit anyway): ${e.message}`);
   }
 
   // Create initial commit
