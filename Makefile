@@ -227,5 +227,9 @@ seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
-	python3 scripts/detect_seasons.py $(DIR)
+	-mkdir -p $(DIR)/bench
+	-mkdir -p $(DIR)/set
+	-mv $(DIR)/*_bench.json $(DIR)/bench
+	-mv $(DIR)/*_set.json $(DIR)/set
+	python3 scripts/detect_seasons.py $(DIR)/set
 .PHONY: seasons
