@@ -114,6 +114,7 @@ playwright-report/
 test-results/
 test-results.json
 .pwa-server.pid
-test-results/
-playwright-report/
+
+# Generated Python files (only in gh-pages)
+mobile-app/python/
 

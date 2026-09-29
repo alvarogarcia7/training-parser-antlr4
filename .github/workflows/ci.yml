@@ -137,8 +137,9 @@ jobs:
         mkdir -p /tmp/git-server
         cp scripts/git-http-server.js /tmp/git-server/ || true
         cd /tmp/git-server
+        git config --global init.defaultBranch main
         git init --bare test-repo.git || true
-        mkdir temp-setup || true
+        mkdir -p temp-setup || true
         cd temp-setup
         git clone ../test-repo.git . || true
         git config user.email "test@local" || true
@@ -147,9 +148,9 @@ jobs:
         git add README.md || true
         git commit -m "Initial workout data" || true
         git push -u origin main || true
-        cd ..
+        cd /tmp/git-server
         rm -rf temp-setup
-        timeout 5 node git-http-server.js > /tmp/git-server.log 2>&1 & || true
+        (timeout 5 node git-http-server.js > /tmp/git-server.log 2>&1 &)
         echo "Git server setup complete"
 
     - name: Install Playwright browsers
@@ -197,6 +198,7 @@ jobs:
 
     - name: Set up local git server
       run: |
+        git config --global init.defaultBranch main
         mkdir -p /tmp/git-server
         cp scripts/git-http-server.js /tmp/git-server/ || true
         cd /tmp/git-server

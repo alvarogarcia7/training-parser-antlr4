@@ -22,9 +22,9 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from functools import partial
 
 
-def load_env_config() -> dict:
+def load_env_config() -> dict[str, str]:
     """Load environment configuration from .env.local."""
-    config = {}
+    config: dict[str, str] = {}
     env_file = ".env.local"
 
     if not os.path.exists(env_file):
@@ -64,7 +64,7 @@ def load_env_config() -> dict:
     return config
 
 
-def inject_config_into_html(html: str, config: dict) -> str:
+def inject_config_into_html(html: str, config: dict[str, str]) -> str:
     """Inject configuration as JavaScript before app loads."""
     if not config:
         return html
