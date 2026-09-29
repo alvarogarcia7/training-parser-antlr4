@@ -239,3 +239,7 @@ seasons: check-virtual-env
 	-mv $(DIR)/*_set.json $(DIR)/set
 	python3 scripts/detect_seasons.py $(DIR)/set
 .PHONY: seasons
+
+parse-all:
+	./scripts/parse_bulk.sh -o data/workdir/bulk data/workdir/*txt
+.PHONY: parse-all
