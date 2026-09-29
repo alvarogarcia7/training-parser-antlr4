@@ -281,22 +281,22 @@ The Service Worker caches everything. To update:
 
 ## FAQ
 
-**Q: Can I use this over the internet (not just local network)?**  
+**Q: Can I use this over the internet (not just local network)?**
 A: Not safely with self-signed certificates. For public internet, use GitHub Pages (`make pwa-publish`) or your own domain with proper SSL.
 
-**Q: How long does offline functionality last?**  
+**Q: How long does offline functionality last?**
 A: Forever. Once cached, the app works indefinitely without network. LocalStorage persists data until you clear it.
 
-**Q: Can multiple phones use the same server?**  
+**Q: Can multiple phones use the same server?**
 A: Yes. The server accepts unlimited connections. Each phone caches independently.
 
-**Q: Does the server need to keep running?**  
+**Q: Does the server need to keep running?**
 A: No. After first load, each phone has full offline functionality. You can stop the server with Ctrl+C.
 
-**Q: How do I update the app on phones?**  
+**Q: How do I update the app on phones?**
 A: Hard refresh (Ctrl+Shift+R) or clear Service Worker cache in browser settings.
 
-**Q: Can I use this without creating certificates?**  
+**Q: Can I use this without creating certificates?**
 A: Not over network. Certificates are required for HTTPS, which Service Workers demand. Local `localhost` works without HTTPS on some browsers.
 
 ## Support

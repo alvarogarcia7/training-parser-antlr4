@@ -2,59 +2,97 @@ name: Deploy PWA to GitHub Pages
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, c42c-the-github-pages ]
     paths:
       - 'mobile-app/**'
       - 'parser/**'
       - 'src/**'
       - 'data/**'
-      - 'dist/trainingLexer.py'
-      - 'dist/trainingParser.py'
+      - 'schema/**'
+      - 'training.g4'
       - 'Makefile'
       - 'makefiles/pwa.mk'
+      - 'makefiles/*.mk'
       - '.github/workflows/deploy-pwa.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  deploy-pwa:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.14'
 
+    - name: Set up Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: '11'
+
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v6
 
     - name: Install dependencies
-      run: |
-        uv sync
+      run: uv sync
 
-    - name: Configure Git
-      run: |
-        git config user.email "github-actions@github.com"
-        git config user.name "GitHub Actions"
+    - name: Cache ANTLR grammar compilation
+      id: cache-grammar
+      uses: actions/cache@v4
+      with:
+        path: dist/
+        key: antlr-grammar-${{ hashFiles('training.g4') }}
+        restore-keys: antlr-grammar-
 
-    - name: Build and publish PWA
+    - name: Download ANTLR4
+      if: steps.cache-grammar.outputs.cache-hit != 'true'
+      run: curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
+
+    - name: Compile grammar
+      if: steps.cache-grammar.outputs.cache-hit != 'true'
       run: |
         source .venv/bin/activate
-        make pwa-publish
+        make compile-grammar
 
-    - name: Print deployment info
+    - name: Bundle Python runtime for PWA
       run: |
-        echo "✓ PWA deployed to GitHub Pages"
-        REPO_NAME=$(basename ${{ github.repository }})
-        REPO_OWNER=$(dirname ${{ github.repository }} | xargs basename)
-        echo "URL: https://${REPO_OWNER}.github.io/${REPO_NAME}/index.html"
+        source .venv/bin/activate
+        ANTLR4_PATH=$(python3 -c "import antlr4, os; print(os.path.dirname(antlr4.__file__))")
+        mkdir -p mobile-app/python
+        cp -r "$ANTLR4_PATH" mobile-app/python/antlr4
+
+    - name: Build PWA
+      run: |
+        source .venv/bin/activate
+        make pwa-build
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/pwa/
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

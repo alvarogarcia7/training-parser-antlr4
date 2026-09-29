@@ -1,6 +1,6 @@
 /* Service Worker for Training Parser PWA */
 
-const CACHE_NAME = 'training-parser-v1';
+const CACHE_NAME = 'training-parser-v3';
 const PYODIDE_VERSION = 'v0.27.0';
 
 const APP_SHELL = [
@@ -143,9 +143,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for everything (app shell, Python sources, Pyodide runtime)
-  // Pyodide CDN URLs cached aggressively to avoid re-download on every refresh
-  event.respondWith(cacheFirstWithNetwork(event.request));
+  // Cache-first only for Pyodide CDN and CDN libs (large, immutable, versioned URLs)
+  const isPyodideCDN = url.hostname === 'cdn.jsdelivr.net' || url.hostname === 'unpkg.com';
+  if (isPyodideCDN) {
+    event.respondWith(cacheFirstWithNetwork(event.request));
+    return;
+  }
+
+  // Network-first for all app files (Python sources, JS, HTML) so deployments propagate immediately
+  event.respondWith(networkFirstWithCache(event.request));
 });
 
 async function handleShareTarget(request) {
@@ -177,6 +183,20 @@ async function cacheFirstWithNetwork(request) {
   }
 }
 
+async function networkFirstWithCache(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    return cached || new Response('Offline', { status: 503 });
+  }
+}
+
 // Background sync for git push
 self.addEventListener('sync', (event) => {
   if (event.tag === 'git-push') {
@@ -190,3 +210,4 @@ async function notifyClientsToSync() {
     client.postMessage({ type: 'sync_requested' });
   }
 }
+// 20260929201739
