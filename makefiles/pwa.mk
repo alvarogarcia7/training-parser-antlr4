@@ -8,7 +8,7 @@ pwa-build: check-virtual-env
 	@echo "Copying Python modules into PWA..."
 	@cp -r parser dist/pwa/
 	@cp -r src dist/pwa/
-	@mkdir -p dist/pwa/dist && rsync -a --exclude=pwa dist/ dist/pwa/dist/
+	@mkdir -p dist/pwa/dist && find dist -maxdepth 1 -mindepth 1 -not -name pwa -exec cp -r {} dist/pwa/dist/ \;
 	@cp -r data dist/pwa/
 	@if [ -d mobile-app/pyodide ]; then \
 		echo "Copying Pyodide to PWA..."; \
