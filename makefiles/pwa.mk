@@ -10,10 +10,19 @@ pwa-build: check-virtual-env
 	@cp -r src dist/pwa/
 	@mkdir -p dist/pwa/dist && find dist -maxdepth 1 -mindepth 1 -not -name pwa -exec cp -r {} dist/pwa/dist/ \;
 	@cp -r data dist/pwa/
+	@cp -r schema dist/pwa/
 	@if [ -d mobile-app/pyodide ]; then \
 		echo "Copying Pyodide to PWA..."; \
 		cp -r mobile-app/pyodide dist/pwa/; \
 	fi
+	@echo "Rewriting fetch paths for GitHub Pages subdirectory hosting..."
+	@sed -i \
+		-e "s|'/parser/|'../parser/|g" \
+		-e "s|'/src/|'../src/|g" \
+		-e "s|'/dist/|'../dist/|g" \
+		-e "s|'/data/|'../data/|g" \
+		-e "s|'/schema/|'../schema/|g" \
+		dist/pwa/src/pyodide-worker.js
 	@echo "PWA packaged to dist/pwa/"
 	@echo "To test locally: python3 -m http.server -d dist/pwa 8080"
 	@echo "Open: http://localhost:8080/"
