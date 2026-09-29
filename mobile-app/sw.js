@@ -1,6 +1,6 @@
 /* Service Worker for Training Parser PWA */
 
-const CACHE_NAME = 'training-parser-v1';
+const CACHE_NAME = 'training-parser-v2';
 const PYODIDE_VERSION = 'v0.27.0';
 
 const APP_SHELL = [
