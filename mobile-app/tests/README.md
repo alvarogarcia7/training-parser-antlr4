@@ -20,13 +20,13 @@ uv run pytest mobile-app/tests/ --headed
 
 ## What's Tested
 
-✓ Page loads and shows UI elements  
-✓ Textarea accepts input  
-✓ Date input defaults to today  
-✓ Settings modal can open/close  
-✓ Log level filter dropdown works  
-✓ LocalStorage persistence across page reloads  
-✓ Share button exists  
+✓ Page loads and shows UI elements
+✓ Textarea accepts input
+✓ Date input defaults to today
+✓ Settings modal can open/close
+✓ Log level filter dropdown works
+✓ LocalStorage persistence across page reloads
+✓ Share button exists
 
 ## Pre-commit Integration
 
