@@ -18,22 +18,18 @@ class TestBulkParserPipeline(unittest.TestCase):
         self.script_path = Path("scripts/parse_bulk.sh")
 
         # Sample training data
-        self.training_sample_1 = """bench press
-4x75, 5x75, 5x75, 5x75
-
-squat
-10x70, 10x70, 10x70, 10x70, 10x70
+        self.training_sample_1 = """2025-01-01
+Bench press 75k: 4, 5x3
+Squat 70k: 5x10
 """
 
-        self.training_sample_2 = """overhead press
-5x40, 5x40, 5x40, 5x40, 5x40
-
-deadlift
-20x60, 15x60, 8x60, 8x60
+        self.training_sample_2 = """2025-01-02
+Overhead press: 5x5x40k
+Deadlift 60k: 20, 15,8,8
 """
 
-        self.training_sample_3 = """machine row
-15x41, 8x41
+        self.training_sample_3 = """2025-01-03
+Row en maquina 41k: 15, 8
 """
 
     def tearDown(self) -> None:
@@ -56,6 +52,11 @@ deadlift
         ]
         result = subprocess.run(cmd, capture_output=True, text=True)
         return result.returncode
+
+    def exercise_names(self, file_path: Path) -> list[str]:
+        """Exercise names in a set-centric or bench-centric file."""
+        data = self.assert_json_valid(file_path)
+        return [e["name"] for e in data["exercises"]]
 
     def assert_json_valid(self, file_path: Path) -> dict[str, Any]:
         """Assert file is valid JSON and return parsed content."""
@@ -171,20 +172,19 @@ deadlift
 
         # Check required fields
         self.assertIn("type", data, "Should have type field")
-        self.assertEqual(data["type"], "bench-centric.v1")
-        self.assertIn("benches", data, "Should have benches")
-        self.assertGreater(len(data["benches"]), 0)
+        self.assertEqual(data["type"], "bench-centric")
+        self.assertGreater(len(data["exercises"]), 0)
 
-        # Check bench structure
-        bench = data["benches"][0]
-        self.assertIn("name", bench)
-        self.assertIn("exercises", bench)
-        self.assertGreater(len(bench["exercises"]), 0)
-
-        # Check exercise structure in bench
-        exercise = bench["exercises"][0]
+        # Check exercise structure
+        exercise = data["exercises"][0]
         self.assertIn("name", exercise)
-        self.assertIn("sets", exercise)
+        self.assertGreater(len(exercise["sets"]), 0)
+
+        # Check set structure (weight and unit are flat in bench-centric)
+        set_ = exercise["sets"][0]
+        self.assertEqual(set_["reps"], 4)
+        self.assertEqual(set_["weight"], 75)
+        self.assertEqual(set_["unit"], "kg")
 
     def test_database_append(self) -> None:
         """Test that results are appended to database."""
@@ -309,6 +309,143 @@ deadlift
         self.assertTrue(Path(custom_db).exists())
         data = self.assert_json_valid(Path(custom_db))
         self.assertIn("workouts", data)
+
+    def test_set_and_bench_files_describe_same_input(self) -> None:
+        """The set-centric and bench-centric files come from the same parse."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        self.run_bulk_parser(file1)
+
+        set_data = self.assert_json_valid(self.output_dir / "day1_set.json")
+        bench_data = self.assert_json_valid(self.output_dir / "day1_bench.json")
+
+        self.assertEqual(set_data["workout_id"], bench_data["workout_id"])
+        self.assertEqual(set_data["date"], bench_data["date"])
+        self.assertEqual(set_data["date"], "2025-01-01T00:00:00+00:00")
+        set_reps = [[s["repetitions"] for s in e["sets"]] for e in set_data["exercises"]]
+        bench_reps = [[s["reps"] for s in e["sets"]] for e in bench_data["exercises"]]
+        self.assertEqual(set_reps, bench_reps)
+
+    def test_each_input_maps_to_its_own_files(self) -> None:
+        """Files do not leak exercises into each other's output."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        file2 = self.create_training_file(self.training_sample_2, "day2.txt")
+        self.run_bulk_parser(file1, file2)
+
+        for kind in ("set", "bench"):
+            names_1 = self.exercise_names(self.output_dir / f"day1_{kind}.json")
+            names_2 = self.exercise_names(self.output_dir / f"day2_{kind}.json")
+            self.assertEqual(len(names_1), 2)
+            self.assertEqual(len(names_2), 2)
+            self.assertFalse(set(names_1) & set(names_2))
+            self.assertTrue(any("Squat" in n for n in names_1))
+            self.assertTrue(any("Deadlift" in n for n in names_2))
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        by_source = {
+            Path(w["source_file"]).name: [e["name"] for e in w["exercises"]]
+            for w in db["workouts"]
+        }
+        self.assertEqual(by_source["day1.txt"], self.exercise_names(self.output_dir / "day1_set.json"))
+        self.assertEqual(by_source["day2.txt"], self.exercise_names(self.output_dir / "day2_set.json"))
+
+    def test_two_sessions_yield_two_files_per_input(self) -> None:
+        """N input files produce exactly 2N files (set + bench) plus the database."""
+        jan = self.create_training_file(
+            "2020-01-01\n" + self.training_sample_1.split("\n", 1)[1], "2020-01-01.txt"
+        )
+        feb = self.create_training_file(
+            "2020-02-01\n" + self.training_sample_2.split("\n", 1)[1], "2020-02-01.txt"
+        )
+        self.assertEqual(self.run_bulk_parser(jan, feb), 0)
+
+        produced = sorted(p.name for p in self.output_dir.glob("*.json"))
+        self.assertEqual(produced, [
+            "2020-01-01_bench.json", "2020-01-01_set.json",
+            "2020-02-01_bench.json", "2020-02-01_set.json",
+            "database.json",
+        ])
+        for stem, date in (("2020-01-01", "2020-01-01"), ("2020-02-01", "2020-02-01")):
+            for kind in ("set", "bench"):
+                data = self.assert_json_valid(self.output_dir / f"{stem}_{kind}.json")
+                self.assertTrue(data["date"].startswith(date))
+
+    def test_same_basename_in_different_directories(self) -> None:
+        """Two inputs named alike must not overwrite each other's output."""
+        (Path(self.temp_dir.name) / "a").mkdir()
+        (Path(self.temp_dir.name) / "b").mkdir()
+        file_a = self.create_training_file(self.training_sample_1, "a/day.txt")
+        file_b = self.create_training_file(self.training_sample_2, "b/day.txt")
+
+        self.assertEqual(self.run_bulk_parser(file_a, file_b), 0)
+
+        set_files = sorted(self.output_dir.glob("*_set.json"))
+        bench_files = sorted(self.output_dir.glob("*_bench.json"))
+        self.assertEqual(len(set_files), 2)
+        self.assertEqual(len(bench_files), 2)
+
+        seen = {tuple(self.exercise_names(f)) for f in set_files}
+        self.assertEqual(len(seen), 2, "Each input needs its own set-centric file")
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        self.assertEqual(len(db["workouts"]), 2)
+        sources = {w["source_file"] for w in db["workouts"]}
+        self.assertEqual(sources, {str(file_a), str(file_b)})
+
+    def test_workout_ids_are_unique_within_one_second(self) -> None:
+        """Files without a date, parsed together, still get distinct ids."""
+        file1 = self.create_training_file("Squat 70k: 5x10\n", "x.txt")
+        file2 = self.create_training_file("Squat 70k: 5x10\n", "y.txt")
+        self.run_bulk_parser(file1, file2)
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        ids = [w["workout_id"] for w in db["workouts"]]
+        self.assertEqual(len(ids), 2)
+        self.assertEqual(len(set(ids)), 2)
+
+    def test_rerun_does_not_duplicate_database_entry(self) -> None:
+        """Parsing the same file again updates its entry instead of adding one."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        self.run_bulk_parser(file1)
+        self.run_bulk_parser(file1)
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        self.assertEqual(len(db["workouts"]), 1)
+
+    def test_database_sorted_by_date(self) -> None:
+        """Database workouts are ordered by workout date, not input order."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        file2 = self.create_training_file(self.training_sample_2, "day2.txt")
+        file3 = self.create_training_file(self.training_sample_3, "day3.txt")
+        self.run_bulk_parser(file3, file1, file2)
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        dates = [w["date"] for w in db["workouts"]]
+        self.assertEqual(dates, sorted(dates))
+        self.assertEqual(len(dates), 3)
+
+    def test_unrelated_json_in_output_dir_untouched(self) -> None:
+        """Only files produced by the run are rewritten."""
+        self.output_dir.mkdir()
+        unrelated = self.output_dir / "unrelated.json"
+        unrelated.write_text('{"b":1,   "a":2}')
+
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        self.run_bulk_parser(file1)
+
+        self.assertEqual(unrelated.read_text(), '{"b":1,   "a":2}')
+
+    def test_failing_file_does_not_stop_others(self) -> None:
+        """One bad input is reported and the rest are still exported."""
+        bad = Path(self.temp_dir.name) / "missing.txt"
+        good = self.create_training_file(self.training_sample_1, "good.txt")
+
+        result = subprocess.run(
+            ["bash", str(self.script_path), "-o", str(self.output_dir), str(bad), str(good)],
+            capture_output=True, text=True
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue((self.output_dir / "good_set.json").exists())
+        self.assertTrue((self.output_dir / "good_bench.json").exists())
 
     def test_missing_file_handling(self) -> None:
         """Test that script handles missing input files gracefully."""

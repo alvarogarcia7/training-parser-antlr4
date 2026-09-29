@@ -77,94 +77,38 @@ fi
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 
-# Initialize database file if it doesn't exist
-if [ ! -f "$DATABASE_FILE" ]; then
-    echo '{"workouts": []}' > "$DATABASE_FILE"
-fi
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MANIFEST="$(mktemp)"
+trap 'rm -f "$MANIFEST"' EXIT
 
-# Function to get base filename without extension
-get_base_name() {
-    basename "$1" | sed 's/\.[^.]*$//'
-}
+# Each input file is parsed once and mapped to its own <name>_set.json and
+# <name>_bench.json; the database gets one entry per input file.
+# Failures for individual files are reported on stderr and do not stop the rest.
+status=0
+PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 "$REPO_ROOT/scripts/bulk_export.py" \
+    -o "$OUTPUT_DIR" -d "$DATABASE_FILE" --manifest "$MANIFEST" "${INPUT_FILES[@]}" || status=$?
 
-# Function to sort JSON file
-sort_json_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        jq -S . "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
-    fi
-}
-
-# Function to export set-centric JSON
-export_set_centric() {
-    local input_file="$1"
-    local output_file="$2"
-    python3 main_export.py "$input_file" -o "$output_file" 2>/dev/null || true
-}
-
-# Function to export bench-centric JSON
-export_bench_centric() {
-    local input_file="$1"
-    local output_file="$2"
-    python3 -c "
-import sys
-sys.path.insert(0, '.')
-from scripts.bulk_export import export_bench_centric
-export_bench_centric('$input_file', '$output_file')
-" || return 1
-}
-
-# Function to append to database
-append_to_database() {
-    local json_file="$1"
-    local database_file="$2"
-    python3 -c "
-import sys
-sys.path.insert(0, '.')
-from scripts.bulk_export import append_to_database
-append_to_database('$json_file', '$database_file')
-" || return 1
-}
-
-# Process each input file
-for input_file in "${INPUT_FILES[@]}"; do
-    if [ ! -f "$input_file" ]; then
-        echo "Error: File not found: $input_file" >&2
-        continue
-    fi
-
-    base_name=$(get_base_name "$input_file")
-    set_centric_file="$OUTPUT_DIR/${base_name}_set.json"
-    bench_centric_file="$OUTPUT_DIR/${base_name}_bench.json"
-
-    echo "Processing: $input_file"
-
-    # Export to set-centric format
-    echo "  → Exporting to set-centric: $set_centric_file"
-    export_set_centric "$input_file" "$set_centric_file"
-
-    # Export to bench-centric format
-    echo "  → Exporting to bench-centric: $bench_centric_file"
-    export_bench_centric "$input_file" "$bench_centric_file"
-
-    # Append set-centric results to database
-    if [ -f "$set_centric_file" ]; then
-        echo "  → Appending to database: $DATABASE_FILE"
-        append_to_database "$set_centric_file" "$DATABASE_FILE"
-    fi
-done
-
-# Sort all JSON files
+# Sort only the files produced by this run (the output directory may hold
+# unrelated JSON files). Keys are sorted everywhere; database workouts are
+# ordered by date, then workout id.
 echo ""
 echo "Sorting JSON files..."
-for json_file in "$OUTPUT_DIR"/*.json; do
-    if [ -f "$json_file" ]; then
-        echo "  → Sorting: $json_file"
-        sort_json_file "$json_file"
+while IFS= read -r json_file; do
+    echo "  → Sorting: $json_file"
+    if [ "$json_file" = "$DATABASE_FILE" ]; then
+        jq -S '.workouts |= sort_by(.date, .workout_id)' "$json_file" > "${json_file}.tmp"
+    else
+        jq -S . "$json_file" > "${json_file}.tmp"
     fi
-done
+    mv "${json_file}.tmp" "$json_file"
+done < "$MANIFEST"
 
 echo ""
-echo "✓ Bulk parsing complete!"
+if [ "$status" -eq 0 ]; then
+    echo "✓ Bulk parsing complete!"
+else
+    echo "✗ Bulk parsing finished with errors" >&2
+fi
 echo "  Output directory: $OUTPUT_DIR"
 echo "  Database file: $DATABASE_FILE"
+exit "$status"
