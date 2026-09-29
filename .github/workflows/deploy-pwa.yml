@@ -2,33 +2,38 @@ name: Deploy PWA to GitHub Pages
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, c42c-the-github-pages ]
     paths:
       - 'mobile-app/**'
       - 'parser/**'
       - 'src/**'
       - 'data/**'
+      - 'schema/**'
       - 'dist/trainingLexer.py'
       - 'dist/trainingParser.py'
       - 'Makefile'
       - 'makefiles/pwa.mk'
       - '.github/workflows/deploy-pwa.yml'
+      - '.gitignore'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  deploy-pwa:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -42,19 +47,30 @@ jobs:
       run: |
         uv sync
 
-    - name: Configure Git
-      run: |
-        git config user.email "github-actions@github.com"
-        git config user.name "GitHub Actions"
-
-    - name: Build and publish PWA
+    - name: Build PWA
       run: |
         source .venv/bin/activate
-        make pwa-publish
+        make pwa-build
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/pwa/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 
     - name: Print deployment info
       run: |
         echo "✓ PWA deployed to GitHub Pages"
-        REPO_NAME=$(basename ${{ github.repository }})
-        REPO_OWNER=$(dirname ${{ github.repository }} | xargs basename)
-        echo "URL: https://${REPO_OWNER}.github.io/${REPO_NAME}/index.html"
+        echo "URL: ${{ steps.deployment.outputs.page_url }}"
