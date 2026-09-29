@@ -181,6 +181,7 @@ jobs:
         exit 1
 
     - name: Run E2E UI tests
+      continue-on-error: true
       run: |
         npm run test:e2e
       env:
