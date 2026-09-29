@@ -10,7 +10,10 @@ usage() {
 Usage: $0 [OPTIONS] <input_files...>
 
 Parse multiple training files and export to JSON (both set-centric and bench-centric formats).
-Results are appended to a database file and all JSON files are sorted.
+Each input file gives one <name>_set.json and one <name>_bench.json. A file that contains
+several dated sessions (YYYY-MM-DD lines) gives one pair per session, named
+<name>_<date>_set.json / <name>_<date>_bench.json.
+Results are appended to a database file (one entry per session) and all JSON files are sorted.
 
 OPTIONS:
     -o, --output-dir DIR    Output directory (default: data/parsed)

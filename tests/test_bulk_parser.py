@@ -369,6 +369,71 @@ Row en maquina 41k: 15, 8
                 data = self.assert_json_valid(self.output_dir / f"{stem}_{kind}.json")
                 self.assertTrue(data["date"].startswith(date))
 
+    def test_multiple_sessions_in_one_file_are_split(self) -> None:
+        """A file with N dated sessions yields N set-centric and N bench-centric files."""
+        multi = self.create_training_file(
+            "2020-01-01\nSquat 70k: 5x10\n\n2020-02-01\nDeadlift 60k: 20, 15\n",
+            "multi.txt"
+        )
+        other = self.create_training_file(self.training_sample_3, "single.txt")
+        self.assertEqual(self.run_bulk_parser(multi, other), 0)
+
+        produced = sorted(p.name for p in self.output_dir.glob("*.json"))
+        self.assertEqual(produced, [
+            "database.json",
+            "multi_2020-01-01_bench.json", "multi_2020-01-01_set.json",
+            "multi_2020-02-01_bench.json", "multi_2020-02-01_set.json",
+            "single_bench.json", "single_set.json",
+        ])
+
+        for kind in ("set", "bench"):
+            jan = self.assert_json_valid(self.output_dir / f"multi_2020-01-01_{kind}.json")
+            feb = self.assert_json_valid(self.output_dir / f"multi_2020-02-01_{kind}.json")
+            self.assertEqual([e["name"] for e in jan["exercises"]], ["Squat"])
+            self.assertEqual([e["name"] for e in feb["exercises"]], ["Deadlift"])
+            self.assertTrue(jan["date"].startswith("2020-01-01"))
+            self.assertTrue(feb["date"].startswith("2020-02-01"))
+            self.assertNotEqual(jan["workout_id"], feb["workout_id"])
+
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        self.assertEqual(len(db["workouts"]), 3)
+        self.assertEqual(
+            [w["date"][:10] for w in db["workouts"]],
+            ["2020-01-01", "2020-02-01", "2025-01-03"]
+        )
+        from_multi = [w for w in db["workouts"] if w["source_file"] == str(multi)]
+        self.assertEqual(
+            [(w["date"][:10], w["exercises"][0]["name"]) for w in from_multi],
+            [("2020-01-01", "Squat"), ("2020-02-01", "Deadlift")],
+        )
+
+    def test_same_date_twice_in_one_file_does_not_collide(self) -> None:
+        """Two sessions with the same date get distinct files and ids."""
+        multi = self.create_training_file(
+            "2020-01-01\nSquat 70k: 5x10\n\n2020-01-01\nDeadlift 60k: 20, 15\n",
+            "twice.txt"
+        )
+        self.assertEqual(self.run_bulk_parser(multi), 0)
+
+        set_files = sorted(self.output_dir.glob("twice_*_set.json"))
+        self.assertEqual(len(set_files), 2)
+        self.assertEqual(
+            sorted(self.exercise_names(f)[0] for f in set_files), ["Deadlift", "Squat"]
+        )
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        self.assertEqual(len({w["workout_id"] for w in db["workouts"]}), 2)
+
+    def test_session_without_exercises_is_skipped(self) -> None:
+        """A date line with nothing under it does not fail the whole file."""
+        multi = self.create_training_file(
+            "2020-01-01\n\n2020-02-01\nDeadlift 60k: 20, 15\n", "gap.txt"
+        )
+        self.assertEqual(self.run_bulk_parser(multi), 0)
+        # Only one session is left, so it keeps the plain file name
+        self.assertEqual(self.exercise_names(self.output_dir / "gap_set.json"), ["Deadlift"])
+        db = self.assert_json_valid(self.output_dir / "database.json")
+        self.assertEqual(db["workouts"][0]["date"][:10], "2020-02-01")
+
     def test_same_basename_in_different_directories(self) -> None:
         """Two inputs named alike must not overwrite each other's output."""
         (Path(self.temp_dir.name) / "a").mkdir()

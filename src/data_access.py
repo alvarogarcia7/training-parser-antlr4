@@ -106,17 +106,26 @@ class DataParser:
             List of parsed Exercise objects
         """
         content = DataReader.read_file(file_path)
-        lines = content.split('\n')
+        return DataParser.parse_lines_filtered(content.split('\n'))
 
-        # Filter out date lines (YYYY-MM-DD) and empty lines
+    @staticmethod
+    def parse_lines_filtered(lines: list[str]) -> list[Exercise]:
+        """
+        Parse training log lines, filtering out date lines (YYYY-MM-DD) and empty lines.
+
+        Args:
+            lines: Lines of a training log
+
+        Returns:
+            List of parsed Exercise objects
+        """
         filtered_lines = []
         for line in lines:
             line = line.strip()
             if line and not re.match(r'^\d{4}-\d{2}-\d{2}$', line):
                 filtered_lines.append(line)
 
-        filtered_content = '\n'.join(filtered_lines)
-        return DataParser.parse_raw_text(filtered_content)
+        return DataParser.parse_raw_text('\n'.join(filtered_lines))
 
 
 class SessionGrouper:
@@ -312,6 +321,20 @@ class DataAccess:
             List of standardized Exercise objects
         """
         exercises = DataParser.parse_file_filtered(file_path)
+        self._standardize_names(exercises)
+        return exercises
+
+    def parse_text(self, text: str) -> list[Exercise]:
+        """
+        Parse training log text (a single session), filtering date lines.
+
+        Args:
+            text: Training log text; date lines (YYYY-MM-DD) and empty lines are ignored
+
+        Returns:
+            List of standardized Exercise objects
+        """
+        exercises = DataParser.parse_lines_filtered(text.split('\n'))
         self._standardize_names(exercises)
         return exercises
 
