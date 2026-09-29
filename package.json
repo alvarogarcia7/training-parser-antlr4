@@ -5,7 +5,8 @@
   "type": "commonjs",
   "dependencies": {
     "backlog.md": "^1.44.0",
-    "isomorphic-git": "^1.25.0"
+    "isomorphic-git": "^1.25.0",
+    "cors-anywhere": "^0.4.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0"
