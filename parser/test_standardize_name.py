@@ -47,3 +47,17 @@ class TestStandardizeName(unittest.TestCase):
 
     def test_multiple_synonyms_when_there_is_no_synonym_for_the_second_shortcut(self) -> None:
         self.assertEqual(StandardizeName().run('m anotherthing'), 'Machine Anotherthing')
+
+    def test_full_clean_name_is_not_expanded_twice(self) -> None:
+        self.assertEqual(StandardizeName().run('Bench press'), 'Bench Press')
+        self.assertEqual(StandardizeName().run('bench press'), 'Bench Press')
+
+    def test_clean_name_inside_longer_name_is_not_expanded_twice(self) -> None:
+        self.assertEqual(StandardizeName().run('machine bench press'), 'Machine Bench Press')
+        self.assertEqual(StandardizeName().run('bench press machine'), 'Bench Press Machine')
+
+    def test_shortcut_followed_by_rest_of_clean_name(self) -> None:
+        self.assertEqual(StandardizeName().run('bp press'), 'Bench Press')
+
+    def test_following_word_not_part_of_clean_name_is_kept(self) -> None:
+        self.assertEqual(StandardizeName().run('bench row'), 'Bench Press Row')
