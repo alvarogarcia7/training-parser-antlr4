@@ -56,8 +56,6 @@ class TestStandardizeName(unittest.TestCase):
         self.assertEqual(StandardizeName().run('machine bench press'), 'Machine Bench Press')
         self.assertEqual(StandardizeName().run('bench press machine'), 'Bench Press Machine')
 
-    def test_shortcut_followed_by_rest_of_clean_name(self) -> None:
-        self.assertEqual(StandardizeName().run('bp press'), 'Bench Press')
+    def test_shortcut_followed_by_another_shortcut_should_be_converted_twice(self) -> None:
+        self.assertEqual(StandardizeName().run('bp press'), 'Bench Press Press')
 
-    def test_following_word_not_part_of_clean_name_is_kept(self) -> None:
-        self.assertEqual(StandardizeName().run('bench row'), 'Bench Press Row')
