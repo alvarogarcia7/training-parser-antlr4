@@ -107,7 +107,7 @@ from parser import StandardizeName
 
 # Use default synonyms
 standardizer = StandardizeName()
-standardizer.run("bench")  # Returns "Bench Press"
+standardizer.run("bp")  # Returns "Bench Press"
 
 # Load custom synonyms from file
 standardizer = StandardizeName(config_path="data/synonyms.yaml")

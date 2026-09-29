@@ -71,39 +71,43 @@ class StandardizeName:
 
         # If no full match, process word by word
         parts = []
-        words = normalized_input.split(" ")
-        index = 0
-        while index < len(words):
-            part = words[index]
-            index += 1
-            clean = self._synonym_for_word(part.strip())
-            if clean is None:
+        for part in normalized_input.split(" "):
+            appended = False
+            for synonym_group in self._synonyms:
+                for synonym in synonym_group['synonyms']:
+                    if part.strip() == synonym.casefold():
+                        parts.append(synonym_group['clean'])
+                        appended = True
+                        break
+                if appended:
+                    break
+            if not appended:
                 parts.append(part)
-                continue
-            parts.append(clean)
-            # Skip the following words when they already spell the end of the clean name,
-            # e.g. "bench press" -> "bench press" instead of "bench press press"
-            index += self._repeated_tail_length(clean.casefold().split(), words[index:])
         return " ".join(parts)
-
-    def _synonym_for_word(self, word: str) -> str | None:
-        for synonym_group in self._synonyms:
-            for synonym in synonym_group['synonyms']:
-                if word == synonym.casefold():
-                    return synonym_group['clean']
-        return None
-
-    @staticmethod
-    def _repeated_tail_length(clean_words: list[str], following_words: list[str]) -> int:
-        """Longest n such that the next n input words equal the last n words of the clean name."""
-        for length in range(min(len(clean_words) - 1, len(following_words)), 0, -1):
-            if [w.strip() for w in following_words[:length]] == clean_words[-length:]:
-                return length
-        return 0
 
     def _check_synonym_configuration(self, synonyms: list[Synonym]) -> None:
         self._check_non_overlapping_synonyms(synonyms)
         self._check_non_repeating_clean_name(synonyms)
+        self._check_non_recursive_synonyms(synonyms)
+
+    def _check_non_recursive_synonyms(self, synonyms: list[Synonym]) -> None:
+        """A synonym must not appear (as whole words) inside any clean name.
+
+        Otherwise the expansion contains the synonym again and expands recursively,
+        e.g. 'bench' -> 'bench press' -> 'bench press press' -> ...
+        """
+        clean_names = [synonym['clean'].casefold().split() for synonym in synonyms]
+        for synonym_group in synonyms:
+            for synonym in synonym_group['synonyms']:
+                synonym_words = synonym.casefold().split()
+                for clean_words in clean_names:
+                    assert not self._contains_words(clean_words, synonym_words), \
+                        f"Synonym '{synonym}' expands recursively: it is part of the clean name '{' '.join(clean_words)}'"
+
+    @staticmethod
+    def _contains_words(words: list[str], sub_words: list[str]) -> bool:
+        length = len(sub_words)
+        return any(words[i:i + length] == sub_words for i in range(len(words) - length + 1))
 
     def _check_non_repeating_clean_name(self, synonyms: list[Synonym]) -> None:
         synonym_names = [synonym['clean'] for synonym in synonyms]

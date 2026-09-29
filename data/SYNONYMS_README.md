@@ -21,7 +21,7 @@ When no configuration file is specified, `StandardizeName` uses built-in default
 from parser import StandardizeName
 
 standardizer = StandardizeName()
-result = standardizer.run("bench")  # Returns "Bench Press"
+result = standardizer.run("bp")  # Returns "Bench Press"
 ```
 
 ### Loading Custom Synonyms
@@ -48,12 +48,10 @@ synonyms:
   - clean: overhead press
     synonyms:
       - oh
-      - overhead
       - op
 
   - clean: bench press
     synonyms:
-      - bench
       - bp
 ```
 
@@ -71,7 +69,15 @@ The configuration is validated on load to ensure:
 
 1. **No overlapping synonyms**: A synonym cannot appear in multiple entries
 2. **No duplicate clean names**: Each clean name must be unique
-3. **Proper data types**: All values must be strings
+3. **No recursive expansion**: A synonym cannot appear, as whole words, inside
+   any clean name (e.g. `bench` for `bench press`), otherwise its expansion
+   contains it again: `bench` -> `bench press` -> `bench press press` -> ...
+4. **Proper data types**: All values must be strings
+
+The same checks run when committing: the `validate-synonyms` pre-commit hook
+(`make validate-synonyms`, i.e. `python3 validate_synonyms_yaml.py [FILE ...]`)
+validates `data/synonyms.yaml` against the schema and then loads it with
+`StandardizeName`.
 
 Invalid configurations will raise descriptive errors:
 

@@ -17,7 +17,7 @@ def example_default_synonyms() -> None:
     print("=== Example 1: Default Synonyms ===")
     standardizer = StandardizeName()
 
-    test_names = ["bench", "oh", "lat pull-down", "Custom Exercise Name"]
+    test_names = ["bp", "oh", "lat pull-down", "Custom Exercise Name"]
 
     for name in test_names:
         result = standardizer.run(name)
@@ -36,7 +36,7 @@ def example_yaml_config() -> None:
 
     standardizer = StandardizeName(config_path=config_path)
 
-    test_names = ["bench", "bp", "overhead"]
+    test_names = ["bp", "op", "mbp"]
 
     for name in test_names:
         result = standardizer.run(name)

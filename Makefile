@@ -51,7 +51,12 @@ test: check-virtual-env
 validate-datasets:
 	${MAKE} validate-bench-centric
 	${MAKE} validate-set-centric
+	${MAKE} validate-synonyms
 .PHONY: validate-datasets
+
+validate-synonyms: check-virtual-env
+	uv run python3 validate_synonyms_yaml.py
+.PHONY: validate-synonyms
 
 validate-set-centric: check-virtual-env
 	uv run python3 validate_set_centric.py
