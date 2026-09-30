@@ -21,11 +21,13 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Iterable
 
+import jsonschema
 import yaml
 
 from src.one_rep_max import BRZYCKI_MAX_REPS, brzycki_1rm, percentage_of_1rm
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "seasons.yaml"
+SEASON_REPORT_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "season_report.schema.json"
 
 _DATE_LINE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?!\d)")
 
@@ -195,6 +197,16 @@ class SeasonReport:
             "seasons": [season.to_dict() for season in self.seasons],
             "ignored": [season.to_dict() for season in self.ignored],
         }
+
+
+def validate_report_dict(data: dict[str, Any]) -> None:
+    """Validate a season report dict against schema/season_report.schema.json.
+
+    Raises jsonschema.exceptions.ValidationError if `data` does not match the
+    schema, or jsonschema.exceptions.SchemaError if the schema itself is invalid.
+    """
+    schema = json.loads(SEASON_REPORT_SCHEMA_PATH.read_text(encoding="utf-8"))
+    jsonschema.validate(data, schema)
 
 
 def rest_days(previous: datetime.date, following: datetime.date) -> int:

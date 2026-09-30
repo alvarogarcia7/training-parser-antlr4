@@ -9,7 +9,9 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-from scripts.detect_seasons import main
+import jsonschema
+
+from scripts.detect_seasons import format_output, main
 from src.one_rep_max import brzycki_1rm, percentage_of_1rm
 from src.seasons import (
     SeasonConfig,
@@ -22,6 +24,7 @@ from src.seasons import (
     rest_days,
     session_from_set_centric,
     sessions_from_directory,
+    validate_report_dict,
 )
 
 
@@ -196,6 +199,57 @@ class TestExerciseIntensities(unittest.TestCase):
         self.assertEqual([s.percentage_1rm for s in second.sets], [100.0, 50.0])
 
 
+class TestSeasonReportSchema(unittest.TestCase):
+    """Test validation of a season report dict against its JSON schema."""
+
+    def test_real_report_validates(self) -> None:
+        sessions = [
+            session("2023-01-01", ("Squat", 1, 100), ("Squat", 5, 50)),
+            session("2023-01-05", ("Squat", 10, 50)),
+            session("2023-03-01"),
+        ]
+        report = analyse_seasons(sessions, SeasonConfig(min_break_days=7))
+        validate_report_dict(report.to_dict())  # must not raise
+
+    def test_empty_report_validates(self) -> None:
+        report = analyse_seasons([], SeasonConfig())
+        validate_report_dict(report.to_dict())  # must not raise
+
+    def test_missing_required_key_is_rejected(self) -> None:
+        data = {"config": {"min_break_days": 21, "min_sessions": 1, "max_reps_for_1rm": 10}, "seasons": []}
+        with self.assertRaises(jsonschema.exceptions.ValidationError):
+            validate_report_dict(data)
+
+    def test_wrong_type_is_rejected(self) -> None:
+        data = {
+            "config": {"min_break_days": 21, "min_sessions": 1, "max_reps_for_1rm": 10},
+            "seasons": [
+                {
+                    "start": "2023-01-01",
+                    "end": "2023-01-01",
+                    "sessions": "one",
+                    "duration_days": 1,
+                    "longest_break_days": 0,
+                    "break_before_days": None,
+                    "exercises": [],
+                }
+            ],
+            "ignored": [],
+        }
+        with self.assertRaises(jsonschema.exceptions.ValidationError):
+            validate_report_dict(data)
+
+    def test_unknown_property_is_rejected(self) -> None:
+        data = {
+            "config": {"min_break_days": 21, "min_sessions": 1, "max_reps_for_1rm": 10},
+            "seasons": [],
+            "ignored": [],
+            "unexpected": True,
+        }
+        with self.assertRaises(jsonschema.exceptions.ValidationError):
+            validate_report_dict(data)
+
+
 def set_centric(date: str, *exercises: tuple[str, list[tuple[int, float]]]) -> dict[str, Any]:
     """Build an enveloped set-centric workout from (name, [(repetitions, kg), ...])."""
     return {
@@ -311,6 +365,27 @@ class TestCli(unittest.TestCase):
         self.assertEqual(first["best_set"]["weight"], 120)
         self.assertAlmostEqual(second["one_rep_max"], 100.0)
         self.assertEqual([s["percentage_1rm"] for s in second["sets"]], [100.0, 50.0])
+        validate_report_dict(result)
+
+    def test_directory_text_output(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workouts = Path(tmp) / "workouts"
+            write_workouts(workouts, {
+                "a.json": set_centric("2023-01-01", ("Squat", [(1, 100), (5, 50)])),
+                "b.json": set_centric("2023-03-01", ("Squat", [(5, 50)])),
+            })
+            config = Path(tmp) / "seasons.yaml"
+            config.write_text("min_break_days: 7\n")
+            buffer = io.StringIO()
+            with contextlib.redirect_stdout(buffer):
+                code = main([str(workouts), "--config", str(config), "--format", "text"])
+        text = buffer.getvalue()
+
+        self.assertEqual(code, 0)
+        self.assertIn("TRAINING SEASONS", text)
+        self.assertIn("Season 1: 2023-01-01 -> 2023-01-01", text)
+        self.assertIn("Season 2: 2023-03-01 -> 2023-03-01", text)
+        self.assertIn("Squat: 1RM=100.0kg", text)
 
     def test_missing_input(self) -> None:
         self.assertEqual(main(["does-not-exist"]), 1)
@@ -329,3 +404,14 @@ class TestCli(unittest.TestCase):
         self.assertIn("Season 2: 2023-03-01 -> 2023-03-01", text)
         self.assertIn("Squat: 1RM=100.0kg", text)
         self.assertIn("2023-01-01: 1x1x100kg 100%, 2x5x50kg 50%", text)
+
+    def test_format_output_dispatches_by_format(self) -> None:
+        sessions = [session("2023-01-01", ("Squat", 1, 100))]
+        report = analyse_seasons(sessions, SeasonConfig(min_break_days=7))
+        data = report.to_dict()
+
+        json_text = format_output(report, data, "json")
+        self.assertEqual(json.loads(json_text), data)
+
+        plain_text = format_output(report, data, "text")
+        self.assertEqual(plain_text, format_report(report))

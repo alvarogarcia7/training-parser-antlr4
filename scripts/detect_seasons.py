@@ -20,20 +20,25 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import jsonschema  # noqa: E402
 
 from src.seasons import (  # noqa: E402
     DEFAULT_CONFIG_PATH,
     SeasonConfig,
+    SeasonReport,
     analyse_seasons,
     format_report,
     sessions_from_directory,
+    validate_report_dict,
 )
 
 
-def main(argv: list[str] | None = None) -> int:
-    """Main CLI entry point."""
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Detect training seasons separated by breaks without training",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -64,25 +69,56 @@ Examples:
         "--max-reps-for-1rm", type=int, help="Override max_reps_for_1rm from config"
     )
     parser.add_argument("--format", choices=["text", "json"], default="text")
-    args = parser.parse_args(argv)
+    return parser.parse_args(argv)
+
+
+def build_config(args: argparse.Namespace) -> SeasonConfig:
+    """Load the season configuration from file or defaults, applying CLI overrides."""
+    config = SeasonConfig.load(args.config) if args.config.exists() else SeasonConfig()
+    if args.min_break_days is not None:
+        config = replace(config, min_break_days=args.min_break_days)
+    if args.min_sessions is not None:
+        config = replace(config, min_sessions=args.min_sessions)
+    if args.max_reps_for_1rm is not None:
+        config = replace(config, max_reps_for_1rm=args.max_reps_for_1rm)
+    return config
+
+
+def run_analysis(input_dir: Path, config: SeasonConfig) -> SeasonReport:
+    """Parse set-centric JSON sessions from a directory and detect seasons."""
+    return analyse_seasons(sessions_from_directory(input_dir), config)
+
+
+def format_output(report: SeasonReport, data: dict[str, Any], fmt: str) -> str:
+    """Render an already-validated season report as text or JSON.
+
+    `data` must be `report.to_dict()`, already validated against the season
+    report schema. No parsing, analysis or validation happens here.
+    """
+    if fmt == "json":
+        return json.dumps(data, indent=2)
+    return format_report(report)
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Main CLI entry point."""
+    args = parse_args(argv)
 
     try:
-        config = SeasonConfig.load(args.config) if args.config.exists() else SeasonConfig()
-        if args.min_break_days is not None:
-            config = replace(config, min_break_days=args.min_break_days)
-        if args.min_sessions is not None:
-            config = replace(config, min_sessions=args.min_sessions)
-        if args.max_reps_for_1rm is not None:
-            config = replace(config, max_reps_for_1rm=args.max_reps_for_1rm)
-        report = analyse_seasons(sessions_from_directory(args.input), config)
+        config = build_config(args)
+        report = run_analysis(args.input, config)
     except (OSError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
-    if args.format == "json":
-        print(json.dumps(report.to_dict(), indent=2))
-    else:
-        print(format_report(report))
+    data = report.to_dict()
+    try:
+        validate_report_dict(data)
+    except jsonschema.exceptions.ValidationError as e:
+        print(f"Error: generated report does not match schema/season_report.schema.json: {e}", file=sys.stderr)
+        return 1
+
+    print(format_output(report, data, args.format))
     return 0
 
 
