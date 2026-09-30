@@ -21,7 +21,7 @@ from parser import StandardizeName
 
 # This still works exactly as before
 standardizer = StandardizeName()
-standardizer.run("bench")  # Returns "Bench Press"
+standardizer.run("bp")  # Returns "Bench Press"
 ```
 
 ## Optional: Using Custom Synonyms
@@ -46,12 +46,10 @@ synonyms:
   - clean: overhead press
     synonyms:
       - oh
-      - overhead
       - op
 
   - clean: bench press
     synonyms:
-      - bench
       - bp
 ```
 
