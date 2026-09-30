@@ -1,0 +1,3 @@
+<div class="document">
+<p>Eager loading ensures that configuration errors surface immediately at construction time rather than mid-parse, simplifying error handling for callers.</p>
+</div>

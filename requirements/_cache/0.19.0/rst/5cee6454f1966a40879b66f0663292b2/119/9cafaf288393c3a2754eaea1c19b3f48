@@ -1,0 +1,3 @@
+<div class="document">
+<p>Overlapping synonyms produce non-deterministic normalization results; rejecting them at load time enforces correctness.</p>
+</div>

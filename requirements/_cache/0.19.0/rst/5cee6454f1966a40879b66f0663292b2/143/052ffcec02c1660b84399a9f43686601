@@ -1,0 +1,3 @@
+<div class="document">
+<p>A single optional parameter preserves the existing call signature and enables opt-in configuration without forcing changes on existing callers.</p>
+</div>

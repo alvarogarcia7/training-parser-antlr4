@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall load and validate the synonym configuration during __init__ (eagerly), not deferred to the first use of the run() method.</p>
+</div>

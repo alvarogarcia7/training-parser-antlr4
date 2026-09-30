@@ -1,0 +1,3 @@
+<div class="document">
+<p>External configuration decouples synonym data from application logic, allowing non-developers to maintain and extend name mappings independently.</p>
+</div>

@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall load synonym configurations from files with .yaml or .yml extensions by parsing them as YAML documents using a standards-compliant YAML parser.</p>
+</div>

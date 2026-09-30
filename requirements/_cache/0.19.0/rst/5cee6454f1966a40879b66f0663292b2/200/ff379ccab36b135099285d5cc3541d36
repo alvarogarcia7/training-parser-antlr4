@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall validate that each entry in the synonyms list contains exactly a clean key (string) and a synonyms key (list of strings). Missing or incorrectly typed fields shall raise a ValueError.</p>
+</div>

@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall support the use of the Training Parser via a Language Server Protocol (LSP) to provide language-specific features and enhancements. User shall be able to use the Training Parser in any IDE that supports LSP</p>
+</div>

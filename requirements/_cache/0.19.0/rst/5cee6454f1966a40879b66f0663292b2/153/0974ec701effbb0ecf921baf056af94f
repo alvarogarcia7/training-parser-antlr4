@@ -1,0 +1,3 @@
+<div class="document">
+<p>The config_path parameter shall accept both pathlib.Path objects and plain string paths interchangeably, converting strings to Path internally as needed.</p>
+</div>

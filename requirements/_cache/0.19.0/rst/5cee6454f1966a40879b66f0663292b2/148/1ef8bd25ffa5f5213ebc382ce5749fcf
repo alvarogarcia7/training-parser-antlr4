@@ -1,0 +1,3 @@
+<div class="document">
+<p>Fail-fast validation at initialization prevents silent misconfiguration and provides actionable feedback to users when configurations are malformed.</p>
+</div>

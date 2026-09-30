@@ -1,0 +1,4931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8"/>
+  <meta name="keywords" content="strictdoc, documentation, documentation-tool, requirements-management, requirements, documentation-generator, requirement-specifications, requirements-engineering, technical-documentation, requirements-specification"/>
+  <meta name="description" content="strictdoc. Software for technical documentation and requirements management."/>
+  <meta name="strictdoc-export-type" content="static">
+  <meta name="strictdoc-document-level" content="2">
+
+  <link rel="shortcut icon" href="../../_static/favicon.ico" type="image/x-icon"/>
+
+  
+  
+  <link rel="stylesheet" href="../../_static/base.css"/>
+  <link rel="stylesheet" href="../../_static/layout.css"/>
+  <link rel="stylesheet" href="../../_static/content.css"/>
+  <link rel="stylesheet" href="../../_static/node.css"/>
+  <link rel="stylesheet" href="../../_static/node_content.css"/>
+  <link rel="stylesheet" href="../../_static/element.css"/>
+  <link rel="stylesheet" href="../../_static/form.css"/>
+  <link rel="stylesheet" href="../../_static/requirement__temporary.css"/>
+  <link rel="stylesheet" href="../../_static/autogen.css"/>
+  <link rel="stylesheet" href="../../_static/pygments.css"/>
+  
+
+
+  
+  <script src="../../_static/stimulus_umd.min.js"></script>
+  <script>
+    Stimulus.application = Stimulus.Application.start();
+  </script>
+  
+  <script src="../../_static/app_core.js"></script><script src="../../_static/dropdown_menu.js"></script><script src="../../_static/resizable_bar.js"></script>
+  <script src="../../_static/collapsible_toc.js"></script>
+  <script src="../../_static/project_tree_preserve_scroll.js"></script>
+  <script src="../../_static/toc_highlighting.js"></script>
+
+  <script src="../../_static/controllers/anchor_controller.js"></script>
+  <script src="../../_static/controllers/copy_stable_link_button_controller.js"></script>
+  <script src="../../_static/controllers/copy_to_clipboard_controller.js"></script>
+
+  
+    <meta name="strictdoc-project-hash" content="d0161262435019af6bf21f7471fe76e4">
+<meta name="strictdoc-search-index-timestamp" content="1790773720.957692">
+<meta name="strictdoc-search-index-path" content="../../_static/static_html_search_index.js">
+
+
+<script src="../../_static/app_core.js"></script>
+<script src="../../_static/static_html_search.js" defer></script>
+  
+  
+  
+
+
+  <title>Training Parser - Synonyms Feature Low-Level Requirements - Document</title>
+
+  
+</head>
+
+<body data-viewtype="document" data-turbo="false">
+
+<div class="mars">
+  
+</div>
+
+  <div class="layout" id="layout">
+
+    <nav class="layout_nav">
+      <div class="nav">
+
+
+
+  <a
+    data-link="index"
+    class="nav_button"
+    href="../../index.html"
+    title="Project index">
+    <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <line x1="9" y1="4" x2="7" y2="4"></line>
+  <line x1="12" y1="9" x2="12" y2="7"></line>
+  <line x1="6" y1="10" x2="10" y2="6"></line>
+  <circle cx="4" cy="12" r="2.25"></circle>
+  <circle cx="12" cy="4" r="2.25"></circle>
+  <circle cx="4" cy="4" r="2.25"></circle>
+  <circle cx="12" cy="12" r="2.25"></circle>
+</svg>
+  </a></div>
+    </nav><aside class="layout_tree">
+      
+  
+
+
+
+<div
+  js-resizable_bar="tree"
+  data-state="open"
+  data-position="left"
+>
+
+<div class="project_tree_with_ad">
+  <turbo-frame id="frame_aside_project_tree">
+  <div
+    class="tree"
+    js-project_tree_preserve_scroll="tree"
+    data-project-title="Untitled Project"
+    data-testid="aside-project-tree"
+  >
+    
+        
+          <div
+            class="tree_folder"
+            data-level="0"
+            data-testid="tree-folder-item"
+          >
+          <span class="tree_folder_path">/</span>
+          </div>
+        
+      
+        
+          <div
+            class="tree_folder"
+            data-level="1"
+            data-testid="tree-folder-item"
+          >
+          <span class="tree_folder_path">/hlr/</span>
+          </div>
+        
+      
+        
+        <a
+          href="../../requirements/hlr/HLR-001-DOC.html"
+          class="tree_item"
+          
+          data-folder="hlr"
+          data-testid="tree-document-link"
+        >
+          <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d=" M13,13 L13,8 C13,7.5 12.6,7 12,7 L9,7 C8.5,7 8,6.5 8,6 L8,3 C8,2.5 7.5,2 7,2 L4,2 C3.5,2 3,2.5 3,3 L3,13 C3,13.5 3.5,14 4,14 L12,14 C12.6,14 13,13.5 13,13 Z M13,9 L13,8 C13,7.5 13,7 12.5,6.5 L8.5,2.5 C8,2 7.5,2 7,2 L6,2"></path>
+</svg>
+          <div
+            class="document_title"
+            title="Training Parser - High-Level Requirements"
+            data-file_name="HLR-001-DOC.sdoc"
+          >Training Parser - High-Level Requirements</div>
+        </a>
+        
+        
+        
+        
+      
+        
+          <div
+            class="tree_folder"
+            data-level="1"
+            data-testid="tree-folder-item"
+          >
+          <span class="tree_folder_path">/llr/</span>
+          </div>
+        
+      
+        
+        <a
+          href="../../requirements/llr/LLR-001-Synonyms.html"
+          class="tree_item"
+          
+          active="true"
+          
+          data-folder="llr"
+          data-testid="tree-document-link"
+        >
+          <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d=" M13,13 L13,8 C13,7.5 12.6,7 12,7 L9,7 C8.5,7 8,6.5 8,6 L8,3 C8,2.5 7.5,2 7,2 L4,2 C3.5,2 3,2.5 3,3 L3,13 C3,13.5 3.5,14 4,14 L12,14 C12.6,14 13,13.5 13,13 Z M13,9 L13,8 C13,7.5 13,7 12.5,6.5 L8.5,2.5 C8,2 7.5,2 7,2 L6,2"></path>
+</svg>
+          <div
+            class="document_title"
+            title="Training Parser - Synonyms Feature Low-Level Requirements"
+            data-file_name="LLR-001-Synonyms.sdoc"
+          >Training Parser - Synonyms Feature Low-Level Requirements</div>
+        </a>
+        
+        
+        
+        
+      
+        
+        <a
+          href="../../requirements/llr/LLR-002-Parser.html"
+          class="tree_item"
+          
+          data-folder="llr"
+          data-testid="tree-document-link"
+        >
+          <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d=" M13,13 L13,8 C13,7.5 12.6,7 12,7 L9,7 C8.5,7 8,6.5 8,6 L8,3 C8,2.5 7.5,2 7,2 L4,2 C3.5,2 3,2.5 3,3 L3,13 C3,13.5 3.5,14 4,14 L12,14 C12.6,14 13,13.5 13,13 Z M13,9 L13,8 C13,7.5 13,7 12.5,6.5 L8.5,2.5 C8,2 7.5,2 7,2 L6,2"></path>
+</svg>
+          <div
+            class="document_title"
+            title="Training Parser - Parser Requirements"
+            data-file_name="LLR-002-Parser.sdoc"
+          >Training Parser - Parser Requirements</div>
+        </a>
+        
+        
+        
+        
+      
+        
+        <a
+          href="../../requirements/llr/LLR-003-LSP.html"
+          class="tree_item"
+          
+          data-folder="llr"
+          data-testid="tree-document-link"
+        >
+          <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d=" M13,13 L13,8 C13,7.5 12.6,7 12,7 L9,7 C8.5,7 8,6.5 8,6 L8,3 C8,2.5 7.5,2 7,2 L4,2 C3.5,2 3,2.5 3,3 L3,13 C3,13.5 3.5,14 4,14 L12,14 C12.6,14 13,13.5 13,13 Z M13,9 L13,8 C13,7.5 13,7 12.5,6.5 L8.5,2.5 C8,2 7.5,2 7,2 L6,2"></path>
+</svg>
+          <div
+            class="document_title"
+            title="Training Parser - Language Server Provider (LSP)"
+            data-file_name="LLR-003-LSP.sdoc"
+          >Training Parser - Language Server Provider (LSP)</div>
+        </a>
+        
+        
+        
+        
+      </div>
+</turbo-frame>
+  
+  <div id="ethical-ad-placement"></div>
+</div>
+</div>
+
+    </aside><aside
+        data-position="right"
+        class="layout_toc"
+      >
+        
+  
+
+
+
+<div
+  js-resizable_bar="toc"
+  data-state="open"
+  data-position="right"
+>
+<turbo-frame
+  id="frame-toc"
+  style="display: contents"
+>
+      <ul
+      data-testid="toc-list"
+      js-collapsible_list="list"
+      class="toc"
+      id="toc"
+      data-controller="draggable_list"><li data-nodeid="8ce759fdbcff49d7bc57cf22fedc3874">
+        <a
+          href="#LLR-SYN-1"
+          anchor="LLR-SYN-1"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            1
+          </span>Optional config_path Constructor Parameter
+            </a></li><li data-nodeid="c7d60617b9044d93b8d4c83db98b8240">
+        <a
+          href="#LLR-SYN-2"
+          anchor="LLR-SYN-2"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            2
+          </span>YAML Synonym File Loading
+            </a></li><li data-nodeid="fe704e1dd6e04703a1bc376ce32274cf">
+        <a
+          href="#LLR-SYN-3"
+          anchor="LLR-SYN-3"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            3
+          </span>JSON Synonym File Loading
+            </a></li><li data-nodeid="3e9b71d4c1874e4bad77af647eed5967">
+        <a
+          href="#LLR-SYN-4"
+          anchor="LLR-SYN-4"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            4
+          </span>Unsupported Format Error
+            </a></li><li data-nodeid="681b72dfa23f4555a84cca6c42d16513">
+        <a
+          href="#LLR-SYN-5"
+          anchor="LLR-SYN-5"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            5
+          </span>Root Key Validation
+            </a></li><li data-nodeid="a868f7bdef404f0d8c34b0332c511ba5">
+        <a
+          href="#LLR-SYN-6"
+          anchor="LLR-SYN-6"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            6
+          </span>Synonym Entry Structure Validation
+            </a></li><li data-nodeid="e1d8d3802013494dbe08b6faa31a5006">
+        <a
+          href="#LLR-SYN-7"
+          anchor="LLR-SYN-7"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            7
+          </span>Overlapping Synonym Detection
+            </a></li><li data-nodeid="baa0423a5c3d413b8a950a7d59382985">
+        <a
+          href="#LLR-SYN-8"
+          anchor="LLR-SYN-8"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            8
+          </span>Duplicate Clean Name Detection
+            </a></li><li data-nodeid="63036d4bb84b4891923a630b0820790e">
+        <a
+          href="#LLR-SYN-9"
+          anchor="LLR-SYN-9"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            9
+          </span>Missing File Error
+            </a></li><li data-nodeid="a1d9a9d64ce64d4daf02a182cbe96be1">
+        <a
+          href="#LLR-SYN-11"
+          anchor="LLR-SYN-11"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            10
+          </span>Case-Insensitive Synonym Matching
+            </a></li><li data-nodeid="763a15127ce24b37a5f3e549fb8caca1">
+        <a
+          href="#LLR-SYN-12"
+          anchor="LLR-SYN-12"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            11
+          </span>Path Object and String Path Acceptance
+            </a></li><li data-nodeid="6331f457fac84f78ab337871810cb8c6">
+        <a
+          href="#LLR-SYN-13"
+          anchor="LLR-SYN-13"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            12
+          </span>Per-Instance Independent Configuration
+            </a></li><li data-nodeid="7196371908c4451d90dece229e3deffd">
+        <a
+          href="#LLR-SYN-14"
+          anchor="LLR-SYN-14"
+          data-turbo="false"
+        >
+          <span class="section-number">
+            13
+          </span>Eager Load at Initialization
+            </a></li></ul>
+</turbo-frame>
+</div>
+
+      </aside><header class="layout_header">
+      <div class="header">
+
+  
+  <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <polyline points="14 5 14 10.5 8 15 2 10.5 2 5 8 1 14 5 8 9.5"></polyline>
+  <polyline points="2.5 5.5 8 9.5 8 15"></polyline>
+</svg>
+  <div
+    class="header__project_name"
+    title="Untitled Project"
+  >Untitled Project
+  </div>
+
+  
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" class="sc-gLvsXj bpkaBy"><path stroke="currentColor" d="M12.5 4.5l-5 11" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <turbo-frame id="header_document_title">
+  <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d=" M13,13 L13,8 C13,7.5 12.6,7 12,7 L9,7 C8.5,7 8,6.5 8,6 L8,3 C8,2.5 7.5,2 7,2 L4,2 C3.5,2 3,2.5 3,3 L3,13 C3,13.5 3.5,14 4,14 L12,14 C12.6,14 13,13.5 13,13 Z M13,9 L13,8 C13,7.5 13,7 12.5,6.5 L8.5,2.5 C8,2 7.5,2 7,2 L6,2"></path>
+</svg>
+  <div
+    class="header__document_title"
+    title="Training Parser - Synonyms Feature Low-Level Requirements"
+  >
+    Training Parser - Synonyms Feature Low-Level Requirements
+  </div>
+</turbo-frame>
+    
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" class="sc-gLvsXj bpkaBy"><path stroke="currentColor" d="M12.5 4.5l-5 11" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div class="viewtype">
+  <div
+    id="viewtype_handler"
+    class="viewtype__handler"
+    data-dropdown-handler
+    aria-expanded="false"
+    aria-controls="viewtype_menu"
+  >
+    <span>Document</span>
+    <svg class="svg_icon" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" >
+  <path d="M5 10l3 3 3-3M5 6l3-3 3 3"></path>
+</svg>
+  </div>
+  <menu
+    id="viewtype_menu"
+    class="dropdown_menu"
+    aria-hidden="true"
+    aria-labelledby="viewtype_handler"
+  >
+    <li class="dropdown_menu_header">VIEWS</li>
+    <li>
+      <a
+        data-viewtype_link="document"
+        class="dropdown_menu_item"
+        title="Go to Document view"
+        href="../../requirements/llr/LLR-001-Synonyms.html#LLR-SYN-DOC">
+      Document</a>
+    </li><li>
+      <a
+        data-viewtype_link="table"
+        class="dropdown_menu_item"
+        title="Go to Table view"
+        href="../../requirements/llr/LLR-001-Synonyms-TABLE.html#LLR-SYN-DOC">
+      Table</a>
+    </li><li>
+      <a
+        data-viewtype_link="traceability"
+        class="dropdown_menu_item"
+        title="Go to Traceability view"
+        href="../../requirements/llr/LLR-001-Synonyms-TRACE.html#LLR-SYN-DOC">
+      Traceability</a>
+    </li><li>
+      <a
+        data-viewtype_link="deep_traceability"
+        class="dropdown_menu_item"
+        title="Go to Deep Traceability view"
+        href="../../requirements/llr/LLR-001-Synonyms-DEEP-TRACE.html#LLR-SYN-DOC">
+      Deep Traceability</a>
+    </li></menu>
+</div>
+    
+  <div class="header__placeholder" data-testid="header-placeholder" id="header-placeholder"></div>
+
+  <div id="search" class="search-box">
+  <div class="search-input">
+      <input type="text" id="userinput" tabindex="2" placeholder="Search" autocorrect="off" spellcheck="false" autocomplete="off" data-testid="static-html-search-input">
+  </div>
+  <div id="search_results" class="search-results">
+    <div id="results_navigation" class="search-results-navigation">
+      <div id="results_count" class="search-results-count"></div>
+      <div class="search-results-navigation-buttons">
+        <span class="search-results-navigation-button" id="start" data-testid="static-html-search-button-start"></span>
+        <span class="search-results-navigation-button" id="previous" data-testid="static-html-search-button-previous"></span>
+        <span class="search-results-navigation-button" id="next" data-testid="static-html-search-button-next"></span>
+        <span class="search-results-navigation-button" id="end" data-testid="static-html-search-button-end"></span>
+      </div>
+    </div>
+    <div id="suggestions" class="search-suggestions"></div>
+  </div>
+</div></div>
+    </header>
+
+    <main class="layout_main">
+      
+  <div class="main">
+  <turbo-frame id="frame_document_content">
+      <div
+        class="content"
+      >
+        
+        
+
+        
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="root"
+    data-testid="node-root"
+  >
+
+    
+    
+
+  
+<h1 data-testid="document-title">
+  Training Parser - Synonyms Feature Low-Level Requirements
+  <span style="position: absolute; left: 0;" id="LLR-SYN-DOC" data-uid="LLR-SYN-DOC" data-anchor="LLR-SYN-DOC"></span>
+</h1>
+  <sdoc-meta><sdoc-meta-label data-testid="document-config-uid-label">UID:</sdoc-meta-label>
+    <sdoc-meta-field data-testid="document-config-uid-field">
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-DOC</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-meta-field><sdoc-meta-label data-testid="document-config-version-label">VERSION:</sdoc-meta-label>
+    <sdoc-meta-field data-testid="document-config-version-field">
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>1.0</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-meta-field>
+
+  </sdoc-meta>
+
+</sdoc-node>
+</turbo-frame>
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-1"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-1"
+  data-anchor="LLR-SYN-1"
+  node-role="requirement"
+  data-uid="LLR-SYN-1"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-1</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="1"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="1"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>1.&nbsp;Optional config_path Constructor Parameter</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-1</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>8ce759fdbcff49d7bc57cf22fedc3874</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-007">
+            <span class="requirement__parent-uid">HLR-007</span>
+            Configurable Synonym Loading
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The StandardizeName class shall accept an optional config_path parameter of type Path | str | None in its constructor. When the parameter is None (default), built-in default synonyms shall be used.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>A single optional parameter preserves the existing call signature and enables opt-in configuration without forcing changes on existing callers.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>High</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-2"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-2"
+  data-anchor="LLR-SYN-2"
+  node-role="requirement"
+  data-uid="LLR-SYN-2"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-2</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="2"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="2"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>2.&nbsp;YAML Synonym File Loading</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-2</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>c7d60617b9044d93b8d4c83db98b8240</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-008">
+            <span class="requirement__parent-uid">HLR-008</span>
+            Multiple Synonym Configuration Formats
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall load synonym configurations from files with .yaml or .yml extensions by parsing them as YAML documents using a standards-compliant YAML parser.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-3"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-3"
+  data-anchor="LLR-SYN-3"
+  node-role="requirement"
+  data-uid="LLR-SYN-3"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-3</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="3"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="3"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>3.&nbsp;JSON Synonym File Loading</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-3</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>fe704e1dd6e04703a1bc376ce32274cf</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-008">
+            <span class="requirement__parent-uid">HLR-008</span>
+            Multiple Synonym Configuration Formats
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall load synonym configurations from files with .json extension by parsing them as JSON documents using a standards-compliant JSON parser.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-4"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-4"
+  data-anchor="LLR-SYN-4"
+  node-role="requirement"
+  data-uid="LLR-SYN-4"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-4</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="4"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="4"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>4.&nbsp;Unsupported Format Error</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-4</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>3e9b71d4c1874e4bad77af647eed5967</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-008">
+            <span class="requirement__parent-uid">HLR-008</span>
+            Multiple Synonym Configuration Formats
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall raise a ValueError with a descriptive message when the config_path refers to a file whose extension is neither .yaml, .yml, nor .json.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>An explicit error on unsupported formats prevents silent failures and guides users toward supported alternatives.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-5"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-5"
+  data-anchor="LLR-SYN-5"
+  node-role="requirement"
+  data-uid="LLR-SYN-5"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-5</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="5"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="5"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>5.&nbsp;Root Key Validation</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-5</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>681b72dfa23f4555a84cca6c42d16513</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall validate that the parsed configuration document contains a top-level synonyms key whose value is a list. A missing key or non-list value shall raise a ValueError with a descriptive message.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>High</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-6"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-6"
+  data-anchor="LLR-SYN-6"
+  node-role="requirement"
+  data-uid="LLR-SYN-6"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-6</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="6"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="6"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>6.&nbsp;Synonym Entry Structure Validation</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-6</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>a868f7bdef404f0d8c34b0332c511ba5</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall validate that each entry in the synonyms list contains exactly a clean key (string) and a synonyms key (list of strings). Missing or incorrectly typed fields shall raise a ValueError.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>High</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-7"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-7"
+  data-anchor="LLR-SYN-7"
+  node-role="requirement"
+  data-uid="LLR-SYN-7"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-7</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="7"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="7"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>7.&nbsp;Overlapping Synonym Detection</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-7</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>e1d8d3802013494dbe08b6faa31a5006</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall detect and reject configurations in which the same synonym string appears in more than one entry. Such overlap shall raise an AssertionError or ValueError identifying the conflicting synonym.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Overlapping synonyms produce non-deterministic normalization results; rejecting them at load time enforces correctness.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>High</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-8"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-8"
+  data-anchor="LLR-SYN-8"
+  node-role="requirement"
+  data-uid="LLR-SYN-8"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-8</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="8"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="8"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>8.&nbsp;Duplicate Clean Name Detection</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-8</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>baa0423a5c3d413b8a950a7d59382985</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall detect and reject configurations in which the same clean name appears in more than one entry. Such duplication shall raise a ValueError identifying the duplicate clean name.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>High</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-9"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-9"
+  data-anchor="LLR-SYN-9"
+  node-role="requirement"
+  data-uid="LLR-SYN-9"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-9</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="9"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="9"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>9.&nbsp;Missing File Error</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-9</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>63036d4bb84b4891923a630b0820790e</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall raise a FileNotFoundError with a descriptive message when the specified config_path does not refer to an existing file.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-11"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-11"
+  data-anchor="LLR-SYN-11"
+  node-role="requirement"
+  data-uid="LLR-SYN-11"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-11</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="10"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="10"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>10.&nbsp;Case-Insensitive Synonym Matching</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-11</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>a1d9a9d64ce64d4daf02a182cbe96be1</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-007">
+            <span class="requirement__parent-uid">HLR-007</span>
+            Configurable Synonym Loading
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall match exercise name inputs to synonyms in a case-insensitive manner, converting the input to a canonical form before lookup.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Users enter exercise names in varying capitalization; case-insensitive matching reduces friction and avoids missed normalization.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-12"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-12"
+  data-anchor="LLR-SYN-12"
+  node-role="requirement"
+  data-uid="LLR-SYN-12"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-12</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="11"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="11"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>11.&nbsp;Path Object and String Path Acceptance</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-12</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>763a15127ce24b37a5f3e549fb8caca1</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-007">
+            <span class="requirement__parent-uid">HLR-007</span>
+            Configurable Synonym Loading
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The config_path parameter shall accept both pathlib.Path objects and plain string paths interchangeably, converting strings to Path internally as needed.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Supporting both types matches Python idioms and avoids forcing callers to convert their path representations.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Low</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-13"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-13"
+  data-anchor="LLR-SYN-13"
+  node-role="requirement"
+  data-uid="LLR-SYN-13"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-13</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="12"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="12"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>12.&nbsp;Per-Instance Independent Configuration</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-13</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>6331f457fac84f78ab337871810cb8c6</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-011">
+            <span class="requirement__parent-uid">HLR-011</span>
+            Synonym-Based Internationalization
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Each StandardizeName instance shall maintain its own synonym mapping independently, so that multiple instances with different config_path values may coexist in the same process without interference.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Independent instances are required to enable simultaneous parsing with different synonym sets (e.g., per-language parsers).</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+          
+            
+
+
+
+
+
+
+
+
+<turbo-frame>
+
+  <sdoc-node
+    node-role="requirement"
+    
+      node-view="narrative"
+      show-node-type-name="REQUIREMENT"
+    data-included-document="False"
+    data-testid="node-requirement"
+  >
+
+    
+      
+        <div
+    data-controller="copy_stable_link_button"
+    data-path="../../#LLR-SYN-14"
+    class="copy_stable_link-button"
+    title="Click to copy a stable node link to the clipboard"
+  >
+    <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+      <svg class="svg_icon"  width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M9,7 L9.5,7.5 C10.5,8.5 10.5,9.5 9.5,10.5 L6,14 C5,15 4,15 3,14 L2,13 C1,12 1,11 2,10 L3.5,8.5"></path>
+  <path d="M7,9 L6.5,8.5 C5.5,7.5 5.5,6.5 6.5,5.5 L10,2 C11,1 12,1 13,2 L14,3 C15,4 15,5 14,6 L12.5,7.5"></path>
+</svg>
+    </span>
+    <span style="display: none;" class="copy_to_clipboard-done_icon">
+      <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+    </span>
+  </div>
+      
+    <sdoc-anchor
+  id="LLR-SYN-14"
+  data-anchor="LLR-SYN-14"
+  node-role="requirement"
+  data-uid="LLR-SYN-14"
+  
+  
+>
+  
+  <div class="anchor_block" data-testid="anchor_hover_button">
+    
+      
+<div class="anchor_button" title="Click to copy" data-testid="section-anchor-button">
+  <span class="anchor_base_icon" style="line-height: 0.1;">
+    <span class="svg_icon_not_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <circle cx="8" cy="3" r="1"></circle>
+  <line x1="8" y1="4" x2="8" y2="14.5"></line>
+  <path d="M5.5,6 C5.5,6 7,6 10.5,6 C10.5,6 5.5,6 5.5,6 Z"/>
+  <path d="M2,11 C3,10 3.5,9.5 3.5,9.5 C3.5,12 5,13 8,13 C11,13 12.5,12 12.5,9.5 C12.5,9.5 13,10 14,11"/>
+</svg></span>
+    <span class="svg_icon_hover_visible"><svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg></span>
+  </span>
+  <span class="anchor_check_icon" style="line-height: 0.1; display: none;">
+    <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+  </span>
+  <span class="anchor_button_text">LLR-SYN-14</span>
+</div>
+    </div></sdoc-anchor>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+<sdoc-node-content
+  node-view="narrative"
+  data-level="13"
+  show-node-type-name="REQUIREMENT"
+  data-testid="requirement-style-narrative"
+>
+  
+  
+  
+  <sdoc-node-title
+    data-level="13"
+  >
+    
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>13.&nbsp;Eager Load at Initialization</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field>
+  </sdoc-node-title>
+
+
+
+  
+    
+    <sdoc-scope class="node_fields_group-secondary">
+      
+    <sdoc-node-field-label>UID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="UID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>LLR-SYN-14</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+    <sdoc-node-field-label>MID:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-type="singleline"
+      data-field-label="MID"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen>7196371908c4451d90dece229e3deffd</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+  
+      
+    <sdoc-node-field-label>RELATIONS (Parent):</sdoc-node-field-label>
+    <sdoc-node-field data-field-label="parent relations">
+      <ul class="requirement__link">
+        <li>
+          <a data-turbo="false" class="requirement__link-parent" href="../../requirements/hlr/HLR-001-DOC.html#HLR-009">
+            <span class="requirement__parent-uid">HLR-009</span>
+            Synonym Configuration Validation
+            
+          </a>
+        </li>
+      </ul>
+    </sdoc-node-field>
+      
+    </sdoc-scope>
+    
+    <sdoc-scope class="node_fields_group-primary">
+      
+    <sdoc-node-field-label>STATEMENT:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="statement"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>The system shall load and validate the synonym configuration during __init__ (eagerly), not deferred to the first use of the run() method.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+      <sdoc-node-field-label>RATIONALE:</sdoc-node-field-label>
+  <sdoc-node-field
+    data-field-label="rationale"
+  >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Eager loading ensures that configuration errors surface immediately at construction time rather than mid-parse, simplifying error handling for callers.</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+  
+      
+
+
+
+  
+      
+
+
+
+  
+    <sdoc-node-field-label>PRIORITY:</sdoc-node-field-label>
+    <sdoc-node-field
+      data-field-label="PRIORITY"
+    >
+
+<sdoc-field data-controller="copy_to_clipboard">
+  <sdoc-field-content>
+    <sdoc-autogen><div class="document">
+<p>Medium</p>
+</div>
+</sdoc-autogen>
+  </sdoc-field-content>
+  <sdoc-field-service>
+
+    <div class="copy_to_clipboard">
+      <div class="copy_to_clipboard-cover">
+        <div title="Click to copy" class="copy_to_clipboard-button action_button">
+          <span style="display: contents;" class="copy_to_clipboard-copy_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M8,2 L12,2 C13,2 14,3 14,4 L14,8 C14,9 13,10 12,10 L8,10 C7,10 6,9 6,8 L6,4 C6,3 7,2 8,2 Z"/>
+  <path d="M10,12 C10,13 9,14 8,14 L4,14 C3,14 2,13 2,12 L2,8 C2,7 3,6 4,6"/>
+</svg>
+          </span>
+          <span style="display: none;" class="copy_to_clipboard-done_icon">
+            <svg class="svg_icon" width="16px" height="16px" viewBox="0 0 16 16">
+  <path d="M2.5,8.5 C2.5,8.5 3.5,9.5 6,12 C11,7 13.5,4.5 13.5,4.5" />
+</svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </sdoc-field-service>
+</sdoc-field></sdoc-node-field>
+    
+    </sdoc-scope>
+    
+  
+
+</sdoc-node-content>
+
+
+    </sdoc-node>
+</turbo-frame>
+          
+
+      </div>
+</turbo-frame>
+</div>
+
+    </main>
+
+    <footer class="layout_footer">
+      <div class="footer">
+        Built with
+        <a
+          class="strictdoc__link"
+          href="https://github.com/strictdoc-project/strictdoc"
+          target="_blank"
+        >StrictDoc</a>
+        <a
+          class="strictdoc__version"
+          href="https://github.com/strictdoc-project/strictdoc/releases/tag/0.19.0"
+          target="_blank"
+        >
+          <svg height="16" viewBox="0 0 16 16" version="1.1" width="16" >
+            <path fill-rule="evenodd" d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z"/>
+          </svg>
+          0.19.0
+        </a>
+      </div>
+    </footer>
+
+    <aside class="layout_aside">
+      
+    </aside>
+
+  </div>
+  
+  <div id="modal"></div>
+  <div id="confirm"></div>
+  
+
+</body>
+</html>

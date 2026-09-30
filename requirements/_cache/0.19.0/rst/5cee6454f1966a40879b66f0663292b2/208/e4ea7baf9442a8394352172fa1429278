@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall detect and reject configurations in which the same synonym string appears in more than one entry. Such overlap shall raise an AssertionError or ValueError identifying the conflicting synonym.</p>
+</div>

@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall validate that the parsed configuration document contains a top-level synonyms key whose value is a list. A missing key or non-list value shall raise a ValueError with a descriptive message.</p>
+</div>

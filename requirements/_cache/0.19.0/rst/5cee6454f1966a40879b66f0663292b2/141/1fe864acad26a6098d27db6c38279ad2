@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall match exercise name inputs to synonyms in a case-insensitive manner, converting the input to a canonical form before lookup.</p>
+</div>

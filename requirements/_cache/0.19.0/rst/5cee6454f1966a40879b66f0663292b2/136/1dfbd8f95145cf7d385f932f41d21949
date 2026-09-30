@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall raise a FileNotFoundError with a descriptive message when the specified config_path does not refer to an existing file.</p>
+</div>

@@ -1,0 +1,3 @@
+<div class="document">
+<p>The system shall validate synonym configuration files at load time and report descriptive errors for any structural or semantic violations.</p>
+</div>

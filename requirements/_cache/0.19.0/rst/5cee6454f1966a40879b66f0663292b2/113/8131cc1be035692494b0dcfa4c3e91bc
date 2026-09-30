@@ -1,0 +1,3 @@
+<div class="document">
+<p>An explicit error on unsupported formats prevents silent failures and guides users toward supported alternatives.</p>
+</div>

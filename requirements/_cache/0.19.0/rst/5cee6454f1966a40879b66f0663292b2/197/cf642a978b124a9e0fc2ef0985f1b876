@@ -1,0 +1,3 @@
+<div class="document">
+<p>The StandardizeName class shall accept an optional config_path parameter of type Path | str | None in its constructor. When the parameter is None (default), built-in default synonyms shall be used.</p>
+</div>

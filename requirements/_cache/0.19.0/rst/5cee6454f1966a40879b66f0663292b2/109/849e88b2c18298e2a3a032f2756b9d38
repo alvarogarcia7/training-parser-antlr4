@@ -1,0 +1,3 @@
+<div class="document">
+<p>Supporting both types matches Python idioms and avoids forcing callers to convert their path representations.</p>
+</div>

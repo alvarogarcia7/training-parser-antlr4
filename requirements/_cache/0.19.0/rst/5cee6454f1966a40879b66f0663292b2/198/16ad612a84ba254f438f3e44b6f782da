@@ -1,0 +1,3 @@
+<div class="document">
+<p>Each StandardizeName instance shall maintain its own synonym mapping independently, so that multiple instances with different config_path values may coexist in the same process without interference.</p>
+</div>
