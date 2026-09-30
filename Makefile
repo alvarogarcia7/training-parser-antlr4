@@ -232,6 +232,7 @@ seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
+	set -u && echo $${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
 	-mv $(DIR)/*_bench.json $(DIR)/bench

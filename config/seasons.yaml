@@ -18,4 +18,4 @@ min_sessions: 1
 # percentage of that 1RM (e.g., 50 kg with a 100 kg 1RM -> 50%).
 # Brzycki overestimates for high repetitions, so only sets with at most this
 # many repetitions are used for the estimate (fallback: any set up to 36 reps).
-max_reps_for_1rm: 10
+max_reps_for_1rm: 20
