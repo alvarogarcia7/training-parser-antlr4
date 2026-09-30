@@ -41,7 +41,7 @@ pwa-build-offline: download-pyodide pwa-build
 pwa-publish: pwa-build
 	@echo "Publishing PWA to github-pages branch..."
 	@git worktree add -B gh-pages /tmp/pwa-deploy origin/gh-pages 2>/dev/null || git worktree add -B gh-pages /tmp/pwa-deploy HEAD
-	@rm -rf /tmp/pwa-deploy/*
+	@find /tmp/pwa-deploy -mindepth 1 -maxdepth 1 ! -name 'requirements' ! -name '.git' -exec rm -rf {} +
 	@cp -r dist/pwa/* /tmp/pwa-deploy/
 	@echo ".gitkeep" > /tmp/pwa-deploy/.gitkeep
 	@cd /tmp/pwa-deploy && git add -A && git commit -m "Deploy PWA from $(shell git rev-parse --short HEAD)" && git push origin gh-pages || echo "No changes to commit"
