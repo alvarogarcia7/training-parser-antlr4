@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://com.trainingparser/schemas/envelope-base.json",
+  "title": "Base Envelope Structure",
+  "description": "Base envelope containing type, schema URL, and payload",
+  "type": "object",
+  "required": ["type", "schema", "payload"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Envelope type identifier (e.g., 'bench-centric.v1', 'set-centric.v1')",
+      "enum": ["bench-centric.v1", "set-centric.v1"]
+    },
+    "schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI pointing to the schema that validates the payload"
+    },
+    "payload": {
+      "type": "object",
+      "description": "The actual data payload"
+    }
+  },
+  "additionalProperties": false
+}

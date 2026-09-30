@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/common-definitions.json",
+  "title": "Common Definitions for Workout Schemas",
+  "description": "Shared type definitions used across different workout schema formats",
+  "$defs": {
+    "workoutMetadata": {
+      "type": "object",
+      "required": ["workout_id", "date"],
+      "properties": {
+        "workout_id": {
+          "type": "string",
+          "description": "Unique workout identifier"
+        },
+        "type": {
+          "type": "string",
+          "description": "Workout type identifier"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "Workout location or gym name"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "description": "Workout statistics and metrics",
+      "properties": {
+        "tracker": {
+          "type": "string",
+          "description": "Device or app used to track workout (e.g., Apple Watch, Garmin)"
+        },
+        "duration": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}$",
+          "description": "Workout duration in HH:MM:SS format"
+        },
+        "bpm": {
+          "type": "object",
+          "description": "Heart rate statistics in beats per minute",
+          "properties": {
+            "average": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Average heart rate"
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum heart rate"
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum heart rate"
+            }
+          }
+        },
+        "kcal": {
+          "type": "object",
+          "description": "Calorie expenditure",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total calories burned"
+            }
+          }
+        }
+      }
+    },
+    "equipment": {
+      "type": "string",
+      "enum": ["barbell", "dumbbell", "machine", "bodyweight", "cable", "kettlebell", "other"]
+    },
+    "weightUnit": {
+      "type": "string",
+      "enum": ["kg", "lb"]
+    },
+    "set": {
+      "type": "object",
+      "required": ["reps"],
+      "properties": {
+        "reps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Load used (omit for bodyweight-only sets)"
+        },
+        "unit": {
+          "$ref": "#/$defs/weightUnit"
+        },
+        "rpe": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Rate of Perceived Exertion"
+        },
+        "rir": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Reps in Reserve"
+        },
+        "tempo": {
+          "type": "string",
+          "pattern": "^[0-9X]{3,4}$",
+          "description": "E.g. 31X1"
+        },
+        "rest_sec": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completed": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

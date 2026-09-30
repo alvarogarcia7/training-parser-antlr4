@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://com.trainingparser/bench-centric_v1.schema.json",
+  "title": "Envelope for Bench-Centric Strength Training Workout",
+  "type": "object",
+  "required": ["type", "schema", "payload"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "bench-centric.v1",
+      "description": "Envelope type identifier"
+    },
+    "schema": {
+      "type": "string",
+      "const": "http://com.trainingparser/bench-centric_v1.schema.json",
+      "description": "URI pointing to this schema"
+    },
+    "payload": {
+      "type": "object",
+      "description": "The workout data payload (validated against bench-centric.schema.json)"
+    }
+  },
+  "additionalProperties": false
+}

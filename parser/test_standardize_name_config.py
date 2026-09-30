@@ -13,7 +13,7 @@ class TestStandardizeNameConfigLoading(unittest.TestCase):
         config_data = {
             'synonyms': [
                 {'clean': 'overhead press', 'synonyms': ['oh', 'op']},
-                {'clean': 'bench press', 'synonyms': ['bench', 'bp']},
+                {'clean': 'bench press', 'synonyms': ['b', 'bp']},
             ]
         }
 
@@ -24,7 +24,7 @@ class TestStandardizeNameConfigLoading(unittest.TestCase):
         try:
             standardizer = StandardizeName(config_path=temp_path)
             self.assertEqual(standardizer.run('oh'), 'Overhead Press')
-            self.assertEqual(standardizer.run('bench'), 'Bench Press')
+            self.assertEqual(standardizer.run('b'), 'Bench Press')
             self.assertEqual(standardizer.run('bp'), 'Bench Press')
         finally:
             Path(temp_path).unlink()
@@ -216,7 +216,7 @@ class TestStandardizeNameConfigLoading(unittest.TestCase):
 
     def test_default_behavior_with_no_config(self) -> None:
         standardizer = StandardizeName()
-        self.assertEqual(standardizer.run('bench'), 'Bench Press')
+        self.assertEqual(standardizer.run('bp'), 'Bench Press')
         self.assertEqual(standardizer.run('oh'), 'Overhead Press')
 
     def test_internationalization_example(self) -> None:
