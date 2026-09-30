@@ -69,6 +69,18 @@ jobs:
       run: |
         npx playwright install --with-deps chromium
 
+    - name: Cache Pyodide
+      id: cache-pyodide
+      uses: actions/cache@v4
+      with:
+        path: mobile-app/pyodide
+        key: pyodide-${{ hashFiles('scripts/download-pyodide.sh') }}
+        restore-keys: pyodide-
+
+    - name: Download Pyodide for offline use
+      if: steps.cache-pyodide.outputs.cache-hit != 'true'
+      run: make download-pyodide
+
     - name: Start PWA dev server
       run: |
         echo "Starting PWA server..."

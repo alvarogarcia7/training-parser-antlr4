@@ -11,7 +11,8 @@ Deadlift 3x100`;
 const INVALID_WORKOUT = `Bench press
 Squat`;
 
-// Pyodide takes 30-90s to download and initialize from CDN
+// Pyodide loads from a local copy in CI/dev (see mobile-app/src/pyodide-worker.js),
+// which takes ~10-20s cold; this is only paid once for the whole file below.
 const PYODIDE_TIMEOUT = 90_000;
 
 /** Wait for the Python runtime (Pyodide) to be fully initialized. */
@@ -19,10 +20,46 @@ async function waitForPyodide(page) {
   await page.locator('#status.status--ready').waitFor({ state: 'attached', timeout: PYODIDE_TIMEOUT });
 }
 
-test.describe('Training Parser PWA', () => {
-  test('1. Page loads correctly', async ({ page }) => {
-    await page.goto('/mobile-app/');
+/** Replace the workout input's contents with a clean slate before filling new values. */
+async function setWorkoutInput(page, text) {
+  const input = page.locator('#workout-input');
+  await input.fill('');
+  await input.fill(text);
+}
 
+test.describe('Training Parser PWA', () => {
+  test.describe.configure({ mode: 'serial' });
+
+  let context;
+  let page;
+
+  test.beforeAll(async ({ browser }) => {
+    test.setTimeout(90_000);
+
+    context = await browser.newContext();
+
+    // Pre-configure git settings in localStorage before the single shared
+    // navigation so the git sync buttons are visible for test 4. Test 1 only
+    // asserts the buttons are attached (not hidden), so this is harmless there.
+    await context.addInitScript(() => {
+      localStorage.setItem('git_settings', JSON.stringify({
+        remoteUrl: 'http://localhost:8888/test-repo.git',
+        username: 'test',
+        token: 'test',
+        author: 'Test User',
+      }));
+    });
+
+    page = await context.newPage();
+    await page.goto('/mobile-app/');
+    await waitForPyodide(page);
+  });
+
+  test.afterAll(async () => {
+    await context.close();
+  });
+
+  test('1. Page loads correctly', async () => {
     await expect(page).toHaveTitle('Training Parser');
     await expect(page.locator('header h1')).toContainText('Training Parser');
 
@@ -30,7 +67,7 @@ test.describe('Training Parser PWA', () => {
     await expect(page.locator('#workout-input')).toBeVisible();
     await expect(page.locator('#parse-btn')).toBeVisible();
 
-    // Git sync buttons are hidden until git is configured — just assert they exist in the DOM
+    // Git sync buttons exist in the DOM
     await expect(page.locator('#save-btn')).toBeAttached();
     await expect(page.locator('#pull-btn')).toBeAttached();
     await expect(page.locator('#sync-btn')).toBeAttached();
@@ -44,14 +81,9 @@ test.describe('Training Parser PWA', () => {
     expect(dateValue).toBe(today);
   });
 
-  test('2. Insert valid line and assert parsing', async ({ page }) => {
-    await page.goto('/mobile-app/');
-
-    // Wait for Pyodide to be fully ready before parsing
-    await waitForPyodide(page);
-
+  test('2. Insert valid line and assert parsing', async () => {
     const today = new Date().toISOString().split('T')[0];
-    await page.locator('#workout-input').fill(VALID_WORKOUT);
+    await setWorkoutInput(page, VALID_WORKOUT);
     await page.locator('#workout-date').fill(today);
 
     await page.locator('#parse-btn').click();
@@ -64,13 +96,9 @@ test.describe('Training Parser PWA', () => {
     await expect(page.locator('#errors-section')).not.toBeVisible();
   });
 
-  test('3. Insert invalid workout and assert error', async ({ page }) => {
-    await page.goto('/mobile-app/');
-
-    await waitForPyodide(page);
-
+  test('3. Insert invalid workout and assert error', async () => {
     const today = new Date().toISOString().split('T')[0];
-    await page.locator('#workout-input').fill(INVALID_WORKOUT);
+    await setWorkoutInput(page, INVALID_WORKOUT);
     await page.locator('#workout-date').fill(today);
 
     await page.locator('#parse-btn').click();
@@ -82,28 +110,15 @@ test.describe('Training Parser PWA', () => {
     expect(errorCount).toBeGreaterThan(0);
   });
 
-  test('4. Git sync - pull and push to remote', async ({ page }) => {
+  test('4. Git sync - pull and push to remote', async () => {
     // Requires local git server: make local-git-server
-    // Pre-configure git settings in localStorage so buttons are visible on first load
-    await page.addInitScript(() => {
-      localStorage.setItem('git_settings', JSON.stringify({
-        remoteUrl: 'http://localhost:8888/test-repo.git',
-        username: 'test',
-        token: 'test',
-        author: 'Test User',
-      }));
-    });
-
-    await page.goto('/mobile-app/');
-    await waitForPyodide(page);
-
-    // Git buttons should now be visible (settings were pre-configured)
+    // Git settings were pre-configured in beforeAll, so the buttons should be visible
     await expect(page.locator('#pull-btn')).toBeVisible();
     await expect(page.locator('#save-btn')).toBeVisible();
     await expect(page.locator('#sync-btn')).toBeVisible();
 
     const today = new Date().toISOString().split('T')[0];
-    await page.locator('#workout-input').fill(VALID_WORKOUT);
+    await setWorkoutInput(page, VALID_WORKOUT);
     await page.locator('#workout-date').fill(today);
 
     await page.locator('#parse-btn').click();
@@ -127,15 +142,13 @@ test.describe('Training Parser PWA', () => {
       m.toLowerCase().includes('push') || m.includes('git-sync') || m.includes('sync')
     );
     expect(pushLogs.length).toBeGreaterThan(0);
+
+    page.removeAllListeners('console');
   });
 
-  test('5. Download file', async ({ page, context }) => {
-    await page.goto('/mobile-app/');
-
-    await waitForPyodide(page);
-
+  test('5. Download file', async () => {
     const today = new Date().toISOString().split('T')[0];
-    await page.locator('#workout-input').fill(VALID_WORKOUT);
+    await setWorkoutInput(page, VALID_WORKOUT);
     await page.locator('#workout-date').fill(today);
 
     await page.locator('#parse-btn').click();

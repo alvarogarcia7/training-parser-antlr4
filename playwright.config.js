@@ -29,5 +29,5 @@ export default defineConfig({
     },
   ],
   globalTimeout: 600000, // 10 minutes
-  timeout: process.env.CI ? 60000 : 30000, // 60s per test in CI, 30s locally
+  timeout: process.env.CI ? 15000 : 15000, // 15s per test; Pyodide now loads once in beforeAll, not per test
 });
