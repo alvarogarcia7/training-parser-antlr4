@@ -7,7 +7,7 @@
 from parser import StandardizeName
 
 standardizer = StandardizeName()
-result = standardizer.run("bench")  # Returns "Bench Press"
+result = standardizer.run("bp")  # Returns "Bench Press"
 ```
 
 ### Load from YAML

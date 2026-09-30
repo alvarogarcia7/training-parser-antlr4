@@ -107,7 +107,7 @@ from parser import StandardizeName
 
 # Use default synonyms
 standardizer = StandardizeName()
-standardizer.run("bench")  # Returns "Bench Press"
+standardizer.run("bp")  # Returns "Bench Press"
 
 # Load custom synonyms from file
 standardizer = StandardizeName(config_path="data/synonyms.yaml")
@@ -115,6 +115,34 @@ standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
 ```
 
 See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation and [examples/](examples/) for usage examples.
+
+### Training Seasons and %1RM
+
+`scripts/detect_seasons.py` splits a training history into **seasons**: a season
+ends when there is a break of at least `min_break_days` days without a training
+session, and the next session starts a new season. For every season, each
+exercise gets an estimated 1RM using the **Brzycki** formula
+(`1RM = weight * 36 / (37 - reps)`, best set of the season) and each set is
+reported as a percentage of that 1RM (50 kg with a 100 kg 1RM -> 50%).
+
+Settings live in [config/seasons.yaml](config/seasons.yaml):
+
+```yaml
+min_break_days: 21    # days without training that end a season
+min_sessions: 1       # seasons with fewer sessions are reported as ignored
+max_reps_for_1rm: 10  # only sets with <= this many reps drive the 1RM estimate
+```
+
+The input is a directory with one or more set-centric JSON files (searched
+recursively; each file holds one workout, enveloped or bare, or an array of
+workouts). Other JSON formats are rejected.
+
+```bash
+python scripts/detect_seasons.py data/parsed/
+python scripts/detect_seasons.py data/parsed/ --format json
+python scripts/detect_seasons.py data/parsed/ --config my-seasons.yaml --min-break-days 30
+make seasons DIR=data/parsed/
+```
 
 ## Phase 2: iOS-Friendly Keyboard Syntax
 

@@ -45,12 +45,18 @@ test: check-virtual-env
 	${MAKE} test-lsp
 	${MAKE} test-bulk-parser
 	${MAKE} test-statistics
+	${MAKE} test-seasons
 .PHONY: test
 
 validate-datasets:
 	${MAKE} validate-bench-centric
 	${MAKE} validate-set-centric
+	${MAKE} validate-synonyms
 .PHONY: validate-datasets
+
+validate-synonyms: check-virtual-env
+	uv run python3 validate_synonyms_yaml.py
+.PHONY: validate-synonyms
 
 validate-set-centric: check-virtual-env
 	uv run python3 validate_set_centric.py
@@ -93,6 +99,11 @@ test-statistics: check-virtual-env
 	@echo "Testing statistics module..."
 	pytest tests/test_statistics.py -v
 .PHONY: test-statistics
+
+test-seasons: check-virtual-env
+	@echo "Testing season detection..."
+	pytest tests/test_seasons.py -v
+.PHONY: test-seasons
 
 test-webapp: check-virtual-env
 	@echo "Testing PWA loading and serving..."
@@ -216,3 +227,15 @@ stats: check-virtual-env
 	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
 	@echo ""
 	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
+
+seasons: check-virtual-env
+	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
+	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
+	@echo ""
+	set -u && echo $${DIR}
+	-mkdir -p $(DIR)/bench
+	-mkdir -p $(DIR)/set
+	-mv $(DIR)/*_bench.json $(DIR)/bench
+	-mv $(DIR)/*_set.json $(DIR)/set
+	python3 scripts/detect_seasons.py $(DIR)/set
+.PHONY: seasons

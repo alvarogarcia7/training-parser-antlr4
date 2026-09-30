@@ -287,7 +287,7 @@ class TestCLIIntegration(unittest.TestCase):
         # Note: "Bench press" → "bench" matches synonym → "bench press" + leftover "press"
         data_row_1 = rows[1]
         self.assertEqual(data_row_1[0], '2025-01-01')
-        self.assertEqual(data_row_1[1], 'Bench Press Press')  # StandardizeName: "bench" + "press"
+        self.assertEqual(data_row_1[1], 'Bench Press')
         self.assertEqual(data_row_1[2], '1')  # 1 set of 4 reps
         self.assertEqual(data_row_1[3], '4')  # avg reps = 4
         self.assertEqual(data_row_1[4], '75,0')
@@ -295,7 +295,7 @@ class TestCLIIntegration(unittest.TestCase):
         # Second row: four 5-rep sets at 75kg (from "4x5" = 4 times 5 reps)
         data_row_2 = rows[2]
         self.assertEqual(data_row_2[0], '2025-01-01')
-        self.assertEqual(data_row_2[1], 'Bench Press Press')
+        self.assertEqual(data_row_2[1], 'Bench Press')
         self.assertEqual(data_row_2[2], '4')  # 4 sets of 5 reps
         self.assertEqual(data_row_2[3], '5')  # avg reps = 5
         self.assertEqual(data_row_2[4], '75,0')

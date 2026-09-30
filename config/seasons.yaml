@@ -1,0 +1,21 @@
+# Configuration for season detection (scripts/detect_seasons.py).
+#
+# A "season" is a continuous training period. A season ends when there is a
+# break of at least `min_break_days` consecutive days without any training
+# session; the next session after that break starts a new season.
+
+# Minimum number of consecutive days without a training session that
+# separates two seasons.
+min_break_days: 21
+
+# Seasons with fewer sessions than this are reported as ignored
+# (e.g., an isolated one-off workout). Use 1 to keep every season.
+min_sessions: 1
+
+# Per season, each exercise gets an estimated 1RM using the Brzycki formula
+#   1RM = weight * 36 / (37 - reps)
+# taken from the best set of the season, and each set is reported as a
+# percentage of that 1RM (e.g., 50 kg with a 100 kg 1RM -> 50%).
+# Brzycki overestimates for high repetitions, so only sets with at most this
+# many repetitions are used for the estimate (fallback: any set up to 36 reps).
+max_reps_for_1rm: 20

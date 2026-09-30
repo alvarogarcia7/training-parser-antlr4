@@ -88,6 +88,26 @@ class StandardizeName:
     def _check_synonym_configuration(self, synonyms: list[Synonym]) -> None:
         self._check_non_overlapping_synonyms(synonyms)
         self._check_non_repeating_clean_name(synonyms)
+        self._check_non_recursive_synonyms(synonyms)
+
+    def _check_non_recursive_synonyms(self, synonyms: list[Synonym]) -> None:
+        """A synonym must not appear (as whole words) inside any clean name.
+
+        Otherwise the expansion contains the synonym again and expands recursively,
+        e.g. 'bench' -> 'bench press' -> 'bench press press' -> ...
+        """
+        clean_names = [synonym['clean'].casefold().split() for synonym in synonyms]
+        for synonym_group in synonyms:
+            for synonym in synonym_group['synonyms']:
+                synonym_words = synonym.casefold().split()
+                for clean_words in clean_names:
+                    assert not self._contains_words(clean_words, synonym_words), \
+                        f"Synonym '{synonym}' expands recursively: it is part of the clean name '{' '.join(clean_words)}'"
+
+    @staticmethod
+    def _contains_words(words: list[str], sub_words: list[str]) -> bool:
+        length = len(sub_words)
+        return any(words[i:i + length] == sub_words for i in range(len(words) - length + 1))
 
     def _check_non_repeating_clean_name(self, synonyms: list[Synonym]) -> None:
         synonym_names = [synonym['clean'] for synonym in synonyms]
