@@ -40,13 +40,6 @@ pwa-build-offline: download-pyodide pwa-build
 
 pwa-publish: pwa-build
 	@echo "Publishing PWA to github-pages branch..."
-	@if ! git rev-parse --verify gh-pages >/dev/null 2>&1; then \
-		echo "Creating github-pages branch..."; \
-		git checkout --orphan gh-pages; \
-		git rm -rf . 2>/dev/null || true; \
-		git commit --allow-empty -m "Initial commit for GitHub Pages"; \
-		git checkout $(shell git rev-parse --abbrev-ref HEAD); \
-	fi
 	@git worktree add -B gh-pages /tmp/pwa-deploy origin/gh-pages 2>/dev/null || git worktree add -B gh-pages /tmp/pwa-deploy HEAD
 	@rm -rf /tmp/pwa-deploy/*
 	@cp -r dist/pwa/* /tmp/pwa-deploy/
