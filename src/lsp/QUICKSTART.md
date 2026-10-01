@@ -6,7 +6,7 @@ Get intelligent editing features for your training logs in under 5 minutes.
 
 ```bash
 # Using uv
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ## Verify

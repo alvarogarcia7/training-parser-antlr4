@@ -40,7 +40,7 @@ Using uv:
 
 ```bash
 # Install in development mode with LSP dependencies
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 Verify installation:
@@ -456,8 +456,8 @@ which training-lsp
 
 **If not found:**
 - Ensure virtual environment is activated
-- Check installation: `uv pip list | grep training-parser`
-- Reinstall: `uv pip install -e ".[dev]"`
+- Check installation: `uv tree --depth 0`
+- Reinstall: `uv sync --all-extras`
 
 ### No Completions Appearing
 

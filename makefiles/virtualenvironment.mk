@@ -2,17 +2,11 @@
 # Hence why the include includes the `makefiles` folder.
 include makefiles/python_version.mk
 
-virtualenvironment:
-	$(PYTHON) -m venv venv
-.PHONY: virtualenvironment
-
-
 check-virtual-env:
-	@# Test if the variable is set (supports both venv and .venv directories)
+	@# Test if the variable is set (created by `uv sync`)
 	@if [ -z "${VIRTUAL_ENV}" ]; then                                               \
   		echo "Need to activate virtual environment:";                               \
-  		echo "  uv:         source .venv/bin/activate";                             \
-  		echo "  virtualenv: source venv/bin/activate";                              \
+  		echo "  uv sync && source .venv/bin/activate";                              \
   		false;       																\
   	fi
 

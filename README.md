@@ -78,7 +78,7 @@ The training-parser now includes a full-featured Language Server Protocol implem
 **Quick Start:**
 ```bash
 # Install with LSP support
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 # Start the LSP server (for editor integration)
 training-lsp

@@ -38,7 +38,7 @@ The LSP client is included with the training-parser package:
 
 ```bash
 # Using uv (recommended)
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ## Quick Start
@@ -411,7 +411,7 @@ If you get "training-lsp not found":
 which training-lsp
 
 # Reinstall if needed
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ### Connection Timeout

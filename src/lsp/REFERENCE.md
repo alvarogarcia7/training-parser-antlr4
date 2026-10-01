@@ -66,7 +66,7 @@ Bench press: <Tab> → 3x8x75k, 75k: 3x8, ...
 **Server not starting?**
 ```bash
 which training-lsp  # Check if installed
-uv pip install -e ".[dev]"  # Reinstall
+uv sync --all-extras  # Reinstall
 ```
 
 **No completions?**

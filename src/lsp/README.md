@@ -40,7 +40,7 @@ A Language Server Protocol implementation for the training workout Domain-Specif
 The LSP server is installed automatically with the training-parser package:
 
 ```bash
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ## Usage
@@ -257,7 +257,7 @@ which training-lsp
 If not found, ensure the package is installed:
 
 ```bash
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ### No completions appearing

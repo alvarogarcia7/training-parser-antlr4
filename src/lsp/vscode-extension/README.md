@@ -17,7 +17,7 @@ This extension provides language support for the training workout DSL in Visual 
 
 1. Install the training-parser package with LSP support:
    ```bash
-   uv pip install -e ".[dev]"
+   uv sync --all-extras
    ```
 
 2. Build the VSCode extension:

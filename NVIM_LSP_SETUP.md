@@ -201,7 +201,7 @@ which training-lsp
 
 ```bash
 source .venv/bin/activate
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ### No Diagnostics Appearing

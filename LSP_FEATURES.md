@@ -6,7 +6,7 @@ The training-parser now includes a full-featured Language Server Protocol implem
 
 ```bash
 # Install
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 # Run the server
 training-lsp
