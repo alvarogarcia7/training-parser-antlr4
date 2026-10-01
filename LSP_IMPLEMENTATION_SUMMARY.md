@@ -8,7 +8,7 @@ A full-featured LSP server has been implemented to provide IDE-like editing capa
 
 ## Components Implemented
 
-### 1. Core Server (`lsp/server.py`)
+### 1. Core Server (`src/lsp/server.py`)
 
 The main LSP server built using `pygls` (Python Generic Language Server):
 
@@ -19,7 +19,7 @@ The main LSP server built using `pygls` (Python Generic Language Server):
 
 **Entry point:** `training-lsp` command
 
-### 2. Diagnostics (`lsp/diagnostics.py`)
+### 2. Diagnostics (`src/lsp/diagnostics.py`)
 
 Real-time syntax validation using ANTLR error listeners:
 
@@ -33,7 +33,7 @@ Real-time syntax validation using ANTLR error listeners:
 - Error position highlighting
 - Descriptive error messages
 
-### 3. Completion (`lsp/completion.py`)
+### 3. Completion (`src/lsp/completion.py`)
 
 Context-aware auto-completion provider:
 
@@ -46,7 +46,7 @@ Context-aware auto-completion provider:
 - After colon → notation patterns
 - Partial typing → filtered suggestions
 
-### 4. Hover (`lsp/hover.py`)
+### 4. Hover (`src/lsp/hover.py`)
 
 Information provider for hover events:
 
@@ -59,7 +59,7 @@ Information provider for hover events:
 - Notation patterns → syntax help
 - Weights → unit information
 
-### 5. Formatting (`lsp/formatting.py`)
+### 5. Formatting (`src/lsp/formatting.py`)
 
 Document and range formatting:
 
@@ -73,7 +73,7 @@ Document and range formatting:
 - Range-based formatting
 - Idempotent transformations
 
-### 6. Semantic Tokens (`lsp/semantic_tokens.py`)
+### 6. Semantic Tokens (`src/lsp/semantic_tokens.py`)
 
 Fine-grained syntax highlighting:
 
@@ -87,7 +87,7 @@ Fine-grained syntax highlighting:
 - Line-by-line tokenization
 - Regex-based pattern matching
 
-### 7. Code Actions (`lsp/code_actions.py`)
+### 7. Code Actions (`src/lsp/code_actions.py`)
 
 Quick fixes and refactorings:
 
@@ -100,7 +100,7 @@ Quick fixes and refactorings:
 - Refactorings (notation conversions)
 - Context-aware suggestions
 
-### 8. CLI Tool (`lsp/cli.py`)
+### 8. CLI Tool (`src/lsp/cli.py`)
 
 Command-line interface for testing LSP features:
 
@@ -113,7 +113,7 @@ Command-line interface for testing LSP features:
 
 **Entry point:** `training-lsp-cli` command
 
-### 9. Tests (`lsp/test_lsp.py`)
+### 9. Tests (`tests/test_lsp.py`)
 
 Comprehensive test suite:
 
@@ -128,7 +128,7 @@ Comprehensive test suite:
 - Edge cases
 - Feature integration
 
-### 10. VS Code Extension (`lsp/vscode-extension/`)
+### 10. VS Code Extension (`src/lsp/vscode-extension/`)
 
 Complete VS Code extension:
 
@@ -158,12 +158,12 @@ Complete VS Code extension:
    - Architecture diagram
    - Example usage
 
-3. **lsp/README.md** - Developer documentation
+3. **src/lsp/README.md** - Developer documentation
    - Architecture details
    - Development guide
    - Contributing guidelines
 
-4. **lsp/QUICKSTART.md** - 5-minute quick start
+4. **src/lsp/QUICKSTART.md** - 5-minute quick start
    - Minimal setup
    - Essential commands
    - Quick verification
@@ -186,7 +186,7 @@ Added:
 - `training-lsp-cli` script entry point
 - LSP package in build configuration
 - mypy overrides for pygls/lsprotocol
-- pytest paths including lsp/
+- pytest paths including tests/test_lsp.py
 
 ### Git Configuration (`.gitignore`)
 
@@ -223,7 +223,7 @@ The LSP integrates with the existing ANTLR parser:
 ## File Structure
 
 ```
-lsp/
+src/lsp/
 ├── __init__.py              # Package exports
 ├── server.py                # Main LSP server (150 lines)
 ├── diagnostics.py           # Error detection (85 lines)
@@ -233,8 +233,6 @@ lsp/
 ├── semantic_tokens.py       # Syntax highlighting (180 lines)
 ├── code_actions.py          # Quick fixes (160 lines)
 ├── cli.py                   # CLI tool (140 lines)
-├── test_lsp.py              # Test suite (180 lines)
-├── example_usage.py         # Usage examples (100 lines)
 ├── README.md                # Developer docs
 ├── QUICKSTART.md            # Quick start guide
 └── vscode-extension/        # VS Code extension

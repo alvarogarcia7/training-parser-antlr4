@@ -98,7 +98,7 @@ make test-grammar-formats
 
 Or test with your own text:
 ```python
-from parser import Parser
+from src.parser import Parser
 
 text = """
 Squat 100k: 5

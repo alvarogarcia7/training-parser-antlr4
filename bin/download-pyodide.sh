@@ -43,7 +43,7 @@ rm -rf "$PYODIDE_DIR/wheels"
 
 # Resolve the exact package files (and their transitive dependencies) that
 # mobile-app/python/app_api.py needs at runtime. app_api.py -> parser.parser
-# / parser.serializer pulls in jsonschema, and parser/__init__.py pulls in
+# / parser.serializer pulls in jsonschema, and src/parser/__init__.py pulls in
 # standardize_name.py -> yaml (pyyaml). pyodide-worker.js calls
 # pyodide.loadPackage(['pyyaml', 'jsonschema']), and Pyodide resolves those
 # package names (plus everything in their "depends" chain) against

@@ -4,7 +4,7 @@
 
 ### Default (No Changes Required)
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 standardizer = StandardizeName()
 result = standardizer.run("bp")  # Returns "Bench Press"

@@ -5,7 +5,7 @@ on:
     branches: [ master, main ]
     paths:
       - 'mobile-app/**'
-      - 'parser/**'
+      - 'src/parser/**'
       - 'src/**'
       - 'data/**'
       - 'schema/**'

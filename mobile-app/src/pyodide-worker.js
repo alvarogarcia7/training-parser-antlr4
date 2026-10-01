@@ -113,13 +113,13 @@ const PYTHON_FILES = [
   ['../python/antlr4/xpath/__init__.py',       '/home/pyodide/antlr4/xpath/__init__.py'],
   ['../python/antlr4/xpath/XPath.py',          '/home/pyodide/antlr4/xpath/XPath.py'],
   // training parser modules (../../ because worker is in mobile-app/src/)
-  ['/parser/__init__.py',           '/home/pyodide/parser/__init__.py'],
-  ['/parser/model.py',              '/home/pyodide/parser/model.py'],
-  ['/parser/parser.py',             '/home/pyodide/parser/parser.py'],
-  ['/parser/standardize_name.py',   '/home/pyodide/parser/standardize_name.py'],
-  ['/parser/serializer.py',         '/home/pyodide/parser/serializer.py'],
-  ['/parser/error_listener.py',     '/home/pyodide/parser/error_listener.py'],
-  ['/parser/series_builder.py',     '/home/pyodide/parser/series_builder.py'],
+  ['/src/parser/__init__.py',           '/home/pyodide/src/parser/__init__.py'],
+  ['/src/parser/model.py',              '/home/pyodide/src/parser/model.py'],
+  ['/src/parser/parser.py',             '/home/pyodide/src/parser/parser.py'],
+  ['/src/parser/standardize_name.py',   '/home/pyodide/src/parser/standardize_name.py'],
+  ['/src/parser/serializer.py',         '/home/pyodide/src/parser/serializer.py'],
+  ['/src/parser/error_listener.py',     '/home/pyodide/src/parser/error_listener.py'],
+  ['/src/parser/series_builder.py',     '/home/pyodide/src/parser/series_builder.py'],
   ['/src/__init__.py',              '/home/pyodide/src/__init__.py'],
   ['/src/data_access.py',           '/home/pyodide/src/data_access.py'],
   ['/src/statistics.py',            '/home/pyodide/src/statistics.py'],
@@ -179,7 +179,7 @@ async function initPyodide() {
   log('Creating directories...', 'DEBUG');
 
   // Create directories in Pyodide FS with error handling
-  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/data/config', '/home/pyodide/antlr4', '/home/pyodide/schema'];
+  const dirs = ['/home/pyodide/src', '/home/pyodide/src/parser', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/data/config', '/home/pyodide/antlr4', '/home/pyodide/schema'];
   for (const dir of dirs) {
     try {
       pyodide.FS.mkdir(dir);
@@ -312,7 +312,7 @@ import os
 files_exist = {
     'antlr4': os.path.exists('/home/pyodide/antlr4/__init__.py'),
     'app_api': os.path.exists('/home/pyodide/app_api.py'),
-    'parser': os.path.exists('/home/pyodide/parser/__init__.py'),
+    'parser': os.path.exists('/home/pyodide/src/parser/__init__.py'),
 }
 print("Files exist:", files_exist)
 `);

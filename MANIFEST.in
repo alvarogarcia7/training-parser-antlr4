@@ -10,7 +10,8 @@ include setup-uv.sh
 
 recursive-include schema *.json
 recursive-include data *.txt *.json
-recursive-include parser *.py
+recursive-include src *.py
+recursive-include bin *.py
 recursive-include tests *.py
 
 exclude .gitignore

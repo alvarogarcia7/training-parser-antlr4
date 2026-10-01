@@ -43,7 +43,7 @@ After installation, the following commands are available:
 - `make typecheck` - Run mypy type checking
 - `make test` - Run all tests (typecheck + compile-grammar + pytest)
 - `make test-python` - Run pytest only
-- `python main.py` - Run sample parser directly
+- `python bin/main.py` - Run sample parser directly
 
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
@@ -103,7 +103,7 @@ The parser supports loading custom exercise name mappings from YAML or JSON file
 **Quick Example:**
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Use default synonyms
 standardizer = StandardizeName()
@@ -171,19 +171,21 @@ See [SYNTAX.md](SYNTAX.md) for detailed Phase 2 documentation and examples.
 ```
 .
 ├── training.g4              # ANTLR4 grammar definition
-├── parser/                  # Parser implementation
-│   ├── model.py            # Data models
-│   ├── parser.py           # Parser and visitor
-│   └── standardize_name.py # Exercise name standardization
-├── lsp/                     # Language Server Protocol implementation
-│   ├── server.py           # LSP server
-│   ├── diagnostics.py      # Error detection
-│   ├── completion.py       # Auto-completion
-│   ├── hover.py            # Hover information
-│   ├── formatting.py       # Code formatting
-│   ├── semantic_tokens.py  # Syntax highlighting
-│   ├── code_actions.py     # Quick fixes
-│   └── vscode-extension/   # VS Code extension
+├── bin/                     # Programs (parser, splitter, validators, weight parser, ...)
+├── src/                     # Libraries
+│   ├── parser/              # Parser implementation
+│   │   ├── model.py         # Data models
+│   │   ├── parser.py        # Parser and visitor
+│   │   └── standardize_name.py # Exercise name standardization
+│   └── lsp/                 # Language Server Protocol implementation
+│       ├── server.py        # LSP server
+│       ├── diagnostics.py   # Error detection
+│       ├── completion.py    # Auto-completion
+│       ├── hover.py         # Hover information
+│       ├── formatting.py    # Code formatting
+│       ├── semantic_tokens.py # Syntax highlighting
+│       ├── code_actions.py  # Quick fixes
+│       └── vscode-extension/ # VS Code extension
 ├── data/                    # Configuration files
 │   ├── config/             # synonyms.yaml, seasons.yaml
 │   └── SYNONYMS_README.md  # Synonyms documentation

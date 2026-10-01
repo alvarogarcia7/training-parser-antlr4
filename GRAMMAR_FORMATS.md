@@ -2,7 +2,7 @@
 
 This document provides a comprehensive reference of all supported input formats for the training log parser. Each format is documented with examples and corresponding test cases that validate the functionality.
 
-**All examples in this guide are backed by automated tests** in `parser/test_grammar_formats_e2e.py`.
+**All examples in this guide are backed by automated tests** in `tests/test_grammar_formats_e2e.py`.
 
 ## Table of Contents
 
@@ -502,19 +502,19 @@ Bench press: 8xx80k,60k,40k,20k
 
 ## Running Tests
 
-All format examples are validated by end-to-end tests in `parser/test_grammar_formats_e2e.py`.
+All format examples are validated by end-to-end tests in `tests/test_grammar_formats_e2e.py`.
 
 ### Run All E2E Format Tests
 
 ```bash
 # Run just the grammar format tests
-pytest parser/test_grammar_formats_e2e.py -v
+pytest tests/test_grammar_formats_e2e.py -v
 
 # Run with detailed output
-pytest parser/test_grammar_formats_e2e.py -v -s
+pytest tests/test_grammar_formats_e2e.py -v -s
 
 # Run a specific test
-pytest parser/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
+pytest tests/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
 ```
 
 ### Run All Tests (Including E2E)
@@ -565,6 +565,6 @@ WS:   [ \t]+ -> skip;
 ## See Also
 
 - [SYNTAX.md](SYNTAX.md) - Detailed syntax documentation with use cases
-- [parser/test_grammar_formats_e2e.py](parser/test_grammar_formats_e2e.py) - Complete test suite
-- [parser/test_parser.py](parser/test_parser.py) - Additional parser tests
+- [tests/test_grammar_formats_e2e.py](tests/test_grammar_formats_e2e.py) - Complete test suite
+- [tests/test_parser.py](tests/test_parser.py) - Additional parser tests
 - [training.g4](training.g4) - ANTLR4 grammar definition

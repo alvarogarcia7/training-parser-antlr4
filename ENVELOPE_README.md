@@ -64,17 +64,17 @@ else:
 
 ## Components
 
-### Core Module (`envelope.py`)
+### Core Module (`src/envelope.py`)
 - **Envelope class**: Wrap/unwrap payloads with metadata
 - **wrap_payload()**: Convert raw data to envelope
 - **unwrap_and_validate()**: Extract payload and validate against schema
 
-### CLI Tool (`envelope_tool.py`)
+### CLI Tool (`bin/envelope_tool.py`)
 ```bash
-python envelope_tool.py wrap <input> <output> <type>     # Wrap payload
-python envelope_tool.py unwrap <input> <output>          # Unwrap payload
-python envelope_tool.py validate <env> <schema> [defs]   # Validate
-python envelope_tool.py convert <input> <output>         # Auto-convert
+python bin/envelope_tool.py wrap <input> <output> <type>     # Wrap payload
+python bin/envelope_tool.py unwrap <input> <output>          # Unwrap payload
+python bin/envelope_tool.py validate <env> <schema> [defs]   # Validate
+python bin/envelope_tool.py convert <input> <output>         # Auto-convert
 ```
 
 ### Validation Scripts
@@ -160,16 +160,16 @@ Both example files validate successfully against their respective payload schema
 
 ```bash
 # Wrap a payload file
-python envelope_tool.py wrap raw.json wrapped.json bench-centric.v1
+python bin/envelope_tool.py wrap raw.json wrapped.json bench-centric.v1
 
 # Unwrap to get payload
-python envelope_tool.py unwrap wrapped.json payload.json
+python bin/envelope_tool.py unwrap wrapped.json payload.json
 
 # Validate envelope + payload
-python envelope_tool.py validate wrapped.json schema/bench-centric.schema.json schema/common-definitions.schema.json
+python bin/envelope_tool.py validate wrapped.json schema/bench-centric.schema.json schema/common-definitions.schema.json
 
 # Auto-detect and convert between formats
-python envelope_tool.py convert data.json output.json
+python bin/envelope_tool.py convert data.json output.json
 ```
 
 ## Testing
@@ -178,10 +178,10 @@ Run the validation scripts to test the implementation:
 
 ```bash
 # Validate bench-centric envelope
-python validate_bench_centric.py
+python bin/validate_bench_centric.py
 
 # Validate set-centric envelope
-python validate_set_centric.py
+python bin/validate_set_centric.py
 ```
 
 Both should output:
@@ -192,8 +192,8 @@ Both should output:
 ## File Structure
 
 ```
-├── envelope.py                              # Core module
-├── envelope_tool.py                         # CLI tool
+├── src/envelope.py                              # Core module
+├── bin/envelope_tool.py                         # CLI tool
 ├── validate_envelope_bench_centric.py       # Validation script
 ├── validate_envelope_set_centric.py         # Validation script
 ├── ENVELOPE_README.md                       # This file

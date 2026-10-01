@@ -17,7 +17,7 @@ The `StandardizeName` class now supports loading exercise name synonyms from ext
 The `StandardizeName` class still works the same way when called without arguments:
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # This still works exactly as before
 standardizer = StandardizeName()
@@ -29,7 +29,7 @@ standardizer.run("bp")  # Returns "Bench Press"
 If you want to use custom synonyms, you can now pass a configuration file:
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Load custom synonyms
 standardizer = StandardizeName(config_path="path/to/synonyms.yaml")
@@ -116,7 +116,7 @@ If validation fails, you'll get a clear error message explaining what's wrong.
 
 - See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation
 - Check [examples/custom_synonyms_example.py](examples/custom_synonyms_example.py) for working code
-- Review [parser/test_standardize_name_config.py](parser/test_standardize_name_config.py) for test examples
+- Review [tests/test_standardize_name_config.py](tests/test_standardize_name_config.py) for test examples
 
 ## Summary
 

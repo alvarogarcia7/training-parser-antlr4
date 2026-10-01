@@ -137,7 +137,7 @@ This script:
 ### LSP-Related Files
 
 ```
-lsp/
+src/lsp/
 ├── server.py              # Main LSP server implementation
 ├── cli.py                 # Command-line interface for training-lsp
 ├── client.py              # LSP client implementation

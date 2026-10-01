@@ -45,13 +45,13 @@ dev = [
 ]
 
 [project.scripts]
-training-parser = "main:main"
-training-splitter = "splitter:main"
-validate-bench-centric = "validate_bench_centric:validate_bench_centric"
-validate-set-centric = "validate_set_centric:validate_set_centric"
-json-validator = "json_validator:main"
-training-lsp = "lsp.server:main"
-training-lsp-cli = "lsp.cli:main"
+training-parser = "bin.main:main"
+training-splitter = "bin.splitter:main"
+validate-bench-centric = "bin.validate_bench_centric:validate_bench_centric"
+validate-set-centric = "bin.validate_set_centric:validate_set_centric"
+json-validator = "bin.json_validator:main"
+training-lsp = "src.lsp.server:main"
+training-lsp-cli = "src.lsp.cli:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -69,7 +69,7 @@ dev-dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["parser", "bin", "lsp"]
+packages = ["src", "bin"]
 include = [
     "*.py",
     "training.g4",
@@ -80,15 +80,14 @@ include = [
     "data/*.md",
     "examples/*.py",
     "examples/*.md",
-    "lsp/*.py",
-    "lsp/*.md",
+    "src/lsp/*.py",
+    "src/lsp/*.md",
 ]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/parser",
+    "/src",
     "/bin",
-    "/lsp",
     "/schema",
     "/data",
     "/examples",

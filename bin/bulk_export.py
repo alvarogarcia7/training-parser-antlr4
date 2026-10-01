@@ -20,9 +20,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, NamedTuple, Optional
 
-from parser.serializer import serialize_to_bench_centric, serialize_to_set_centric
-from parser import StandardizeName
-from parser.model import Exercise
+from src.parser.serializer import serialize_to_bench_centric, serialize_to_set_centric
+from src.parser import StandardizeName
+from src.parser.model import Exercise
 from src.data_access import DataAccess
 
 DATE_LINE = re.compile(r'^\d{4}-\d{2}-\d{2}$')

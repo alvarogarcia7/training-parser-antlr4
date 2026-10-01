@@ -69,7 +69,7 @@ One-click fixes for:
 ## 📦 What's Included
 
 ```
-lsp/
+src/lsp/
 ├── server.py           # Main LSP server
 ├── diagnostics.py      # Syntax error detection
 ├── completion.py       # Auto-completion
@@ -98,8 +98,8 @@ Editor ←→ LSP Protocol ←→ training-lsp ←→ ANTLR Parser
 ## 📚 Documentation
 
 - **[LSP_GUIDE.md](LSP_GUIDE.md)** - Complete setup and usage guide
-- **[lsp/README.md](lsp/README.md)** - Developer documentation
-- **[lsp/QUICKSTART.md](lsp/QUICKSTART.md)** - 5-minute quick start
+- **[src/lsp/README.md](src/lsp/README.md)** - Developer documentation
+- **[src/lsp/QUICKSTART.md](src/lsp/QUICKSTART.md)** - 5-minute quick start
 
 ## 🎓 Example
 
@@ -123,15 +123,15 @@ Open in your LSP-enabled editor to experience:
 
 Run tests:
 ```bash
-pytest lsp/
+pytest tests/test_lsp.py tests/test_client.py
 ```
 
 Test manually:
 ```bash
-python lsp/example_usage.py
+python src/lsp/example_usage.py
 ```
 
-Add custom features by extending the providers in `lsp/`.
+Add custom features by extending the providers in `src/lsp/`.
 
 ## 📄 License
 

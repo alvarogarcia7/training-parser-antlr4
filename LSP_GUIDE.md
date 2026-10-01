@@ -97,7 +97,7 @@ Open it in your LSP-enabled editor to see features in action.
 
 1. Install the extension from source:
    ```bash
-   cd lsp/vscode-extension
+   cd src/lsp/vscode-extension
    npm install
    npm run compile
    ```
@@ -105,7 +105,7 @@ Open it in your LSP-enabled editor to see features in action.
 2. Install in VS Code:
    - Open Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`)
    - Run "Developer: Install Extension from Location"
-   - Select the `lsp/vscode-extension` directory
+   - Select the `src/lsp/vscode-extension` directory
 
 3. Configure (optional) in `.vscode/settings.json`:
    ```json
@@ -516,7 +516,7 @@ If the server is slow:
 
 ### Custom Exercise Names
 
-The server provides default exercise name completions, but you can add your own by editing `lsp/completion.py`:
+The server provides default exercise name completions, but you can add your own by editing `src/lsp/completion.py`:
 
 ```python
 EXERCISE_NAMES = [
@@ -528,20 +528,20 @@ EXERCISE_NAMES = [
 
 ### Custom Diagnostics
 
-To add custom validation rules, edit `lsp/diagnostics.py` and extend the `DiagnosticErrorListener` class.
+To add custom validation rules, edit `src/lsp/diagnostics.py` and extend the `DiagnosticErrorListener` class.
 
 ### Custom Code Actions
 
-Add new quick fixes by creating functions in `lsp/code_actions.py` following the existing patterns.
+Add new quick fixes by creating functions in `src/lsp/code_actions.py` following the existing patterns.
 
 ## Development
 
-See `lsp/README.md` for detailed development information.
+See `src/lsp/README.md` for detailed development information.
 
 ## Support
 
 For issues, questions, or contributions:
-1. Check this guide and `lsp/README.md`
+1. Check this guide and `src/lsp/README.md`
 2. Review existing issues in the project repository
 3. Create a new issue with details about your setup and problem
 

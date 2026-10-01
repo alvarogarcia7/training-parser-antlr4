@@ -9,7 +9,7 @@ This script shows how to:
 """
 
 from pathlib import Path
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 
 def example_default_synonyms() -> None:

@@ -55,7 +55,7 @@ Complete guide to the training log parser grammar, formats, and testing.
 
 ### Developer Documentation
 
-#### [parser/test_grammar_formats_e2e.py](parser/test_grammar_formats_e2e.py)
+#### [tests/test_grammar_formats_e2e.py](tests/test_grammar_formats_e2e.py)
 **Comprehensive E2E test suite**
 - 70+ test cases covering all formats
 - Organized by format type
@@ -64,7 +64,7 @@ Complete guide to the training log parser grammar, formats, and testing.
 
 **Use this when:** You want to see "working code examples" or "validate formats"
 
-#### [parser/test_grammar_formats_e2e_README.md](parser/test_grammar_formats_e2e_README.md)
+#### [tests/test_grammar_formats_e2e_README.md](tests/test_grammar_formats_e2e_README.md)
 **Test suite documentation**
 - Purpose and organization of E2E tests
 - How to run tests
@@ -116,7 +116,7 @@ make test-grammar-formats
 make test
 
 # Specific test
-pytest parser/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
+pytest tests/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
 ```
 
 ### Test Coverage
@@ -149,10 +149,10 @@ The E2E test suite covers:
 → See [SYNTAX.md - Use Cases by Pattern](SYNTAX.md#tips-and-best-practices)
 
 ### "I want to validate my format works"
-→ Run `make test-grammar-formats` or check [test_grammar_formats_e2e.py](parser/test_grammar_formats_e2e.py)
+→ Run `make test-grammar-formats` or check [test_grammar_formats_e2e.py](tests/test_grammar_formats_e2e.py)
 
 ### "I want to add a new format to the grammar"
-→ See [parser/test_grammar_formats_e2e_README.md - Adding New Tests](parser/test_grammar_formats_e2e_README.md#adding-new-tests)
+→ See [tests/test_grammar_formats_e2e_README.md - Adding New Tests](tests/test_grammar_formats_e2e_README.md#adding-new-tests)
 
 ### "I want a cleaner, more compact notation"
 → See [PRD_DOT_NOTATION.md](PRD_DOT_NOTATION.md) for dot notation format (`1.10.23k` instead of `1x10x23k`)
@@ -202,7 +202,7 @@ Deadlift 60k: 20,15,8,8
 When adding new grammar features:
 
 1. Update [training.g4](training.g4) with grammar rules
-2. Add test cases to [test_grammar_formats_e2e.py](parser/test_grammar_formats_e2e.py)
+2. Add test cases to [test_grammar_formats_e2e.py](tests/test_grammar_formats_e2e.py)
 3. Document in [GRAMMAR_FORMATS.md](GRAMMAR_FORMATS.md)
 4. Add use cases to [SYNTAX.md](SYNTAX.md) if applicable
 5. Run `make test` to validate all changes

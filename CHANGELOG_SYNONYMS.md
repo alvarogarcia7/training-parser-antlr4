@@ -8,7 +8,7 @@ Extended `StandardizeName` to support configurable synonym loading from YAML/JSO
 
 ### Core Implementation
 
-#### `parser/standardize_name.py`
+#### `src/parser/standardize_name.py`
 - Added optional `config_path` parameter to `__init__()` method accepting `Path | str | None`
 - Implemented `_load_synonyms_from_file()` method to load synonyms from YAML or JSON files
 - Implemented `_get_default_synonyms()` method to return built-in default synonyms
@@ -64,7 +64,7 @@ Extended `StandardizeName` to support configurable synonym loading from YAML/JSO
 
 ### Testing
 
-#### `parser/test_standardize_name_config.py`
+#### `tests/test_standardize_name_config.py`
 - Complete test suite for new configuration loading functionality
 - Tests YAML file loading
 - Tests JSON file loading
@@ -137,7 +137,7 @@ Extended `StandardizeName` to support configurable synonym loading from YAML/JSO
 
 ### Default Usage (Unchanged)
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 standardizer = StandardizeName()
 standardizer.run("bench")  # Returns "Bench Press"
@@ -145,7 +145,7 @@ standardizer.run("bench")  # Returns "Bench Press"
 
 ### Custom YAML Configuration
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 standardizer.run("bench")  # Returns "Bench Press"
@@ -153,7 +153,7 @@ standardizer.run("bench")  # Returns "Bench Press"
 
 ### Internationalization
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Custom language-specific synonyms
 standardizer = StandardizeName(config_path="data/synonyms_custom.yaml")
@@ -166,16 +166,16 @@ standardizer = StandardizeName(config_path="data/synonyms_custom.yaml")
 2. `data/SYNONYMS_README.md`
 3. `examples/custom_synonyms_example.py`
 4. `examples/README.md`
-5. `parser/test_standardize_name_config.py`
+5. `tests/test_standardize_name_config.py`
 6. `schema/exercise_synonyms.schema.json`
 7. `MIGRATION_SYNONYMS.md`
 8. `CHANGELOG_SYNONYMS.md` (this file)
 9. `IMPLEMENTATION_SUMMARY.md`
 10. `QUICK_START_SYNONYMS.md`
-11. `validate_synonyms_yaml.py`
+11. `bin/validate_synonyms_yaml.py`
 
 ### Modified Files (3)
-1. `parser/standardize_name.py` - Core implementation
+1. `src/parser/standardize_name.py` - Core implementation
 2. `README.md` - Added feature documentation
 3. `pyproject.toml` - Updated build configuration
 
@@ -192,7 +192,7 @@ make test  # Runs all tests including new config loading tests
 
 Run only the new tests:
 ```bash
-pytest parser/test_standardize_name_config.py -v
+pytest tests/test_standardize_name_config.py -v
 ```
 
 Run the example:

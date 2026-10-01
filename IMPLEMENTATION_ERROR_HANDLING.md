@@ -10,14 +10,14 @@ Implemented comprehensive error handling for the training parser that:
 
 ## Files Modified
 
-### 1. `parser/model.py`
+### 1. `src/parser/model.py`
 **Added:**
 - `ParseError` class: Stores error information (line, column, message, offending symbol)
 - `ParseResult` class: Contains both exercises and errors from parsing
   - Properties: `has_errors`, `is_valid`
   - Methods: `get_error_summary()`, `print_errors()`
 
-### 2. `parser/parser.py`
+### 2. `src/parser/parser.py`
 **Added:**
 - `TrainingErrorListener` class: Custom ANTLR error listener that captures syntax errors
 - `Parser.parse()` method: New method that returns `ParseResult` with error handling
@@ -34,13 +34,13 @@ Implemented comprehensive error handling for the training parser that:
   - `visitErrorNode()`: No longer raises exceptions
 - `Parser.parse_sessions()`: Now uses `parse()` internally, raises ValueError on errors for backward compatibility
 
-### 3. `parser/__init__.py`
+### 3. `src/parser/__init__.py`
 **Added exports:**
 - `ParseError`
 - `ParseResult`
 - `TrainingErrorListener`
 
-### 4. `main.py`
+### 4. `bin/main.py`
 **Updated:**
 - Changed to use new `parse()` method
 - Added error display functionality
@@ -77,7 +77,7 @@ Implemented comprehensive error handling for the training parser that:
    - Used for testing error handling
 
 ### Tests
-6. **`parser/test_error_handling.py`** - Comprehensive test suite
+6. **`tests/test_error_handling.py`** - Comprehensive test suite
    - Tests valid input produces no errors
    - Tests invalid input captures errors
    - Tests partial parsing of mixed valid/invalid input
@@ -180,7 +180,7 @@ print(f"Errors: {len(result.errors)}")
 
 Run the test suite:
 ```bash
-python -m pytest parser/test_error_handling.py -v
+python -m pytest tests/test_error_handling.py -v
 ```
 
 Run the example:

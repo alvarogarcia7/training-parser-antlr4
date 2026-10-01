@@ -123,9 +123,9 @@ def test_python_files_are_accessible(pwa_server):
 def test_parser_modules_accessible(pwa_server):
     """Test that parser modules are accessible."""
     files_to_test = [
-        "/../parser/__init__.py",
-        "/../parser/model.py",
-        "/../parser/parser.py",
+        "/../src/parser/__init__.py",
+        "/../src/parser/model.py",
+        "/../src/parser/parser.py",
         "/../dist/trainingLexer.py",
     ]
 
@@ -186,7 +186,7 @@ def test_all_required_scripts_loadable(pwa_server):
         "/mobile-app/manifest.json",
         "/mobile-app/python/app_api.py",
         # Parser modules accessible from project root
-        "/parser/model.py",
+        "/src/parser/model.py",
         "/src/statistics.py",
     ]
 

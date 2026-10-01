@@ -18,7 +18,7 @@ The `StandardizeName` class supports loading exercise name synonyms from externa
 When no configuration file is specified, `StandardizeName` uses built-in default synonyms:
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 standardizer = StandardizeName()
 result = standardizer.run("bp")  # Returns "Bench Press"
@@ -30,7 +30,7 @@ Specify a configuration file path to load custom synonyms:
 
 ```python
 from pathlib import Path
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Using YAML
 standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
@@ -106,7 +106,7 @@ This directory includes:
 
 ## Validation
 
-`validate_synonyms_yaml.py` validates a synonyms file in two steps:
+`bin/validate_synonyms_yaml.py` validates a synonyms file in two steps:
 
 1. **Structure**: against the JSON Schema in `schema/exercise_synonyms.schema.json`
 2. **Validation rules**: it loads the file with `StandardizeName`, so it runs
@@ -116,13 +116,13 @@ This directory includes:
 To validate the YAML file yourself:
 
 ```bash
-python validate_synonyms_yaml.py                 # data/config/synonyms.yaml
-python validate_synonyms_yaml.py my-synonyms.yaml
+python bin/validate_synonyms_yaml.py                 # data/config/synonyms.yaml
+python bin/validate_synonyms_yaml.py my-synonyms.yaml
 make validate-synonyms
 ```
 
 It also runs automatically as the `validate-synonyms` pre-commit hook whenever
-`data/config/synonyms.yaml`, its schema, `parser/standardize_name.py` or the validator
+`data/config/synonyms.yaml`, its schema, `src/parser/standardize_name.py` or the validator
 change, so an invalid configuration cannot be committed.
 
 Example of a rejected configuration:
@@ -166,7 +166,7 @@ Common errors and solutions:
 
 ```python
 from pathlib import Path
-from parser import StandardizeName, Parser
+from src.parser import StandardizeName, Parser
 
 # Load custom synonyms
 config_path = Path("data/synonyms_es.yaml")

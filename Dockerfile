@@ -53,7 +53,7 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 # Run tests
-#RUN pytest -v parser tests
+#RUN pytest -v tests
 
 # Set entrypoint for parsing
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["python", "bin/main.py"]

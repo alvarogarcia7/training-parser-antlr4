@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'mobile-app/**'
-      - 'parser/**'
+      - 'src/parser/**'
       - 'src/**'
       - 'data/**'
       - 'schema/**'
@@ -15,7 +15,7 @@ on:
       - 'playwright.config.*'
       - 'package.json'
       - 'package-lock.json'
-      - 'serve.py'
+      - 'bin/serve.py'
       - 'bin/git-http-server.js'
 
 jobs:
@@ -84,7 +84,7 @@ jobs:
     - name: Start PWA dev server
       run: |
         echo "Starting PWA server..."
-        uv run python3 serve.py > /tmp/pwa-server.log 2>&1 &
+        uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 &
         SERVER_PID=$!
         echo "Server PID: $SERVER_PID"
 

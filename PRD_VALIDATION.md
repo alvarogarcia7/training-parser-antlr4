@@ -32,7 +32,7 @@ Line 18: | INT '.' INT '.' weight rir? #whole_set_dots_
 ```
 ✅ Matches PRD specification exactly
 
-#### Parser Implementation (parser/parser.py, lines 137-165)
+#### Parser Implementation (src/parser/parser.py, lines 137-165)
 ```python
 def visitWhole_set_dots_(self, ctx: trainingParser.Whole_set_dots_Context) -> Any:
     # Get the INT tokens which are number_of_series and number_of_repetitions
@@ -105,7 +105,7 @@ Line 21: | INT '..' weight ('/' weight)* #range_reps_multiple_weight
 ```
 ✅ Matches PRD specification exactly
 
-#### Parser Implementation (parser/parser.py, lines 167-176)
+#### Parser Implementation (src/parser/parser.py, lines 167-176)
 ```python
 def visitRange_reps_multiple_weight(self, ctx: trainingParser.Range_reps_multiple_weightContext) -> Any:
     first_child = ctx.getChild(0)
@@ -177,7 +177,7 @@ Line 9: weight: INT ('.' INT)? 'k'? ;
 
 ## Implementation Requirements Validation
 
-### Parser Changes (parser/parser.py)
+### Parser Changes (src/parser/parser.py)
 
 #### ✅ Requirement 1: Add `visitWhole_set_dots_` method
 - **Status**: ✅ Implemented (lines 137-165)
@@ -190,7 +190,7 @@ Line 9: weight: INT ('.' INT)? 'k'? ;
 - **Extracts**: repetitions ✅, list of weights ✅
 - **Calls**: `builder.add_fixed_reps_multiple_weights()` ✅
 
-### SeriesBuilder Changes (parser/series_builder.py)
+### SeriesBuilder Changes (src/parser/series_builder.py)
 
 #### ✅ Requirement: No changes required
 - **Status**: ✅ Confirmed - No changes made
