@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import csv
 from functools import reduce
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any
 
 
 def chain(arg: object, *funcs: Any) -> object:
@@ -182,3 +184,29 @@ class WeightParser:
             parse = self.single_parser.parse("\n".join(note))
             result.append(parse)
         return result
+
+
+CSV_COLUMNS: list[str | None] = [
+    'date',
+    'body score',
+    'weight',
+    'bmi',
+    'body fat',
+    None,  # body water
+    'basal metabolism',
+    'visceral fat',
+    None,  # skeletal muscle - empty column
+    'muscle',
+    'protein',
+    'bone mass',
+    None,  # metabolic age is not properly parsed
+    None,  # desired weight - computed by a formula, here keep empty
+    'body type',
+]
+
+
+def write_csv(file_path: Path | str, parsed: list[dict[str, Any]]) -> None:
+    with open(file_path, mode='w+', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile, delimiter=';', quotechar='"')
+        for row in parsed:
+            csv_writer.writerow(['' if column is None else row[column] for column in CSV_COLUMNS])

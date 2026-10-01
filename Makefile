@@ -228,6 +228,11 @@ stats: check-virtual-env
 	@echo ""
 	python3 bin/workout_stats.py $(FILE) --time $(TIME)
 
+weight-parse: check-virtual-env
+	@echo "Usage: make weight-parse FILE=data/workdir/weight_2026.txt YEAR=2026"
+	python3 bin/weight_parser.py $(FILE) --year $(YEAR)
+.PHONY: weight-parse
+
 organize-files:
 	@echo "Usage: make organize-files DIR=<directory with JSON files>"
 	set -u && echo $${DIR}

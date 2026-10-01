@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import csv
+import subprocess
+import sys
+import tempfile
 import unittest
+from pathlib import Path
 
-from weight_parser.program import SingleMeasurementWeightParser, WeightParser
+from src.weight_parser import SingleMeasurementWeightParser, WeightParser, write_csv
 
 
 class MyTestCase(unittest.TestCase):
@@ -60,6 +65,29 @@ Mi Fit"""
             (self.fit + "\n" + self.fit).splitlines())
 
         self.assertEqual(2, len(parsed))
+
+    def test_write_csv(self) -> None:
+        parsed = SingleMeasurementWeightParser("2023").parse(self.fit)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "out.csv"
+            write_csv(path, [parsed])
+            with open(path, newline='') as f:
+                rows = list(csv.reader(f, delimiter=';'))
+        self.assertEqual(
+            [["21/06/2023", "00", "03,15", "17,2", "17,7", "", "1809", "12", "", "33,90", "29,0", "3,40", "", "",
+              "Thick-set"]],
+            rows)
+
+    def test_cli(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "weight.txt"
+            source.write_text(self.fit + "\n" + self.fit)
+            output = Path(tmp) / "weight.csv"
+            result = subprocess.run(
+                [sys.executable, "bin/weight_parser.py", str(source), "--year", "2023", "-o", str(output)],
+                capture_output=True, text=True, env={"PYTHONPATH": "."})
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(2, len(output.read_text().splitlines()))
 
 
 if __name__ == '__main__':
