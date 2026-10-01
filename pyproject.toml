@@ -69,7 +69,7 @@ dev-dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["parser", "scripts", "lsp"]
+packages = ["parser", "bin", "lsp"]
 include = [
     "*.py",
     "training.g4",
@@ -87,7 +87,7 @@ include = [
 [tool.hatch.build.targets.sdist]
 include = [
     "/parser",
-    "/scripts",
+    "/bin",
     "/lsp",
     "/schema",
     "/data",

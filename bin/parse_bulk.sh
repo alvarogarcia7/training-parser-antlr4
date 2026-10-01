@@ -93,7 +93,7 @@ trap 'rm -f "$MANIFEST"' EXIT
 # <name>_bench.json; the database gets one entry per input file.
 # Failures for individual files are reported on stderr and do not stop the rest.
 status=0
-PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 "$REPO_ROOT/scripts/bulk_export.py" \
+PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 "$REPO_ROOT/bin/bulk_export.py" \
     -o "$OUTPUT_DIR" -d "$DATABASE_FILE" --manifest "$MANIFEST" "${INPUT_FILES[@]}" || status=$?
 
 # Sort only the files produced by this run (the output directory may hold

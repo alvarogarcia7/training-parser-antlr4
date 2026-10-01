@@ -20,7 +20,7 @@ check-virtual-env:
 # uv-specific targets
 uv-sync:
 	uv sync --all-extras
-	@if [ -f scripts/download_antlr.py ]; then \
-		python3 scripts/download_antlr.py; \
+	@if [ -f bin/download_antlr.py ]; then \
+		python3 bin/download_antlr.py; \
 	fi
 .PHONY: uv-sync

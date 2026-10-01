@@ -128,7 +128,7 @@ const PYTHON_FILES = [
   ['/dist/trainingParser.py',       '/home/pyodide/dist/trainingParser.py'],
   ['/dist/trainingListener.py',     '/home/pyodide/dist/trainingListener.py'],
   ['/dist/trainingVisitor.py',      '/home/pyodide/dist/trainingVisitor.py'],
-  ['/data/synonyms.yaml',           '/home/pyodide/data/synonyms.yaml'],
+  ['/data/config/synonyms.yaml',    '/home/pyodide/data/config/synonyms.yaml'],
   ['/schema/envelope-set-centric.schema.json', '/home/pyodide/schema/envelope-set-centric.schema.json'],
   ['/schema/set-centric.schema.json',          '/home/pyodide/schema/set-centric.schema.json'],
   ['/schema/common-definitions.schema.json',   '/home/pyodide/schema/common-definitions.schema.json'],
@@ -179,7 +179,7 @@ async function initPyodide() {
   log('Creating directories...', 'DEBUG');
 
   // Create directories in Pyodide FS with error handling
-  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/antlr4', '/home/pyodide/schema'];
+  const dirs = ['/home/pyodide/parser', '/home/pyodide/src', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/data/config', '/home/pyodide/antlr4', '/home/pyodide/schema'];
   for (const dir of dirs) {
     try {
       pyodide.FS.mkdir(dir);

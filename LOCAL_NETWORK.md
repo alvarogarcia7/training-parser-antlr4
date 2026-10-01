@@ -13,8 +13,8 @@ This guide explains how to serve the Training Parser PWA from your laptop to pho
 ### 1. Generate SSL Certificates (One-time setup)
 
 ```bash
-chmod +x scripts/create-ssl-certs.sh
-./scripts/create-ssl-certs.sh
+chmod +x bin/create-ssl-certs.sh
+./bin/create-ssl-certs.sh
 ```
 
 This creates self-signed certificates in the `certs/` directory. The certificates are valid for 365 days.
@@ -24,7 +24,7 @@ This creates self-signed certificates in the `certs/` directory. The certificate
 ### 2. Start the HTTPS Server
 
 ```bash
-python3 scripts/serve-local.py
+python3 bin/serve-local.py
 ```
 
 The server will display:
@@ -105,16 +105,16 @@ The `serve-local.py` script accepts command-line options:
 
 ```bash
 # Use default (0.0.0.0:8443)
-python3 scripts/serve-local.py
+python3 bin/serve-local.py
 
 # Custom port
-python3 scripts/serve-local.py --port 9443
+python3 bin/serve-local.py --port 9443
 
 # Custom certificate location
-python3 scripts/serve-local.py --cert mycert.pem --key mykey.pem
+python3 bin/serve-local.py --cert mycert.pem --key mykey.pem
 
 # Bind to specific address
-python3 scripts/serve-local.py --host 192.168.1.100 --port 8443
+python3 bin/serve-local.py --host 192.168.1.100 --port 8443
 ```
 
 ## Security Considerations
@@ -179,7 +179,7 @@ This is **normal and expected** for self-signed certificates. Click:
 rm -rf certs/
 
 # Generate new ones (valid 365 days from now)
-./scripts/create-ssl-certs.sh
+./bin/create-ssl-certs.sh
 ```
 
 ## Using with Git Sync
@@ -215,7 +215,7 @@ For your own domain, use a proper SSL certificate from a provider:
 
 ```bash
 # Use production-grade certificates (not self-signed)
-python3 scripts/serve-local.py \
+python3 bin/serve-local.py \
   --cert /etc/letsencrypt/live/example.com/fullchain.pem \
   --key /etc/letsencrypt/live/example.com/privkey.pem
 ```
@@ -305,5 +305,5 @@ For issues:
 
 1. Check the troubleshooting section above
 2. Open browser DevTools (F12) and check Console
-3. Review `scripts/create-ssl-certs.sh` for certificate issues
-4. Check `scripts/serve-local.py` for server issues
+3. Review `bin/create-ssl-certs.sh` for certificate issues
+4. Check `bin/serve-local.py` for server issues

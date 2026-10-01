@@ -88,7 +88,7 @@ const PYTHON_SOURCES = [
   '../dist/trainingParser.py',
   '../dist/trainingListener.py',
   '../dist/trainingVisitor.py',
-  '../data/synonyms.yaml',
+  '../data/config/synonyms.yaml',
 ];
 
 // CDN libraries for git sync and filesystem

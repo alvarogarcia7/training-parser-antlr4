@@ -25,7 +25,7 @@ pytestmark = pytest.mark.skipif(
 def pwa_server():
     """Start the pwa-serve-local server for the duration of tests."""
     proc = subprocess.Popen(
-        ["python3", "scripts/serve-local.py", "--host", "127.0.0.1", "--port", "8446"],
+        ["python3", "bin/serve-local.py", "--host", "127.0.0.1", "--port", "8446"],
         cwd=Path(__file__).parent.parent.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -148,7 +148,7 @@ def test_all_python_modules_exist(pwa_server):
         "/parser/model.py",
         "/src/statistics.py",
         "/dist/trainingLexer.py",
-        "/data/synonyms.yaml",
+        "/data/config/synonyms.yaml",
     ]
 
     for file_path in critical_files:

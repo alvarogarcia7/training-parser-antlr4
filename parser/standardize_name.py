@@ -11,7 +11,7 @@ Synonym = TypedDict('Synonym', {
 
 
 class StandardizeName:
-    def __init__(self, config_path: Path | str = "data/synonyms.yaml") -> None:
+    def __init__(self, config_path: Path | str = "data/config/synonyms.yaml") -> None:
         self._synonyms = self._load_synonyms_from_file(config_path)
         self._check_synonym_configuration(self._synonyms)
 

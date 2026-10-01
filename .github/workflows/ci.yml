@@ -127,7 +127,7 @@ jobs:
       run: |
         git config --global init.defaultBranch main
         mkdir -p /tmp/git-server
-        cp scripts/git-http-server.js /tmp/git-server/ || true
+        cp bin/git-http-server.js /tmp/git-server/ || true
         cd /tmp/git-server
         for repo in test-repo-empty test-repo-main test-repo-master; do
           git init --bare $repo.git || true

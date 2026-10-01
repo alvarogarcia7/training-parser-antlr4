@@ -19,7 +19,7 @@ Extended `StandardizeName` to support configurable synonym loading from YAML/JSO
 
 ### Configuration Files
 
-#### `data/synonyms.yaml`
+#### `data/config/synonyms.yaml`
 - Default synonym mappings in YAML format
 - Includes all built-in exercise synonyms
 - Well-documented with comments
@@ -147,7 +147,7 @@ standardizer.run("bench")  # Returns "Bench Press"
 ```python
 from parser import StandardizeName
 
-standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 standardizer.run("bench")  # Returns "Bench Press"
 ```
 
@@ -162,7 +162,7 @@ standardizer = StandardizeName(config_path="data/synonyms_custom.yaml")
 ## Files Created/Modified
 
 ### New Files (12)
-1. `data/synonyms.yaml`
+1. `data/config/synonyms.yaml`
 2. `data/SYNONYMS_README.md`
 3. `examples/custom_synonyms_example.py`
 4. `examples/README.md`

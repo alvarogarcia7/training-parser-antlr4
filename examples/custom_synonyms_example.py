@@ -28,7 +28,7 @@ def example_default_synonyms() -> None:
 def example_yaml_config() -> None:
     """Example loading synonyms from YAML file."""
     print("=== Example 2: YAML Configuration ===")
-    config_path = Path("data/synonyms.yaml")
+    config_path = Path("data/config/synonyms.yaml")
 
     if not config_path.exists():
         print(f"  Warning: {config_path} not found")

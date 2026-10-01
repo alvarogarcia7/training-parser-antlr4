@@ -2,7 +2,7 @@
 """CLI tool for detecting training seasons.
 
 A season ends when there is a break of at least ``min_break_days`` days
-without a training session (configured in ``config/seasons.yaml``); the next
+without a training session (configured in ``data/config/seasons.yaml``); the next
 session after the break starts a new season.
 
 For each season, every exercise gets an estimated 1RM (Brzycki formula, best
@@ -11,7 +11,7 @@ set of the season) and each set is reported as a percentage of that 1RM.
 Input: a directory with one or more set-centric JSON files.
 
 Usage:
-    python scripts/detect_seasons.py <input_directory> [--config FILE] [--min-break-days N]
+    python bin/detect_seasons.py <input_directory> [--config FILE] [--min-break-days N]
                                      [--min-sessions N] [--format text|json]
 """
 
@@ -45,13 +45,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         epilog="""
 Examples:
   # Seasons from a directory of set-centric JSON files
-  python scripts/detect_seasons.py data/parsed/
+  python bin/detect_seasons.py data/parsed/
 
   # Custom config file
-  python scripts/detect_seasons.py data/parsed/ --config my-seasons.yaml
+  python bin/detect_seasons.py data/parsed/ --config my-seasons.yaml
 
   # Override the minimum break from the command line
-  python scripts/detect_seasons.py data/parsed/ --min-break-days 30 --format json
+  python bin/detect_seasons.py data/parsed/ --min-break-days 30 --format json
         """,
     )
     parser.add_argument(
@@ -61,7 +61,7 @@ Examples:
         "--config",
         type=Path,
         default=DEFAULT_CONFIG_PATH,
-        help=f"Season config YAML (default: {DEFAULT_CONFIG_PATH.name} in config/)",
+        help=f"Season config YAML (default: {DEFAULT_CONFIG_PATH.name} in data/config/)",
     )
     parser.add_argument("--min-break-days", type=int, help="Override min_break_days from config")
     parser.add_argument("--min-sessions", type=int, help="Override min_sessions from config")

@@ -30,8 +30,8 @@ pwa-build: check-virtual-env
 
 download-pyodide:
 	@echo "Downloading Pyodide for offline support..."
-	@chmod +x scripts/download-pyodide.sh
-	@./scripts/download-pyodide.sh
+	@chmod +x bin/download-pyodide.sh
+	@./bin/download-pyodide.sh
 .PHONY: download-pyodide
 
 pwa-build-offline: download-pyodide pwa-build
@@ -54,16 +54,16 @@ pwa-serve-local: check-virtual-env
 	@echo "Starting local HTTPS server for PWA..."
 	@if [ ! -f certs/cert.pem ] || [ ! -f certs/key.pem ]; then \
 		echo "SSL certificates not found. Generating..."; \
-		chmod +x scripts/create-ssl-certs.sh; \
-		./scripts/create-ssl-certs.sh; \
+		chmod +x bin/create-ssl-certs.sh; \
+		./bin/create-ssl-certs.sh; \
 	fi
-	python3 scripts/serve-local.py --host 0.0.0.0 --port 8444
+	python3 bin/serve-local.py --host 0.0.0.0 --port 8444
 .PHONY: pwa-serve-local
 
 pwa-certs:
 	@echo "Generating SSL certificates for local HTTPS..."
-	@chmod +x scripts/create-ssl-certs.sh
-	@./scripts/create-ssl-certs.sh
+	@chmod +x bin/create-ssl-certs.sh
+	@./bin/create-ssl-certs.sh
 .PHONY: pwa-certs
 
 pwa-clean:
@@ -136,11 +136,11 @@ setup-local-git-server:
 	@echo "Setting up local git server..."
 	@mkdir -p /tmp/git-server
 	@if [ ! -f /tmp/git-server/git-http-server.js ]; then \
-		cp scripts/git-http-server.js /tmp/git-server/; \
+		cp bin/git-http-server.js /tmp/git-server/; \
 		echo "✓ Copied git HTTP server"; \
 	fi
 	@if [ ! -f /tmp/cors-proxy.js ]; then \
-		cp scripts/cors-proxy.js /tmp/cors-proxy.js; \
+		cp bin/cors-proxy.js /tmp/cors-proxy.js; \
 		echo "✓ Copied CORS proxy"; \
 	fi
 	@if [ ! -d /tmp/git-server/test-repo.git ]; then \
@@ -265,6 +265,6 @@ test-git-watch: check-virtual-env
 # Monitor GitHub Actions workflow until completion
 
 ci-babysit:
-	@chmod +x scripts/babysit-ci.sh
-	@bash scripts/babysit-ci.sh
+	@chmod +x bin/babysit-ci.sh
+	@bash bin/babysit-ci.sh
 .PHONY: ci-babysit

@@ -1,4 +1,4 @@
-# Configuration for season detection (scripts/detect_seasons.py).
+# Configuration for season detection (bin/detect_seasons.py).
 #
 # A "season" is a continuous training period. A season ends when there is a
 # break of at least `min_break_days` consecutive days without any training

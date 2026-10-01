@@ -26,7 +26,7 @@ uv sync --all-extras
 
 echo ""
 echo "==> Downloading ANTLR jar..."
-python3 scripts/download_antlr.py
+python3 bin/download_antlr.py
 
 echo ""
 echo "==> Installing pre-commit hooks..."

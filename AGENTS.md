@@ -23,7 +23,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv sync --all-extras
 
 # Download ANTLR jar (required for grammar compilation)
-python3 scripts/download_antlr.py
+python3 bin/download_antlr.py
 
 # Install pre-commit hooks
 make install-githooks

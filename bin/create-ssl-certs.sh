@@ -1,6 +1,6 @@
 #!/bin/bash
 # Generate self-signed SSL certificates for local HTTPS development
-# Usage: ./scripts/create-ssl-certs.sh
+# Usage: ./bin/create-ssl-certs.sh
 #
 # Strict mode: exit on error, undefined variables, or pipe failures
 set -euo pipefail
@@ -113,10 +113,10 @@ echo "  Certificate: ${CERT_FILE} ($(stat -f%z "${CERT_FILE}" 2>/dev/null || sta
 echo "  Private key: ${KEY_FILE} ($(stat -f%z "${KEY_FILE}" 2>/dev/null || stat -c%s "${KEY_FILE}" 2>/dev/null || echo "created") bytes)"
 echo ""
 echo "Next steps:"
-echo "  1. Start the HTTPS server: python3 scripts/serve-local.py"
+echo "  1. Start the HTTPS server: python3 bin/serve-local.py"
 echo "  2. On your phone, open: https://${LOCAL_IP}:8443"
 echo "  3. Accept the security warning (self-signed certificate)"
 echo "  4. The app will load and cache everything for offline use"
 echo ""
 echo "Note: The certificate is valid for ${DAYS} days."
-echo "To regenerate: rm -rf ${CERT_DIR}/ && ./scripts/create-ssl-certs.sh"
+echo "To regenerate: rm -rf ${CERT_DIR}/ && ./bin/create-ssl-certs.sh"

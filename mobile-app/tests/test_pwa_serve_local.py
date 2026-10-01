@@ -26,7 +26,7 @@ def pwa_server():
     """Start the pwa-serve-local server for the duration of tests."""
     # Start server
     proc = subprocess.Popen(
-        ["python3", "scripts/serve-local.py", "--host", "127.0.0.1", "--port", "8445"],
+        ["python3", "bin/serve-local.py", "--host", "127.0.0.1", "--port", "8445"],
         cwd=Path(__file__).parent.parent.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

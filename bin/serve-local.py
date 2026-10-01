@@ -4,9 +4,9 @@ Local HTTPS server for PWA development and local network deployment.
 Serves the mobile-app PWA with proper HTTPS and CORS headers.
 
 Usage:
-    python3 scripts/serve-local.py
-    python3 scripts/serve-local.py --port 9443
-    python3 scripts/serve-local.py --host 0.0.0.0 --port 8443
+    python3 bin/serve-local.py
+    python3 bin/serve-local.py --port 9443
+    python3 bin/serve-local.py --host 0.0.0.0 --port 8443
 """
 
 import http.server
@@ -151,8 +151,8 @@ def main() -> None:
         print(f"   Expected at: {cert_path.absolute()}")
         print("")
         print("Generate certificates with:")
-        print("   chmod +x scripts/create-ssl-certs.sh")
-        print("   ./scripts/create-ssl-certs.sh")
+        print("   chmod +x bin/create-ssl-certs.sh")
+        print("   ./bin/create-ssl-certs.sh")
         sys.exit(1)
 
     if not key_path.exists():
@@ -160,8 +160,8 @@ def main() -> None:
         print(f"   Expected at: {key_path.absolute()}")
         print("")
         print("Generate certificates with:")
-        print("   chmod +x scripts/create-ssl-certs.sh")
-        print("   ./scripts/create-ssl-certs.sh")
+        print("   chmod +x bin/create-ssl-certs.sh")
+        print("   ./bin/create-ssl-certs.sh")
         sys.exit(1)
 
     # Verify files are readable
@@ -208,11 +208,11 @@ def main() -> None:
     except OSError as e:
         if "Address already in use" in str(e):
             print(f"❌ Error: Port {args.port} is already in use")
-            print("   Try a different port: python3 scripts/serve-local.py --port 9443")
+            print("   Try a different port: python3 bin/serve-local.py --port 9443")
         elif "Permission denied" in str(e):
             print(f"❌ Error: Permission denied for port {args.port}")
             print("   Ports < 1024 require administrator privileges")
-            print(f"   Try a port >= 1024: python3 scripts/serve-local.py --port 8443")
+            print(f"   Try a port >= 1024: python3 bin/serve-local.py --port 8443")
         else:
             print(f"❌ Error binding to {args.host}:{args.port}: {e}")
         sys.exit(1)

@@ -59,7 +59,7 @@ To support multiple languages, create language-specific configuration files:
 
 ```python
 # For English users (default)
-standardizer_en = StandardizeName(config_path="data/synonyms.yaml")
+standardizer_en = StandardizeName(config_path="data/config/synonyms.yaml")
 
 # For other languages, create your own config file
 standardizer_custom = StandardizeName(config_path="data/synonyms_custom.yaml")
@@ -80,7 +80,7 @@ synonyms:
 
 The repository includes example configuration files in the `data/` directory:
 
-- `data/synonyms.yaml` - Default synonyms in YAML format
+- `data/config/synonyms.yaml` - Default synonyms in YAML format
 
 ## Code Examples
 

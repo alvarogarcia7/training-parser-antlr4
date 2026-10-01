@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validate synonym configuration files (default: data/synonyms.yaml):
+Validate synonym configuration files (default: data/config/synonyms.yaml):
 
 1. Structure, against schema/exercise_synonyms.schema.json
 2. Consistency, with the same checks StandardizeName runs when the application
@@ -17,7 +17,7 @@ import jsonschema
 
 from parser.standardize_name import StandardizeName
 
-DEFAULT_SYNONYMS = 'data/synonyms.yaml'
+DEFAULT_SYNONYMS = 'data/config/synonyms.yaml'
 SCHEMA = 'schema/exercise_synonyms.schema.json'
 
 

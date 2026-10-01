@@ -2,8 +2,8 @@
 """CLI tool for calculating and displaying workout statistics.
 
 Usage:
-    python scripts/workout_stats.py <input_file> [--time MINUTES] [--format json|text]
-    python scripts/workout_stats.py --database <db_file> [--time MINUTES] [--format json|text]
+    python bin/workout_stats.py <input_file> [--time MINUTES] [--format json|text]
+    python bin/workout_stats.py --database <db_file> [--time MINUTES] [--format json|text]
 """
 
 import argparse
@@ -45,16 +45,16 @@ def main() -> None:
         epilog="""
 Examples:
   # Stats for a single parsed workout
-  python scripts/workout_stats.py data/parsed/workout_set.json
+  python bin/workout_stats.py data/parsed/workout_set.json
 
   # Stats with workout duration
-  python scripts/workout_stats.py data/parsed/workout_set.json --time 60
+  python bin/workout_stats.py data/parsed/workout_set.json --time 60
 
   # Stats for entire database
-  python scripts/workout_stats.py --database data/parsed/database.json --time 300
+  python bin/workout_stats.py --database data/parsed/database.json --time 300
 
   # Output as JSON
-  python scripts/workout_stats.py data/parsed/workout_set.json --format json
+  python bin/workout_stats.py data/parsed/workout_set.json --format json
         """,
     )
 

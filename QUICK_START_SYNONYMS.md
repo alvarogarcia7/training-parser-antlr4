@@ -12,7 +12,7 @@ result = standardizer.run("bp")  # Returns "Bench Press"
 
 ### Load from YAML
 ```python
-standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 ```
 
 ## Create Custom Config

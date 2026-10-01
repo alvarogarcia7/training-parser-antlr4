@@ -26,7 +26,7 @@ import yaml
 
 from src.one_rep_max import BRZYCKI_MAX_REPS, brzycki_1rm, percentage_of_1rm
 
-DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "seasons.yaml"
+DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "data" / "config" / "seasons.yaml"
 SEASON_REPORT_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schema" / "season_report.schema.json"
 
 _DATE_LINE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?!\d)")

@@ -226,7 +226,7 @@ stats: check-virtual-env
 	@echo "Calculate workout statistics from JSON data"
 	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
 	@echo ""
-	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
+	python3 bin/workout_stats.py $(FILE) --time $(TIME)
 
 organize-files:
 	@echo "Usage: make organize-files DIR=<directory with JSON files>"
@@ -239,15 +239,15 @@ organize-files:
 
 DIR?=data/workdir/bulk/set/
 seasons: check-virtual-env
-	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
+	@echo "Detect training seasons and %1RM per exercise (config: data/config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
 	set -u && echo $${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
-	python3 scripts/detect_seasons.py $(DIR)/set
+	python3 bin/detect_seasons.py $(DIR)/set
 .PHONY: seasons
 
 parse-all:
-	./scripts/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
+	./bin/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all

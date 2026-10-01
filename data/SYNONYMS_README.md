@@ -33,10 +33,10 @@ from pathlib import Path
 from parser import StandardizeName
 
 # Using YAML
-standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 
 # Using Path object
-standardizer = StandardizeName(config_path=Path("data/synonyms.yaml"))
+standardizer = StandardizeName(config_path=Path("data/config/synonyms.yaml"))
 ```
 
 ## Configuration File Format
@@ -102,7 +102,7 @@ synonyms:
 
 This directory includes:
 
-- `synonyms.yaml` - Default synonyms in YAML format (validated against JSON Schema)
+- `config/synonyms.yaml` - Default synonyms in YAML format (validated against JSON Schema)
 
 ## Validation
 
@@ -116,13 +116,13 @@ This directory includes:
 To validate the YAML file yourself:
 
 ```bash
-python validate_synonyms_yaml.py                 # data/synonyms.yaml
+python validate_synonyms_yaml.py                 # data/config/synonyms.yaml
 python validate_synonyms_yaml.py my-synonyms.yaml
 make validate-synonyms
 ```
 
 It also runs automatically as the `validate-synonyms` pre-commit hook whenever
-`data/synonyms.yaml`, its schema, `parser/standardize_name.py` or the validator
+`data/config/synonyms.yaml`, its schema, `parser/standardize_name.py` or the validator
 change, so an invalid configuration cannot be committed.
 
 Example of a rejected configuration:
@@ -136,7 +136,7 @@ synonyms:
 ```
 
 ```
-✗ Synonym configuration error in data/synonyms.yaml: Synonym 'bench' expands recursively: it is part of the clean name 'bench press'
+✗ Synonym configuration error in data/config/synonyms.yaml: Synonym 'bench' expands recursively: it is part of the clean name 'bench press'
 ```
 
 ## Best Practices
