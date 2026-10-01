@@ -228,6 +228,16 @@ stats: check-virtual-env
 	@echo ""
 	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
 
+organize-files:
+	@echo "Usage: make organize-files DIR=<directory with JSON files>"
+	set -u && echo $${DIR}
+	set -u && ls -d $${DIR}
+	-mv $(DIR)/*_bench.json $(DIR)/bench
+	-mv $(DIR)/*_set.json $(DIR)/set
+.PHONY: organize-files
+
+
+DIR?=data/workdir/bulk/set/
 seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
@@ -235,8 +245,6 @@ seasons: check-virtual-env
 	set -u && echo $${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
-	-mv $(DIR)/*_bench.json $(DIR)/bench
-	-mv $(DIR)/*_set.json $(DIR)/set
 	python3 scripts/detect_seasons.py $(DIR)/set
 .PHONY: seasons
 
