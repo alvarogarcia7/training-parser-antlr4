@@ -241,5 +241,5 @@ seasons: check-virtual-env
 .PHONY: seasons
 
 parse-all:
-	./scripts/parse_bulk.sh -o data/workdir/bulk data/workdir/*txt
+	./scripts/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all
