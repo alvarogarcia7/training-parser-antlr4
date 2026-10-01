@@ -1,7 +1,7 @@
 """Shared display and formatting logic for workout data."""
 from typing import Any
 
-from parser.model import Exercise, Set_, Weight
+from src.parser.model import Exercise, Set_, Weight
 from src.data_access import VolumeFormatter
 
 

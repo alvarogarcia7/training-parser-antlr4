@@ -16,8 +16,8 @@ from antlr4 import CommonTokenStream, InputStream
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
-from parser import Exercise, StandardizeName, Formatter
-from parser.serializer import serialize_to_set_centric
+from src.parser import Exercise, StandardizeName, Formatter
+from src.parser.serializer import serialize_to_set_centric
 
 
 RawWorkoutSession = TypedDict('RawWorkoutSession', {

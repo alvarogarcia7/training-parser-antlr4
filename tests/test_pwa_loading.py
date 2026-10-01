@@ -25,7 +25,7 @@ pytestmark = pytest.mark.skipif(
 def pwa_server():
     """Start the pwa-serve-local server for the duration of tests."""
     proc = subprocess.Popen(
-        ["python3", "scripts/serve-local.py", "--host", "127.0.0.1", "--port", "8446"],
+        ["python3", "bin/serve-local.py", "--host", "127.0.0.1", "--port", "8446"],
         cwd=Path(__file__).parent.parent.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -145,10 +145,10 @@ def test_all_python_modules_exist(pwa_server):
 
     # Check a sample of critical files
     critical_files = [
-        "/parser/model.py",
+        "/src/parser/model.py",
         "/src/statistics.py",
         "/dist/trainingLexer.py",
-        "/data/synonyms.yaml",
+        "/data/config/synonyms.yaml",
     ]
 
     for file_path in critical_files:
@@ -216,7 +216,7 @@ def test_pyodide_worker_paths_are_correct(pwa_server):
     """Test that Pyodide worker uses correct paths for module fetching.
 
     Bundled antlr4 files use relative paths (../python/).
-    Project modules use absolute paths (/parser/, /src/, /dist/, /data/).
+    Project modules use absolute paths (/src/, /dist/, /data/).
     """
     content = fetch_file("/mobile-app/src/pyodide-worker.js", pwa_server).decode("utf-8")
 
@@ -236,7 +236,7 @@ def test_pyodide_worker_paths_are_correct(pwa_server):
     absolute_paths = re.findall(r"\['/([^']+)'", python_files)
     assert len(absolute_paths) > 0, "Missing absolute paths for project modules"
     assert any("parser" in path or "src" in path or "dist" in path or "data" in path for path in absolute_paths), \
-        "Project modules should use absolute paths (/parser/, /src/, /dist/, /data/)"
+        "Project modules should use absolute paths (/src/, /dist/, /data/)"
 
 
 def test_app_shell_files_are_accessible(pwa_server):

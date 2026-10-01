@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 import jsonschema
 
-from parser.model import Exercise
+from src.parser.model import Exercise
 
 
 def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[datetime] = None) -> dict[str, Any]:
@@ -57,8 +57,8 @@ def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[da
     }
 
     # Validate against JSON schema
-    schema_path = Path(__file__).parent.parent / "schema" / "bench-centric.schema.json"
-    common_defs_path = Path(__file__).parent.parent / "schema" / "common-definitions.schema.json"
+    schema_path = Path(__file__).parent.parent.parent / "schema" / "bench-centric.schema.json"
+    common_defs_path = Path(__file__).parent.parent.parent / "schema" / "common-definitions.schema.json"
 
     with open(schema_path, 'r') as f:
         schema = json.load(f)
@@ -131,8 +131,8 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
     }
 
     # Validate against JSON schema
-    schema_path = Path(__file__).parent.parent / "schema" / "set-centric.schema.json"
-    common_defs_path = Path(__file__).parent.parent / "schema" / "common-definitions.schema.json"
+    schema_path = Path(__file__).parent.parent.parent / "schema" / "set-centric.schema.json"
+    common_defs_path = Path(__file__).parent.parent.parent / "schema" / "common-definitions.schema.json"
 
     with open(schema_path, 'r') as f:
         schema = json.load(f)

@@ -1,0 +1,79 @@
+{
+  "name": "training-language-support",
+  "displayName": "Training Language Support",
+  "description": "Language support for training workout DSL",
+  "version": "0.1.0",
+  "publisher": "training-parser",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:training"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "training",
+        "aliases": [
+          "Training",
+          "training"
+        ],
+        "extensions": [
+          ".training",
+          ".workout"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "training",
+        "scopeName": "source.training",
+        "path": "./syntaxes/training.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Training Language Server",
+      "properties": {
+        "trainingLanguageServer.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the training language server"
+        },
+        "trainingLanguageServer.serverPath": {
+          "type": "string",
+          "default": "training-lsp",
+          "description": "Path to the training-lsp executable"
+        },
+        "trainingLanguageServer.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  }
+}
