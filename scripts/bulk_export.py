@@ -5,9 +5,10 @@ Bulk export utilities for training parser data.
 Every input file is parsed exactly once. Each training session in it (a
 YYYY-MM-DD line starts a session) is mapped to exactly one set-centric file and
 one bench-centric file, so a file with a single session gives one pair and a
-file with N dated sessions gives N pairs. The files and the database entry of a
-session are built from the same parse, so they can never disagree, and nothing
-is shared between different sessions or input files.
+file with N dated sessions gives N pairs. Set-centric files go to
+<output-dir>/set/ and bench-centric files to <output-dir>/bench/. The files and
+the database entry of a session are built from the same parse, so they can never
+disagree, and nothing is shared between different sessions or input files.
 """
 
 import argparse
@@ -26,6 +27,8 @@ from src.data_access import DataAccess
 
 DATE_LINE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 REPO_ROOT = Path(__file__).resolve().parent.parent
+SET_DIR = "set"      # <output-dir>/set/    holds the set-centric files
+BENCH_DIR = "bench"  # <output-dir>/bench/  holds the bench-centric files
 
 
 class Session(NamedTuple):
@@ -143,8 +146,8 @@ def export_session(
     bench_data = serialize_to_bench_centric(session.exercises, timestamp)
     set_data["workout_id"] = bench_data["workout_id"] = wid
 
-    set_file = output_dir / f"{stem}_set.json"
-    bench_file = output_dir / f"{stem}_bench.json"
+    set_file = output_dir / SET_DIR / f"{stem}_set.json"
+    bench_file = output_dir / BENCH_DIR / f"{stem}_bench.json"
     _write_json(set_file, set_data)
     _write_json(bench_file, bench_data)
 
@@ -186,7 +189,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    (args.output_dir / SET_DIR).mkdir(parents=True, exist_ok=True)
+    (args.output_dir / BENCH_DIR).mkdir(parents=True, exist_ok=True)
 
     inputs: list[Path] = []
     failures = 0

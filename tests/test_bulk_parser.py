@@ -53,6 +53,10 @@ Row en maquina 41k: 15, 8
         result = subprocess.run(cmd, capture_output=True, text=True)
         return result.returncode
 
+    def produced_files(self) -> list[str]:
+        """Every JSON file under the output directory, relative and sorted."""
+        return sorted(p.relative_to(self.output_dir).as_posix() for p in self.output_dir.rglob("*.json"))
+
     def exercise_names(self, file_path: Path) -> list[str]:
         """Exercise names in a set-centric or bench-centric file."""
         data = self.assert_json_valid(file_path)
@@ -93,8 +97,8 @@ Row en maquina 41k: 15, 8
         self.assertEqual(returncode, 0, "Parser script should succeed")
 
         # Check output files exist
-        set_file = self.output_dir / "workout_day1_set.json"
-        bench_file = self.output_dir / "workout_day1_bench.json"
+        set_file = self.output_dir / "set" / "workout_day1_set.json"
+        bench_file = self.output_dir / "bench" / "workout_day1_bench.json"
         db_file = self.output_dir / "database.json"
 
         self.assertTrue(set_file.exists(), "Set-centric file should exist")
@@ -121,8 +125,8 @@ Row en maquina 41k: 15, 8
 
         # Check all output files exist
         for prefix in ["day1", "day2", "day3"]:
-            set_file = self.output_dir / f"{prefix}_set.json"
-            bench_file = self.output_dir / f"{prefix}_bench.json"
+            set_file = self.output_dir / "set" / f"{prefix}_set.json"
+            bench_file = self.output_dir / "bench" / f"{prefix}_bench.json"
             self.assertTrue(set_file.exists(), f"{prefix} set file missing")
             self.assertTrue(bench_file.exists(), f"{prefix} bench file missing")
 
@@ -135,7 +139,7 @@ Row en maquina 41k: 15, 8
 
         self.run_bulk_parser(file1)
 
-        set_file = self.output_dir / "test_set.json"
+        set_file = self.output_dir / "set" / "test_set.json"
         data = self.assert_json_valid(set_file)
 
         # Check required fields
@@ -167,7 +171,7 @@ Row en maquina 41k: 15, 8
 
         self.run_bulk_parser(file1)
 
-        bench_file = self.output_dir / "test_bench.json"
+        bench_file = self.output_dir / "bench" / "test_bench.json"
         data = self.assert_json_valid(bench_file)
 
         # Check required fields
@@ -218,7 +222,7 @@ Row en maquina 41k: 15, 8
         self.run_bulk_parser(file1)
 
         # Check all JSON files are sorted
-        for json_file in self.output_dir.glob("*.json"):
+        for json_file in self.output_dir.rglob("*.json"):
             data = self.assert_json_valid(json_file)
             self.assert_json_sorted(data)
 
@@ -252,7 +256,7 @@ Row en maquina 41k: 15, 8
 
         self.run_bulk_parser(file1)
 
-        set_file = self.output_dir / "test_set.json"
+        set_file = self.output_dir / "set" / "test_set.json"
         data = self.assert_json_valid(set_file)
         exercises = data["exercises"]
 
@@ -315,8 +319,8 @@ Row en maquina 41k: 15, 8
         file1 = self.create_training_file(self.training_sample_1, "day1.txt")
         self.run_bulk_parser(file1)
 
-        set_data = self.assert_json_valid(self.output_dir / "day1_set.json")
-        bench_data = self.assert_json_valid(self.output_dir / "day1_bench.json")
+        set_data = self.assert_json_valid(self.output_dir / "set" / "day1_set.json")
+        bench_data = self.assert_json_valid(self.output_dir / "bench" / "day1_bench.json")
 
         self.assertEqual(set_data["workout_id"], bench_data["workout_id"])
         self.assertEqual(set_data["date"], bench_data["date"])
@@ -332,8 +336,8 @@ Row en maquina 41k: 15, 8
         self.run_bulk_parser(file1, file2)
 
         for kind in ("set", "bench"):
-            names_1 = self.exercise_names(self.output_dir / f"day1_{kind}.json")
-            names_2 = self.exercise_names(self.output_dir / f"day2_{kind}.json")
+            names_1 = self.exercise_names(self.output_dir / kind / f"day1_{kind}.json")
+            names_2 = self.exercise_names(self.output_dir / kind / f"day2_{kind}.json")
             self.assertEqual(len(names_1), 2)
             self.assertEqual(len(names_2), 2)
             self.assertFalse(set(names_1) & set(names_2))
@@ -345,8 +349,30 @@ Row en maquina 41k: 15, 8
             Path(w["source_file"]).name: [e["name"] for e in w["exercises"]]
             for w in db["workouts"]
         }
-        self.assertEqual(by_source["day1.txt"], self.exercise_names(self.output_dir / "day1_set.json"))
-        self.assertEqual(by_source["day2.txt"], self.exercise_names(self.output_dir / "day2_set.json"))
+        self.assertEqual(by_source["day1.txt"], self.exercise_names(self.output_dir / "set" / "day1_set.json"))
+        self.assertEqual(by_source["day2.txt"], self.exercise_names(self.output_dir / "set" / "day2_set.json"))
+
+    def test_set_and_bench_files_go_to_separate_folders(self) -> None:
+        """Set-centric files live in set/, bench-centric files in bench/, nothing else."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        file2 = self.create_training_file(self.training_sample_2, "day2.txt")
+        self.assertEqual(self.run_bulk_parser(file1, file2), 0)
+
+        self.assertEqual(
+            sorted(p.name for p in self.output_dir.iterdir()), ["bench", "database.json", "set"]
+        )
+        self.assertEqual(
+            sorted(p.name for p in (self.output_dir / "set").iterdir()),
+            ["day1_set.json", "day2_set.json"]
+        )
+        self.assertEqual(
+            sorted(p.name for p in (self.output_dir / "bench").iterdir()),
+            ["day1_bench.json", "day2_bench.json"]
+        )
+        for path in (self.output_dir / "set").iterdir():
+            self.assertEqual(self.assert_json_valid(path)["type"], "set-centric")
+        for path in (self.output_dir / "bench").iterdir():
+            self.assertEqual(self.assert_json_valid(path)["type"], "bench-centric")
 
     def test_two_sessions_yield_two_files_per_input(self) -> None:
         """N input files produce exactly 2N files (set + bench) plus the database."""
@@ -358,15 +384,15 @@ Row en maquina 41k: 15, 8
         )
         self.assertEqual(self.run_bulk_parser(jan, feb), 0)
 
-        produced = sorted(p.name for p in self.output_dir.glob("*.json"))
+        produced = self.produced_files()
         self.assertEqual(produced, [
-            "2020-01-01_bench.json", "2020-01-01_set.json",
-            "2020-02-01_bench.json", "2020-02-01_set.json",
+            "bench/2020-01-01_bench.json", "bench/2020-02-01_bench.json",
             "database.json",
+            "set/2020-01-01_set.json", "set/2020-02-01_set.json",
         ])
         for stem, date in (("2020-01-01", "2020-01-01"), ("2020-02-01", "2020-02-01")):
             for kind in ("set", "bench"):
-                data = self.assert_json_valid(self.output_dir / f"{stem}_{kind}.json")
+                data = self.assert_json_valid(self.output_dir / kind / f"{stem}_{kind}.json")
                 self.assertTrue(data["date"].startswith(date))
 
     def test_multiple_sessions_in_one_file_are_split(self) -> None:
@@ -378,17 +404,18 @@ Row en maquina 41k: 15, 8
         other = self.create_training_file(self.training_sample_3, "single.txt")
         self.assertEqual(self.run_bulk_parser(multi, other), 0)
 
-        produced = sorted(p.name for p in self.output_dir.glob("*.json"))
+        produced = self.produced_files()
         self.assertEqual(produced, [
+            "bench/multi_2020-01-01_bench.json", "bench/multi_2020-02-01_bench.json",
+            "bench/single_bench.json",
             "database.json",
-            "multi_2020-01-01_bench.json", "multi_2020-01-01_set.json",
-            "multi_2020-02-01_bench.json", "multi_2020-02-01_set.json",
-            "single_bench.json", "single_set.json",
+            "set/multi_2020-01-01_set.json", "set/multi_2020-02-01_set.json",
+            "set/single_set.json",
         ])
 
         for kind in ("set", "bench"):
-            jan = self.assert_json_valid(self.output_dir / f"multi_2020-01-01_{kind}.json")
-            feb = self.assert_json_valid(self.output_dir / f"multi_2020-02-01_{kind}.json")
+            jan = self.assert_json_valid(self.output_dir / kind / f"multi_2020-01-01_{kind}.json")
+            feb = self.assert_json_valid(self.output_dir / kind / f"multi_2020-02-01_{kind}.json")
             self.assertEqual([e["name"] for e in jan["exercises"]], ["Squat"])
             self.assertEqual([e["name"] for e in feb["exercises"]], ["Deadlift"])
             self.assertTrue(jan["date"].startswith("2020-01-01"))
@@ -415,7 +442,7 @@ Row en maquina 41k: 15, 8
         )
         self.assertEqual(self.run_bulk_parser(multi), 0)
 
-        set_files = sorted(self.output_dir.glob("twice_*_set.json"))
+        set_files = sorted((self.output_dir / "set").glob("twice_*_set.json"))
         self.assertEqual(len(set_files), 2)
         self.assertEqual(
             sorted(self.exercise_names(f)[0] for f in set_files), ["Deadlift", "Squat"]
@@ -430,7 +457,7 @@ Row en maquina 41k: 15, 8
         )
         self.assertEqual(self.run_bulk_parser(multi), 0)
         # Only one session is left, so it keeps the plain file name
-        self.assertEqual(self.exercise_names(self.output_dir / "gap_set.json"), ["Deadlift"])
+        self.assertEqual(self.exercise_names(self.output_dir / "set" / "gap_set.json"), ["Deadlift"])
         db = self.assert_json_valid(self.output_dir / "database.json")
         self.assertEqual(db["workouts"][0]["date"][:10], "2020-02-01")
 
@@ -446,8 +473,8 @@ Row en maquina 41k: 15, 8
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("no exercise could be parsed", result.stderr)
-        self.assertEqual(list(self.output_dir.glob("bad*")), [], "no partial output for a failed file")
-        self.assertTrue((self.output_dir / "good_set.json").exists())
+        self.assertEqual(list(self.output_dir.rglob("bad*")), [], "no partial output for a failed file")
+        self.assertTrue((self.output_dir / "set" / "good_set.json").exists())
 
     def test_runs_from_any_working_directory(self) -> None:
         """The script resolves its own dependencies and does not rely on the cwd."""
@@ -457,7 +484,7 @@ Row en maquina 41k: 15, 8
             capture_output=True, text=True, cwd=self.temp_dir.name
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue((self.output_dir / "day1_set.json").exists())
+        self.assertTrue((self.output_dir / "set" / "day1_set.json").exists())
 
     def test_same_basename_in_different_directories(self) -> None:
         """Two inputs named alike must not overwrite each other's output."""
@@ -468,8 +495,8 @@ Row en maquina 41k: 15, 8
 
         self.assertEqual(self.run_bulk_parser(file_a, file_b), 0)
 
-        set_files = sorted(self.output_dir.glob("*_set.json"))
-        bench_files = sorted(self.output_dir.glob("*_bench.json"))
+        set_files = sorted((self.output_dir / "set").glob("*_set.json"))
+        bench_files = sorted((self.output_dir / "bench").glob("*_bench.json"))
         self.assertEqual(len(set_files), 2)
         self.assertEqual(len(bench_files), 2)
 
@@ -534,8 +561,8 @@ Row en maquina 41k: 15, 8
             capture_output=True, text=True
         )
         self.assertNotEqual(result.returncode, 0)
-        self.assertTrue((self.output_dir / "good_set.json").exists())
-        self.assertTrue((self.output_dir / "good_bench.json").exists())
+        self.assertTrue((self.output_dir / "set" / "good_set.json").exists())
+        self.assertTrue((self.output_dir / "bench" / "good_bench.json").exists())
 
     def test_missing_file_handling(self) -> None:
         """Test that script handles missing input files gracefully."""
