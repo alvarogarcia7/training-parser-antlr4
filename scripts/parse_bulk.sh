@@ -102,7 +102,6 @@ PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" python3 "$REPO_ROOT/scripts/b
 echo ""
 echo "Sorting JSON files..."
 while IFS= read -r json_file; do
-    echo "  → Sorting: $json_file"
     if [ "$json_file" = "$DATABASE_FILE" ]; then
         jq -S '.workouts |= sort_by(.date, .workout_id)' "$json_file" > "${json_file}.tmp"
     else
