@@ -202,8 +202,8 @@ When parsing ambiguous patterns:
 ## Testing
 
 Comprehensive tests are available in:
-- `parser/test_parser.py` - Unit tests for both notations
-- `parser/test_grammar_formats_e2e.py` - End-to-end integration tests
+- `tests/test_parser.py` - Unit tests for both notations
+- `tests/test_grammar_formats_e2e.py` - End-to-end integration tests
 
 Run tests with:
 ```bash

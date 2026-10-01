@@ -11,7 +11,7 @@ from typing import Any
 
 import jsonschema
 
-from scripts.detect_seasons import format_output, main
+from bin.detect_seasons import format_output, main
 from src.one_rep_max import brzycki_1rm, percentage_of_1rm
 from src.seasons import (
     SeasonConfig,
@@ -56,7 +56,7 @@ class TestSeasonConfig(unittest.TestCase):
             self.assertEqual(SeasonConfig.load(path), SeasonConfig())
 
     def test_repository_config_is_valid(self) -> None:
-        config = SeasonConfig.load(Path("config/seasons.yaml"))
+        config = SeasonConfig.load(Path("data/config/seasons.yaml"))
         self.assertGreaterEqual(config.min_break_days, 1)
 
     def test_rejects_invalid_values(self) -> None:

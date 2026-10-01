@@ -74,13 +74,13 @@ jobs:
     - name: Run splitter.py against data.txt.sample
       run: |
         source .venv/bin/activate
-        python splitter.py data.txt.sample --output e2e-output-data.csv
+        python bin/splitter.py data.txt.sample --output e2e-output-data.csv
         echo "✓ Successfully processed data.txt.sample"
 
     - name: Run splitter.py against training-sample.txt
       run: |
         source .venv/bin/activate
-        python splitter.py training-sample.txt --output e2e-output-training.csv
+        python bin/splitter.py training-sample.txt --output e2e-output-training.csv
         echo "✓ Successfully processed training-sample.txt"
 
     - name: Verify output files exist
@@ -127,7 +127,7 @@ jobs:
       run: |
         git config --global init.defaultBranch main
         mkdir -p /tmp/git-server
-        cp scripts/git-http-server.js /tmp/git-server/ || true
+        cp bin/git-http-server.js /tmp/git-server/ || true
         cd /tmp/git-server
         for repo in test-repo-empty test-repo-main test-repo-master; do
           git init --bare $repo.git || true

@@ -73,13 +73,13 @@ const APP_SHELL = [
 ];
 
 const PYTHON_SOURCES = [
-  '../parser/__init__.py',
-  '../parser/model.py',
-  '../parser/parser.py',
-  '../parser/standardize_name.py',
-  '../parser/serializer.py',
-  '../parser/error_listener.py',
-  '../parser/series_builder.py',
+  '../src/parser/__init__.py',
+  '../src/parser/model.py',
+  '../src/parser/parser.py',
+  '../src/parser/standardize_name.py',
+  '../src/parser/serializer.py',
+  '../src/parser/error_listener.py',
+  '../src/parser/series_builder.py',
   '../src/__init__.py',
   '../src/data_access.py',
   '../src/statistics.py',
@@ -88,7 +88,7 @@ const PYTHON_SOURCES = [
   '../dist/trainingParser.py',
   '../dist/trainingListener.py',
   '../dist/trainingVisitor.py',
-  '../data/synonyms.yaml',
+  '../data/config/synonyms.yaml',
 ];
 
 // CDN libraries for git sync and filesystem

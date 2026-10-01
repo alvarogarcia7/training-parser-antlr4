@@ -26,7 +26,7 @@ uv sync --all-extras
 
 echo ""
 echo "==> Downloading ANTLR jar..."
-python3 scripts/download_antlr.py
+python3 bin/download_antlr.py
 
 echo ""
 echo "==> Installing pre-commit hooks..."
@@ -42,4 +42,4 @@ echo "Useful commands:"
 echo "  make compile-grammar  - Compile ANTLR4 grammar"
 echo "  make typecheck        - Run mypy type checking"
 echo "  make test             - Run all tests"
-echo "  python main.py        - Run sample parser"
+echo "  python bin/main.py        - Run sample parser"

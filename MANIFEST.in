@@ -2,7 +2,6 @@ include README.md
 include MIGRATION_UV.md
 include AGENTS.md
 include LICENSE
-include requirements.txt
 include training.g4
 include mypy.ini
 include .pre-commit-config.yaml
@@ -10,7 +9,8 @@ include setup-uv.sh
 
 recursive-include schema *.json
 recursive-include data *.txt *.json
-recursive-include parser *.py
+recursive-include src *.py
+recursive-include bin *.py
 recursive-include tests *.py
 
 exclude .gitignore

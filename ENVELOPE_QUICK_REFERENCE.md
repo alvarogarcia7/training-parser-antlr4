@@ -57,29 +57,29 @@ else:
 
 ### Wrap
 ```bash
-python envelope_tool.py wrap input.json output.json bench-centric.v1
+python bin/envelope_tool.py wrap input.json output.json bench-centric.v1
 ```
 
 ### Unwrap
 ```bash
-python envelope_tool.py unwrap envelope.json payload.json
+python bin/envelope_tool.py unwrap envelope.json payload.json
 ```
 
 ### Validate
 ```bash
-python envelope_tool.py validate envelope.json schema/bench-centric.schema.json schema/common-definitions.schema.json
+python bin/envelope_tool.py validate envelope.json schema/bench-centric.schema.json schema/common-definitions.schema.json
 ```
 
 ### Convert (Auto-detect)
 ```bash
 # Envelope → Payload
-python envelope_tool.py convert envelope.json payload.json
+python bin/envelope_tool.py convert envelope.json payload.json
 
 # Payload → Envelope (auto-wraps in bench-centric.v1)
-python envelope_tool.py convert payload.json envelope.json
+python bin/envelope_tool.py convert payload.json envelope.json
 
 # Force specific type
-python envelope_tool.py convert payload.json envelope.json --wrap --type set-centric.v1
+python bin/envelope_tool.py convert payload.json envelope.json --wrap --type set-centric.v1
 ```
 
 ## Validation Scripts
@@ -88,18 +88,18 @@ Run pre-configured validations:
 
 ```bash
 # Validate bench-centric example with envelope
-python validate_bench_centric.py
+python bin/validate_bench_centric.py
 
 # Validate set-centric example with envelope
-python validate_set_centric.py
+python bin/validate_set_centric.py
 ```
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `envelope.py` | Python module with Envelope class |
-| `envelope_tool.py` | CLI tool for envelope operations |
+| `src/envelope.py` | Python module with Envelope class |
+| `bin/envelope_tool.py` | CLI tool for envelope operations |
 | `data/bench-centric-example.json` | Wrapped bench-centric example |
 | `data/set-centric-example.json` | Wrapped set-centric example |
 | `schema/envelope-base.schema.json` | Envelope structure schema |
@@ -176,4 +176,4 @@ if success:
 2. **Schema discovery**: Extract schema URL from envelope for client-side validation
 3. **Versioning**: Add new types (e.g., `bench-centric.v2`) for breaking changes
 4. **Error handling**: Check `success` flag before using payload
-5. **CLI for testing**: Use envelope_tool.py to test wrap/unwrap cycles
+5. **CLI for testing**: Use bin/envelope_tool.py to test wrap/unwrap cycles

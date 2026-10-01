@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from typing import Any
 
-from parser.model import Exercise, Set_, Weight
+from src.parser.model import Exercise, Set_, Weight
 from src.statistics import StatisticsCalculator, WorkoutStats
 
 

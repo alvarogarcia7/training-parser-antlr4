@@ -6,7 +6,7 @@ Usage: python examples/parse_with_errors.py <filename>
 
 import sys
 from pathlib import Path
-from parser import Parser, ParseError
+from src.parser import Parser, ParseError
 from antlr4 import InputStream
 
 

@@ -15,7 +15,7 @@ class TestBulkParserPipeline(unittest.TestCase):
         """Set up test fixtures."""
         self.temp_dir = tempfile.TemporaryDirectory()
         self.output_dir = Path(self.temp_dir.name) / "parsed"
-        self.script_path = Path("scripts/parse_bulk.sh")
+        self.script_path = Path("bin/parse_bulk.sh")
 
         # Sample training data
         self.training_sample_1 = """2025-01-01

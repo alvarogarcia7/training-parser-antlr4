@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from parser.parser import Parser, ParsingException
+from src.parser.parser import Parser, ParsingException
 
 
 class TestInvalidInputIntegration:

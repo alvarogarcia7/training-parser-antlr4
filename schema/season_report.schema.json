@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://example.com/season_report.schema.json",
   "title": "Training Season Report",
-  "description": "Schema for the season detection report produced by scripts/detect_seasons.py (SeasonReport.to_dict())",
+  "description": "Schema for the season detection report produced by bin/detect_seasons.py (SeasonReport.to_dict())",
   "type": "object",
   "required": ["config", "seasons", "ignored"],
   "properties": {

@@ -6,7 +6,6 @@ pwa-build: check-virtual-env
 	@mkdir -p dist/pwa
 	@cp -r mobile-app/* dist/pwa/
 	@echo "Copying Python modules into PWA..."
-	@cp -r parser dist/pwa/
 	@cp -r src dist/pwa/
 	@mkdir -p dist/pwa/dist && find dist -maxdepth 1 -mindepth 1 -not -name pwa -exec cp -r {} dist/pwa/dist/ \;
 	@cp -r data dist/pwa/
@@ -17,7 +16,6 @@ pwa-build: check-virtual-env
 	fi
 	@echo "Rewriting fetch paths for GitHub Pages subdirectory hosting..."
 	@sed -i \
-		-e "s|'/parser/|'../parser/|g" \
 		-e "s|'/src/|'../src/|g" \
 		-e "s|'/dist/|'../dist/|g" \
 		-e "s|'/data/|'../data/|g" \
@@ -30,8 +28,8 @@ pwa-build: check-virtual-env
 
 download-pyodide:
 	@echo "Downloading Pyodide for offline support..."
-	@chmod +x scripts/download-pyodide.sh
-	@./scripts/download-pyodide.sh
+	@chmod +x bin/download-pyodide.sh
+	@./bin/download-pyodide.sh
 .PHONY: download-pyodide
 
 pwa-build-offline: download-pyodide pwa-build
@@ -54,16 +52,16 @@ pwa-serve-local: check-virtual-env
 	@echo "Starting local HTTPS server for PWA..."
 	@if [ ! -f certs/cert.pem ] || [ ! -f certs/key.pem ]; then \
 		echo "SSL certificates not found. Generating..."; \
-		chmod +x scripts/create-ssl-certs.sh; \
-		./scripts/create-ssl-certs.sh; \
+		chmod +x bin/create-ssl-certs.sh; \
+		./bin/create-ssl-certs.sh; \
 	fi
-	python3 scripts/serve-local.py --host 0.0.0.0 --port 8444
+	python3 bin/serve-local.py --host 0.0.0.0 --port 8444
 .PHONY: pwa-serve-local
 
 pwa-certs:
 	@echo "Generating SSL certificates for local HTTPS..."
-	@chmod +x scripts/create-ssl-certs.sh
-	@./scripts/create-ssl-certs.sh
+	@chmod +x bin/create-ssl-certs.sh
+	@./bin/create-ssl-certs.sh
 .PHONY: pwa-certs
 
 pwa-clean:
@@ -114,7 +112,7 @@ pwa-serve: pwa-serve-http
 
 pwa-serve-http:
 	@echo "Starting PWA on http://localhost:8080/mobile-app/"
-	uv run python3 serve.py
+	uv run python3 bin/serve.py
 .PHONY: pwa-serve-http
 
 # Local Git Server for Testing
@@ -136,11 +134,11 @@ setup-local-git-server:
 	@echo "Setting up local git server..."
 	@mkdir -p /tmp/git-server
 	@if [ ! -f /tmp/git-server/git-http-server.js ]; then \
-		cp scripts/git-http-server.js /tmp/git-server/; \
+		cp bin/git-http-server.js /tmp/git-server/; \
 		echo "✓ Copied git HTTP server"; \
 	fi
 	@if [ ! -f /tmp/cors-proxy.js ]; then \
-		cp scripts/cors-proxy.js /tmp/cors-proxy.js; \
+		cp bin/cors-proxy.js /tmp/cors-proxy.js; \
 		echo "✓ Copied CORS proxy"; \
 	fi
 	@if [ ! -d /tmp/git-server/test-repo.git ]; then \
@@ -179,7 +177,7 @@ test-e2e: check-virtual-env
 		echo "✓ PWA server already running (PID: $$(cat $(PWA_SERVER_PID)))"; \
 	else \
 		echo "Starting new PWA server on http://localhost:$(PWA_PORT)"; \
-		uv run python3 serve.py > /tmp/pwa-server.log 2>&1 & \
+		uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 & \
 		echo $$! > $(PWA_SERVER_PID); \
 		\
 		echo "Waiting for server to be ready (max 30 seconds)..."; \
@@ -229,7 +227,7 @@ test-e2e-debug: check-virtual-env
 	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
 		echo "✓ PWA server already running"; \
 	else \
-		uv run python3 serve.py > /tmp/pwa-server.log 2>&1 & \
+		uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 & \
 		echo $$! > $(PWA_SERVER_PID); \
 		sleep 3; \
 	fi
@@ -265,6 +263,6 @@ test-git-watch: check-virtual-env
 # Monitor GitHub Actions workflow until completion
 
 ci-babysit:
-	@chmod +x scripts/babysit-ci.sh
-	@bash scripts/babysit-ci.sh
+	@chmod +x bin/babysit-ci.sh
+	@bash bin/babysit-ci.sh
 .PHONY: ci-babysit

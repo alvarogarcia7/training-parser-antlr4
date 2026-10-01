@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from validate_synonyms_yaml import main
+from bin.validate_synonyms_yaml import main
 
 
 class TestValidateSynonyms(unittest.TestCase):

@@ -26,7 +26,7 @@ repos:
         entry: make validate-synonyms
         language: system
         pass_filenames: false
-        files: ^(data/synonyms\.yaml|schema/exercise_synonyms\.schema\.json|parser/standardize_name\.py|validate_synonyms_yaml\.py)$
+        files: ^(data/config/synonyms\.yaml|schema/exercise_synonyms\.schema\.json|src/parser/standardize_name\.py|bin/validate_synonyms_yaml\.py)$
       - id: unittest
         name: Python Unit Tests
         entry: make test-python

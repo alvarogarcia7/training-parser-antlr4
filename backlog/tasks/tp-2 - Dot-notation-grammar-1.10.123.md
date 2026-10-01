@@ -127,8 +127,8 @@ Dot:       5..40.5/42.5/45
 ## Testing
 
 Tests for dot notation are in:
-- `parser/test_grammar_formats_e2e.py` - End-to-end format tests
-- `parser/test_parser.py` - Parser unit tests
+- `tests/test_grammar_formats_e2e.py` - End-to-end format tests
+- `tests/test_parser.py` - Parser unit tests
 
 Run tests with:
 ```bash

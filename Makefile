@@ -55,20 +55,20 @@ validate-datasets:
 .PHONY: validate-datasets
 
 validate-synonyms: check-virtual-env
-	uv run python3 validate_synonyms_yaml.py
+	uv run python3 bin/validate_synonyms_yaml.py
 .PHONY: validate-synonyms
 
 validate-set-centric: check-virtual-env
-	uv run python3 validate_set_centric.py
+	uv run python3 bin/validate_set_centric.py
 .PHONY: validate-set-centric
 
 validate-bench-centric: check-virtual-env
-	uv run python3 validate_bench_centric.py
+	uv run python3 bin/validate_bench_centric.py
 .PHONY: validate-bench-centric
 
 test-json-export: check-virtual-env
 	@echo "Testing JSON export from training data..."
-	python3 main_export.py training-sample_initial.txt -o .test-output.json
+	python3 bin/main_export.py training-sample_initial.txt -o .test-output.json
 	@if [ -f .test-output.json ]; then \
 		rm .test-output.json; \
 	else \
@@ -78,16 +78,16 @@ test-json-export: check-virtual-env
 .PHONY: test-json-export
 
 test-python: check-virtual-env
-	uv run pytest parser tests
+	uv run pytest tests
 .PHONY: test-python
 
 test-grammar-formats: check-virtual-env
 	@echo "Running grammar format e2e tests..."
-	pytest parser/test_grammar_formats_e2e.py -v
+	pytest tests/test_grammar_formats_e2e.py -v
 .PHONY: test-grammar-formats
 
 test-lsp: check-virtual-env
-	pytest lsp
+	pytest tests/test_lsp.py tests/test_client.py tests/test_diagnostics.py
 .PHONY: test-lsp
 
 test-bulk-parser: check-virtual-env
@@ -163,7 +163,7 @@ output.csv-generic: check-virtual-env
 	# paste data into data.txt
 	# If data is coming from todoist, it is compacted into a single line, separated by ' - ' symbols. Split again using:
 	# %s/ - /\r/g
-	python3 splitter.py $(FILE) --output output.csv
+	python3 bin/splitter.py $(FILE) --output output.csv
 .PHONY: output.csv-generic
 
 verify-splitter: check-virtual-env
@@ -171,12 +171,12 @@ verify-splitter: check-virtual-env
 .PHONY: verify-splitter
 
 verify-splitter-generic: check-virtual-env
-	python3 splitter.py $(FILE)
+	python3 bin/splitter.py $(FILE)
 	@echo "Data is correct"
 .PHONY: verify-splitter-generic
 
 validate-json: check-virtual-env
-	python3 json_validator.py $(SCHEMA) $(FILES)
+	python3 bin/json_validator.py $(SCHEMA) $(FILES)
 .PHONY: validate-json
 
 to-clipboard:
@@ -191,22 +191,22 @@ output.json: check-virtual-env data.txt
 .PHONY: output.json
 
 output.json-generic: check-virtual-env
-	python3 parse_to_json.py $(FILE) --output output.json
+	python3 bin/parse_to_json.py $(FILE) --output output.json
 .PHONY: output.json-generic
 
 compact: check-virtual-env output.json
-	python3 compact_from_json.py output.json
+	python3 bin/compact_from_json.py output.json
 .PHONY: compact
 
 compact-generic: check-virtual-env
-	python3 compact_from_json.py $(FILE)
+	python3 bin/compact_from_json.py $(FILE)
 .PHONY: compact-generic
 
 compare-v1-v2: check-virtual-env
 	@echo "Comparing v1 (splitter.py) vs v2 (parse_to_json + compact_from_json)..."
-	FILE=data.txt.sample python3 splitter.py data.txt.sample > /tmp/compact-v1.log
-	python3 parse_to_json.py data.txt.sample --output /tmp/output-v2.json
-	python3 compact_from_json.py /tmp/output-v2.json > /tmp/compact-v2.log
+	FILE=data.txt.sample python3 bin/splitter.py data.txt.sample > /tmp/compact-v1.log
+	python3 bin/parse_to_json.py data.txt.sample --output /tmp/output-v2.json
+	python3 bin/compact_from_json.py /tmp/output-v2.json > /tmp/compact-v2.log
 	@if diff -u /tmp/compact-v1.log /tmp/compact-v2.log > /dev/null; then \
 		echo "✓ v1 and v2 produce identical output"; \
 		rm -f /tmp/compact-v1.log /tmp/compact-v2.log /tmp/output-v2.json; \
@@ -219,14 +219,19 @@ compare-v1-v2: check-virtual-env
 
 serve: check-virtual-env
 	@echo "Open: http://localhost:8080/mobile-app/"
-	uv run python3 serve.py
+	uv run python3 bin/serve.py
 .PHONY: serve
 
 stats: check-virtual-env
 	@echo "Calculate workout statistics from JSON data"
 	@echo "Usage: make stats FILE=data/parsed/workout_set.json TIME=60"
 	@echo ""
-	python3 scripts/workout_stats.py $(FILE) --time $(TIME)
+	python3 bin/workout_stats.py $(FILE) --time $(TIME)
+
+weight-parse: check-virtual-env
+	@echo "Usage: make weight-parse FILE=data/workdir/weight_2026.txt YEAR=2026"
+	python3 bin/weight_parser.py $(FILE) --year $(YEAR)
+.PHONY: weight-parse
 
 organize-files:
 	@echo "Usage: make organize-files DIR=<directory with JSON files>"
@@ -239,15 +244,15 @@ organize-files:
 
 DIR?=data/workdir/bulk/set/
 seasons: check-virtual-env
-	@echo "Detect training seasons and %1RM per exercise (config: config/seasons.yaml)"
+	@echo "Detect training seasons and %1RM per exercise (config: data/config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
 	set -u && echo $${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
-	python3 scripts/detect_seasons.py $(DIR)/set
+	python3 bin/detect_seasons.py $(DIR)/set
 .PHONY: seasons
 
 parse-all:
-	./scripts/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
+	./bin/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all

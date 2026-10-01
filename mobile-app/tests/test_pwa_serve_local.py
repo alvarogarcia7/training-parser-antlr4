@@ -26,7 +26,7 @@ def pwa_server():
     """Start the pwa-serve-local server for the duration of tests."""
     # Start server
     proc = subprocess.Popen(
-        ["python3", "scripts/serve-local.py", "--host", "127.0.0.1", "--port", "8445"],
+        ["python3", "bin/serve-local.py", "--host", "127.0.0.1", "--port", "8445"],
         cwd=Path(__file__).parent.parent.parent,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -123,9 +123,9 @@ def test_python_files_are_accessible(pwa_server):
 def test_parser_modules_accessible(pwa_server):
     """Test that parser modules are accessible."""
     files_to_test = [
-        "/../parser/__init__.py",
-        "/../parser/model.py",
-        "/../parser/parser.py",
+        "/../src/parser/__init__.py",
+        "/../src/parser/model.py",
+        "/../src/parser/parser.py",
         "/../dist/trainingLexer.py",
     ]
 
@@ -186,7 +186,7 @@ def test_all_required_scripts_loadable(pwa_server):
         "/mobile-app/manifest.json",
         "/mobile-app/python/app_api.py",
         # Parser modules accessible from project root
-        "/parser/model.py",
+        "/src/parser/model.py",
         "/src/statistics.py",
     ]
 

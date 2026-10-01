@@ -137,7 +137,7 @@ This script:
 ### LSP-Related Files
 
 ```
-lsp/
+src/lsp/
 ├── server.py              # Main LSP server implementation
 ├── cli.py                 # Command-line interface for training-lsp
 ├── client.py              # LSP client implementation
@@ -201,7 +201,7 @@ which training-lsp
 
 ```bash
 source .venv/bin/activate
-uv pip install -e ".[dev]"
+uv sync --all-extras
 ```
 
 ### No Diagnostics Appearing

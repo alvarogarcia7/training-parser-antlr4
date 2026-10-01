@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'mobile-app/**'
-      - 'parser/**'
+      - 'src/parser/**'
       - 'src/**'
       - 'data/**'
       - 'schema/**'
@@ -15,8 +15,8 @@ on:
       - 'playwright.config.*'
       - 'package.json'
       - 'package-lock.json'
-      - 'serve.py'
-      - 'scripts/git-http-server.js'
+      - 'bin/serve.py'
+      - 'bin/git-http-server.js'
 
 jobs:
   e2e-ui-tests:
@@ -47,7 +47,7 @@ jobs:
     - name: Set up local git server
       run: |
         mkdir -p /tmp/git-server
-        cp scripts/git-http-server.js /tmp/git-server/ || true
+        cp bin/git-http-server.js /tmp/git-server/ || true
         cd /tmp/git-server
         git config --global init.defaultBranch main
         git init --bare test-repo.git || true
@@ -74,7 +74,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: mobile-app/pyodide
-        key: pyodide-${{ hashFiles('scripts/download-pyodide.sh') }}
+        key: pyodide-${{ hashFiles('bin/download-pyodide.sh') }}
         restore-keys: pyodide-
 
     - name: Download Pyodide for offline use
@@ -84,7 +84,7 @@ jobs:
     - name: Start PWA dev server
       run: |
         echo "Starting PWA server..."
-        uv run python3 serve.py > /tmp/pwa-server.log 2>&1 &
+        uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 &
         SERVER_PID=$!
         echo "Server PID: $SERVER_PID"
 

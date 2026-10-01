@@ -8,7 +8,7 @@ The training parser now includes extensive tests and examples for complete worko
 
 ## Test Coverage
 
-### `parser/test_workout_sessions.py`
+### `tests/test_workout_sessions.py`
 
 Comprehensive test suite with 17 test cases covering:
 
@@ -203,7 +203,7 @@ Examples cover actual training methodologies:
 
 ### Basic Session Logging
 ```python
-from parser import Parser
+from src.parser import Parser
 
 workout = """
 Bench press 80k: 5, 5, 5
@@ -259,10 +259,10 @@ for week, workout in enumerate(sessions, 1):
 
 ```bash
 # Run workout session tests
-python -m pytest parser/test_workout_sessions.py -v
+python -m pytest tests/test_workout_sessions.py -v
 
 # Run all parser tests including sessions
-python -m pytest parser/test_parser.py parser/test_workout_sessions.py -v
+python -m pytest tests/test_parser.py tests/test_workout_sessions.py -v
 
 # Run workout session examples
 python examples/error_handling_example.py

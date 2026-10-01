@@ -203,7 +203,7 @@ Restart server, open PWA → credentials auto-filled.
 
 ## How Configuration Loading Works
 
-1. **Development Server** (`serve.py`):
+1. **Development Server** (`bin/serve.py`):
    - Reads `.env.local` on each request for index.html
    - Parses KEY=VALUE pairs (skips comments and empty lines)
    - Maps environment variables to app keys:

@@ -17,7 +17,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv
 source .venv/bin/activate
 uv sync --all-extras
-python3 scripts/download_antlr.py  # Downloads ANTLR jar if not present
+python3 bin/download_antlr.py  # Downloads ANTLR jar if not present
 make install-githooks
 ```
 
@@ -43,7 +43,7 @@ After installation, the following commands are available:
 - `make typecheck` - Run mypy type checking
 - `make test` - Run all tests (typecheck + compile-grammar + pytest)
 - `make test-python` - Run pytest only
-- `python main.py` - Run sample parser directly
+- `python bin/main.py` - Run sample parser directly
 
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
@@ -78,7 +78,7 @@ The training-parser now includes a full-featured Language Server Protocol implem
 **Quick Start:**
 ```bash
 # Install with LSP support
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 # Start the LSP server (for editor integration)
 training-lsp
@@ -103,14 +103,14 @@ The parser supports loading custom exercise name mappings from YAML or JSON file
 **Quick Example:**
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Use default synonyms
 standardizer = StandardizeName()
 standardizer.run("bp")  # Returns "Bench Press"
 
 # Load custom synonyms from file
-standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
 ```
 
@@ -118,14 +118,14 @@ See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentatio
 
 ### Training Seasons and %1RM
 
-`scripts/detect_seasons.py` splits a training history into **seasons**: a season
+`bin/detect_seasons.py` splits a training history into **seasons**: a season
 ends when there is a break of at least `min_break_days` days without a training
 session, and the next session starts a new season. For every season, each
 exercise gets an estimated 1RM using the **Brzycki** formula
 (`1RM = weight * 36 / (37 - reps)`, best set of the season) and each set is
 reported as a percentage of that 1RM (50 kg with a 100 kg 1RM -> 50%).
 
-Settings live in [config/seasons.yaml](config/seasons.yaml):
+Settings live in [data/config/seasons.yaml](data/config/seasons.yaml):
 
 ```yaml
 min_break_days: 21    # days without training that end a season
@@ -138,9 +138,9 @@ recursively; each file holds one workout, enveloped or bare, or an array of
 workouts). Other JSON formats are rejected.
 
 ```bash
-python scripts/detect_seasons.py data/parsed/
-python scripts/detect_seasons.py data/parsed/ --format json
-python scripts/detect_seasons.py data/parsed/ --config my-seasons.yaml --min-break-days 30
+python bin/detect_seasons.py data/parsed/
+python bin/detect_seasons.py data/parsed/ --format json
+python bin/detect_seasons.py data/parsed/ --config my-seasons.yaml --min-break-days 30
 make seasons DIR=data/parsed/
 ```
 
@@ -171,21 +171,23 @@ See [SYNTAX.md](SYNTAX.md) for detailed Phase 2 documentation and examples.
 ```
 .
 ├── training.g4              # ANTLR4 grammar definition
-├── parser/                  # Parser implementation
-│   ├── model.py            # Data models
-│   ├── parser.py           # Parser and visitor
-│   └── standardize_name.py # Exercise name standardization
-├── lsp/                     # Language Server Protocol implementation
-│   ├── server.py           # LSP server
-│   ├── diagnostics.py      # Error detection
-│   ├── completion.py       # Auto-completion
-│   ├── hover.py            # Hover information
-│   ├── formatting.py       # Code formatting
-│   ├── semantic_tokens.py  # Syntax highlighting
-│   ├── code_actions.py     # Quick fixes
-│   └── vscode-extension/   # VS Code extension
+├── bin/                     # Programs (parser, splitter, validators, weight parser, ...)
+├── src/                     # Libraries
+│   ├── parser/              # Parser implementation
+│   │   ├── model.py         # Data models
+│   │   ├── parser.py        # Parser and visitor
+│   │   └── standardize_name.py # Exercise name standardization
+│   └── lsp/                 # Language Server Protocol implementation
+│       ├── server.py        # LSP server
+│       ├── diagnostics.py   # Error detection
+│       ├── completion.py    # Auto-completion
+│       ├── hover.py         # Hover information
+│       ├── formatting.py    # Code formatting
+│       ├── semantic_tokens.py # Syntax highlighting
+│       ├── code_actions.py  # Quick fixes
+│       └── vscode-extension/ # VS Code extension
 ├── data/                    # Configuration files
-│   ├── synonyms.yaml       # Default synonyms (YAML)
+│   ├── config/             # synonyms.yaml, seasons.yaml
 │   └── SYNONYMS_README.md  # Synonyms documentation
 ├── examples/                # Example scripts
 ├── dist/                    # Generated ANTLR4 code (auto-generated)

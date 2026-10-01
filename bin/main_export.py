@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""
+Executable script to parse workout training logs and export to JSON format.
+
+Parses a training log file, converts it to set-centric JSON format,
+validates against schema, and writes the output.
+"""
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+from src.data_access import DataAccess, DataSerializer
+from src.schema_validator import validate_json_with_schema
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Parse workout training log and export to JSON format"
+    )
+    parser.add_argument(
+        "input",
+        type=str,
+        help="Path to the input training log file"
+    )
+    parser.add_argument(
+        "-o", "--output",
+        type=str,
+        default=None,
+        help="Path to the output JSON file (optional, prints to stdout if not provided)"
+    )
+
+    args = parser.parse_args()
+
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"Error: Input file not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        data_access = DataAccess()
+        exercises = data_access.parse_single_file(str(input_path))
+
+        json_data = DataSerializer.to_set_centric_json(exercises)
+
+        json_output = json.dumps(json_data, indent=2)
+
+        # TODO E255BB19-DE9D-41B3-AD2F-EB58D1CE247B: Whether there is output or not, the output should be validated against its schema
+        if args.output:
+            output_path = Path(args.output)
+            output_path.write_text(json_output, encoding='utf-8')
+
+            schema_path = Path("schema/set-centric.schema.json")
+            common_defs_path = Path("schema/common-definitions.schema.json")
+
+            if schema_path.exists():
+                success, message = validate_json_with_schema(
+                    schema_path,
+                    output_path,
+                    common_defs_path if common_defs_path.exists() else None
+                # TODO 74840431-FDC1-422F-83D2-62BB171619BB: common_defs_path must exist. otherwise, produce an error.
+                )
+
+                if success:
+                    print(message)
+                else:
+                    print(message, file=sys.stderr)
+                    sys.exit(1)
+            else:
+                print(f"Warning: Schema file not found at {schema_path}, skipping validation", file=sys.stderr)
+                print(f"Output written to: {output_path}")
+        else:
+            print(json_output)
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

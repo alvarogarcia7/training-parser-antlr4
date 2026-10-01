@@ -23,7 +23,7 @@ Example: with a 1RM of 100 kg, training with 50 kg is 50% 1RM.
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [x] #1 Minimum break without training is configured in config/seasons.yaml
+- [x] #1 Minimum break without training is configured in data/config/seasons.yaml
 - [x] #2 A break of at least that many days starts a new season
 - [x] #3 Per season, each exercise gets a Brzycki 1RM estimate
 - [x] #4 Per season, each set is reported as a percentage of the season 1RM
@@ -36,11 +36,11 @@ Example: with a 1RM of 100 kg, training with 50 kg is 50% 1RM.
 <!-- SECTION:NOTES:BEGIN -->
 - `src/seasons.py`: season detection and per-season intensity
 - `src/one_rep_max.py`: Brzycki 1RM and %1RM
-- `scripts/detect_seasons.py`: CLI (text/JSON output), `make seasons DIR=...`
+- `bin/detect_seasons.py`: CLI (text/JSON output), `make seasons DIR=...`
 - Input: directory searched recursively for `*.json`; each file is one
   set-centric workout (enveloped or bare) or an array of them. Other
   formats (e.g. bench-centric) are rejected with an error.
-- `config/seasons.yaml`: `min_break_days`, `min_sessions`, `max_reps_for_1rm`
+- `data/config/seasons.yaml`: `min_break_days`, `min_sessions`, `max_reps_for_1rm`
 - Brzycki overestimates at high reps, so only sets with at most
   `max_reps_for_1rm` reps drive the estimate (fallback: sets up to 36 reps).
 - Tests: `tests/test_seasons.py` (`make test-seasons`)

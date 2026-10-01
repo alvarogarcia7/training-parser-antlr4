@@ -47,7 +47,7 @@ async function startGitServer() {
     console.log('[test] Starting local git server...');
 
     // Create server script
-    const serverScript = path.join(path.dirname(__dirname), 'scripts', 'git-http-server.js');
+    const serverScript = path.join(path.dirname(__dirname), 'bin', 'git-http-server.js');
     if (!fs.existsSync(serverScript)) {
       console.warn('[test] Git server script not found, tests will use existing server');
       resolve();

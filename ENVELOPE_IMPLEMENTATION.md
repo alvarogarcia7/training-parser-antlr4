@@ -50,7 +50,7 @@ All envelopes follow this structure:
 
 ## Core Components
 
-### 1. envelope.py - Python Module
+### 1. src/envelope.py - Python Module
 
 #### Envelope Class
 ```python
@@ -83,15 +83,15 @@ def unwrap_and_validate(
     """Unwrap envelope, validate payload, and extract data."""
 ```
 
-### 2. envelope_tool.py - CLI Tool
+### 2. bin/envelope_tool.py - CLI Tool
 
 Command-line tool for envelope operations:
 
 ```bash
-envelope_tool.py wrap <input> <output> <type>          # Wrap payload
-envelope_tool.py unwrap <input> <output>               # Unwrap payload
-envelope_tool.py validate <envelope> <schema> [defs]   # Validate envelope
-envelope_tool.py convert <input> <output> [options]    # Auto-convert
+bin/envelope_tool.py wrap <input> <output> <type>          # Wrap payload
+bin/envelope_tool.py unwrap <input> <output>               # Unwrap payload
+bin/envelope_tool.py validate <envelope> <schema> [defs]   # Validate envelope
+bin/envelope_tool.py convert <input> <output> [options]    # Auto-convert
 ```
 
 ### 3. Schema Files
@@ -180,10 +180,10 @@ else:
 Automatically detect format and convert:
 ```bash
 # Auto-detect and convert envelope to plain JSON
-python envelope_tool.py convert workout.json output.json
+python bin/envelope_tool.py convert workout.json output.json
 
 # Auto-detect and convert plain JSON to envelope
-python envelope_tool.py convert payload.json output.json
+python bin/envelope_tool.py convert payload.json output.json
 ```
 
 ## API Reference
@@ -312,16 +312,16 @@ else:
 
 ```bash
 # Wrap a raw payload file
-python envelope_tool.py wrap raw_workout.json envelope.json bench-centric.v1
+python bin/envelope_tool.py wrap raw_workout.json envelope.json bench-centric.v1
 
 # Unwrap and extract payload
-python envelope_tool.py unwrap envelope.json payload.json
+python bin/envelope_tool.py unwrap envelope.json payload.json
 
 # Validate envelope against schema
-python envelope_tool.py validate envelope.json schema/bench-centric.schema.json schema/common-definitions.schema.json
+python bin/envelope_tool.py validate envelope.json schema/bench-centric.schema.json schema/common-definitions.schema.json
 
 # Convert (auto-detect)
-python envelope_tool.py convert data.json output.json
+python bin/envelope_tool.py convert data.json output.json
 ```
 
 ## Validation Workflow

@@ -5,7 +5,7 @@ This document summarizes the comprehensive grammar format testing and documentat
 ## What Was Created
 
 ### 1. Comprehensive E2E Test Suite
-**File:** `parser/test_grammar_formats_e2e.py`
+**File:** `tests/test_grammar_formats_e2e.py`
 
 A complete end-to-end test suite with 70+ test cases covering:
 - All predefined and custom exercise name formats
@@ -42,7 +42,7 @@ A comprehensive reference guide that documents all supported formats with:
 - Links to test cases for validation
 
 ### 3. Test Suite Documentation
-**File:** `parser/test_grammar_formats_e2e_README.md`
+**File:** `tests/test_grammar_formats_e2e_README.md`
 
 Documentation explaining:
 - Purpose and organization of the test suite
@@ -70,7 +70,7 @@ Added new make target:
 ```makefile
 test-grammar-formats: check-virtual-env
     @echo "Running grammar format e2e tests..."
-    pytest parser/test_grammar_formats_e2e.py -v
+    pytest tests/test_grammar_formats_e2e.py -v
 ```
 
 Integrated into main test pipeline:
@@ -192,7 +192,7 @@ The E2E test suite provides comprehensive coverage:
    ```
 
 2. Want to see code examples?
-   → Check `parser/test_grammar_formats_e2e.py`
+   → Check `tests/test_grammar_formats_e2e.py`
 
 3. Want to add a new format?
    - Update `training.g4`
@@ -209,9 +209,9 @@ make test  # Full test suite includes grammar format tests
 ## Files Created/Modified
 
 ### New Files
-- `parser/test_grammar_formats_e2e.py` - Complete E2E test suite
+- `tests/test_grammar_formats_e2e.py` - Complete E2E test suite
 - `GRAMMAR_FORMATS.md` - Complete format reference guide
-- `parser/test_grammar_formats_e2e_README.md` - Test suite documentation
+- `tests/test_grammar_formats_e2e_README.md` - Test suite documentation
 - `GRAMMAR_DOCUMENTATION_INDEX.md` - Documentation navigation hub
 - `GRAMMAR_TESTING_SUMMARY.md` - This file
 
@@ -250,13 +250,13 @@ make test-grammar-formats
 make test
 
 # Run with pytest directly
-pytest parser/test_grammar_formats_e2e.py -v
+pytest tests/test_grammar_formats_e2e.py -v
 
 # Run specific test
-pytest parser/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
+pytest tests/test_grammar_formats_e2e.py::TestGrammarFormatsE2E::test_whole_set_basic -v
 
 # Run with coverage
-pytest parser/test_grammar_formats_e2e.py --cov=parser
+pytest tests/test_grammar_formats_e2e.py --cov=parser
 ```
 
 ## Next Steps

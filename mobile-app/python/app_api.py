@@ -3,9 +3,9 @@ import json
 import datetime
 from datetime import timezone
 
-from parser.parser import Parser
-from parser.model import Exercise, Set_, Weight
-from parser.serializer import serialize_to_set_centric
+from src.parser.parser import Parser
+from src.parser.model import Exercise, Set_, Weight
+from src.parser.serializer import serialize_to_set_centric
 from src.statistics import StatisticsCalculator
 from antlr4 import InputStream
 

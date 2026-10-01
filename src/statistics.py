@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from parser.model import Exercise
+from src.parser.model import Exercise
 
 
 @dataclass

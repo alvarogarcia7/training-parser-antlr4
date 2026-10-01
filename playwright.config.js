@@ -17,7 +17,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: process.env.CI ? undefined : {
-    command: 'uv run python3 serve.py',
+    command: 'uv run python3 bin/serve.py',
     url: 'http://localhost:8080',
     reuseExistingServer: true,
     timeout: 120000,

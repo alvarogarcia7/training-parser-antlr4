@@ -34,7 +34,7 @@ https://owner.github.io/repo-name/
 - Triggered on every push to main/master
 - Selective triggering based on path changes:
   - `mobile-app/**` - PWA source code
-  - `parser/**` - Parser modules
+  - `src/parser/**` - Parser modules
   - `src/**` - Data access and utilities
   - `data/**` - Data files
   - Workflow config files themselves
@@ -45,7 +45,7 @@ The deployment uses the `make pwa-publish` target which:
 
 1. **pwa-build**: Packages PWA for deployment
    - Copies `mobile-app/*` to `dist/pwa/`
-   - Copies `parser/`, `src/`, `dist/`, `data/` modules
+   - Copies `src/` (including `src/parser/`), `dist/`, `data/` modules
    - Creates a complete, self-contained PWA bundle
 
 2. **gh-pages branch management**:
@@ -117,7 +117,7 @@ Note: This requires:
 1. Run `make pwa-build` locally to debug
 2. Check that all source files exist:
    - `mobile-app/` directory
-   - `parser/`, `src/`, `data/` modules
+   - `src/` (including `src/parser/`), `data/` modules
    - `dist/training{Lexer,Parser}.py` files
 3. Verify ANTLR files are generated: `make build`
 

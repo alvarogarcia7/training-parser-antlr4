@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timezone
 from typing import cast
 
-from parser import Exercise, Set_, Weight
+from src.parser import Exercise, Set_, Weight
 from src.data_access import DataSerializer, ParsedWorkoutSession
 
 

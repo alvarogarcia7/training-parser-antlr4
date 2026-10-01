@@ -5,7 +5,7 @@ This guide shows you how to use the new error handling feature in the training p
 ## Basic Usage
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 # Parse input that may contain errors
 input_text = """
@@ -81,4 +81,4 @@ This tells you:
 
 - `ERROR_HANDLING.md` - Full documentation
 - `examples/error_handling_example.py` - Comprehensive examples
-- `parser/test_error_handling.py` - Test cases
+- `tests/test_error_handling.py` - Test cases
