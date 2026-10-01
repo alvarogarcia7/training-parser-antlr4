@@ -20,10 +20,12 @@ from pathlib import Path
 from typing import Any, NamedTuple, Optional
 
 from parser.serializer import serialize_to_bench_centric, serialize_to_set_centric
+from parser import StandardizeName
 from parser.model import Exercise
 from src.data_access import DataAccess
 
 DATE_LINE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 class Session(NamedTuple):
@@ -67,12 +69,17 @@ def split_sessions(text: str) -> list[tuple[Optional[str], list[str]]]:
 
 def read_sessions(input_file: Path) -> list[Session]:
     """Parse every session of ``input_file``; sessions without exercises are skipped."""
-    data_access = DataAccess()
+    # Anchor the synonyms file to the repository so the script works from any cwd
+    data_access = DataAccess(StandardizeName(REPO_ROOT / "data" / "synonyms.yaml"))
     sessions: list[Session] = []
     for date, lines in split_sessions(input_file.read_text(encoding='utf-8')):
         exercises = data_access.parse_text("\n".join(lines))
         if exercises:
             sessions.append(Session(date, exercises))
+        elif any(line.strip() and not line.strip().startswith('#') for line in lines):
+            # There was content but none of it parsed: failing is better than
+            # silently dropping a session from the output.
+            raise ValueError(f"session {date or '(undated)'} has content but no exercise could be parsed")
         else:
             print(
                 f"Warning: {input_file}: session {date or '(undated)'} has no exercises, skipped",

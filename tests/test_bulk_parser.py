@@ -434,6 +434,31 @@ Row en maquina 41k: 15, 8
         db = self.assert_json_valid(self.output_dir / "database.json")
         self.assertEqual(db["workouts"][0]["date"][:10], "2020-02-01")
 
+    def test_unparseable_session_fails_the_file(self) -> None:
+        """A session with content that yields no exercise is an error, not a silent drop."""
+        bad = self.create_training_file(
+            "2020-01-01\nSquat 70k: 5x10\n\n2020-02-01\nthis is !!! not valid\n", "bad.txt"
+        )
+        good = self.create_training_file(self.training_sample_3, "good.txt")
+        result = subprocess.run(
+            ["bash", str(self.script_path), "-o", str(self.output_dir), str(bad), str(good)],
+            capture_output=True, text=True
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("no exercise could be parsed", result.stderr)
+        self.assertEqual(list(self.output_dir.glob("bad*")), [], "no partial output for a failed file")
+        self.assertTrue((self.output_dir / "good_set.json").exists())
+
+    def test_runs_from_any_working_directory(self) -> None:
+        """The script resolves its own dependencies and does not rely on the cwd."""
+        file1 = self.create_training_file(self.training_sample_1, "day1.txt")
+        result = subprocess.run(
+            ["bash", str(self.script_path.resolve()), "-o", str(self.output_dir), str(file1)],
+            capture_output=True, text=True, cwd=self.temp_dir.name
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.output_dir / "day1_set.json").exists())
+
     def test_same_basename_in_different_directories(self) -> None:
         """Two inputs named alike must not overwrite each other's output."""
         (Path(self.temp_dir.name) / "a").mkdir()
