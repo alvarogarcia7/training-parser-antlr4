@@ -2,7 +2,6 @@ include README.md
 include MIGRATION_UV.md
 include AGENTS.md
 include LICENSE
-include requirements.txt
 include training.g4
 include mypy.ini
 include .pre-commit-config.yaml

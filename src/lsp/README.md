@@ -43,12 +43,6 @@ The LSP server is installed automatically with the training-parser package:
 uv pip install -e ".[dev]"
 ```
 
-Or with pip:
-
-```bash
-pip install -e ".[dev]"
-```
-
 ## Usage
 
 ### Running the Server

@@ -39,9 +39,6 @@ The LSP client is included with the training-parser package:
 ```bash
 # Using uv (recommended)
 uv pip install -e ".[dev]"
-
-# Using pip
-pip install -e ".[dev]"
 ```
 
 ## Quick Start

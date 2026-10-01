@@ -6,7 +6,7 @@
 # maintain structured requirements in .sdoc files.
 #
 # Prerequisites:
-#   - StrictDoc must be installed (uv sync or pip install strictdoc)
+#   - StrictDoc must be installed (uv sync)
 #   - Requirements must be located in the requirements/ directory
 #   - If installed with uv, commands will use 'uv run strictdoc'
 # ==============================================================================

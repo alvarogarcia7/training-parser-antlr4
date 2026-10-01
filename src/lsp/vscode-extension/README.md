@@ -17,8 +17,6 @@ This extension provides language support for the training workout DSL in Visual 
 
 1. Install the training-parser package with LSP support:
    ```bash
-   pip install -e ".[dev]"
-   # or
    uv pip install -e ".[dev]"
    ```
 

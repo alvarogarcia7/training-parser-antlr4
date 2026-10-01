@@ -5,11 +5,8 @@ Get intelligent editing features for your training logs in under 5 minutes.
 ## Install
 
 ```bash
-# Using uv (recommended)
+# Using uv
 uv pip install -e ".[dev]"
-
-# Or using pip
-pip install -e ".[dev]"
 ```
 
 ## Verify

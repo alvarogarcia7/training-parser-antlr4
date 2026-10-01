@@ -98,7 +98,6 @@ include = [
     "/LSP_GUIDE.md",
     "/MIGRATION_UV.md",
     "/AGENTS.md",
-    "/requirements.txt",
     "/pyproject.toml",
     "/setup-uv.sh",
 ]

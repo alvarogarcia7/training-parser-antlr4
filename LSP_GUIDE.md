@@ -36,17 +36,11 @@ The training language server provides intelligent editing features for workout l
 
 ### Install the LSP Server
 
-Using uv (recommended):
+Using uv:
 
 ```bash
 # Install in development mode with LSP dependencies
 uv pip install -e ".[dev]"
-```
-
-Using pip:
-
-```bash
-pip install -e ".[dev]"
 ```
 
 Verify installation:
@@ -462,7 +456,7 @@ which training-lsp
 
 **If not found:**
 - Ensure virtual environment is activated
-- Check installation: `pip list | grep training-parser`
+- Check installation: `uv pip list | grep training-parser`
 - Reinstall: `uv pip install -e ".[dev]"`
 
 ### No Completions Appearing
