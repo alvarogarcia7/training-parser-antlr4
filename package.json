@@ -1,23 +1,37 @@
 {
   "name": "training-parser",
-  "version": "1.0.0",
-  "description": "PWA for parsing and syncing training workouts",
-  "type": "commonjs",
+  "version": "2.0.0",
+  "description": "PWA for parsing and syncing training workouts with dual-backend git support",
+  "type": "module",
+  "main": "mobile-app/src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/training-parser.git"
+  },
+  "scripts": {
+    "test": "npm run test:git && npm run test:e2e",
+    "test:git": "node --test tests/git-integration.spec.js",
+    "test:git:watch": "node --watch --test tests/git-integration.spec.js",
+    "test:e2e": "node --test e2e/git-sync-e2e.spec.js",
+    "test:e2e:watch": "node --watch --test e2e/git-sync-e2e.spec.js",
+    "cors-proxy": "PORT=8081 node ./node_modules/cors-anywhere/server.js",
+    "git-server": "git daemon --reuseaddr --base-path=/tmp --export-all --port=8888 --verbose",
+    "dev": "npm run cors-proxy & npm run git-server"
+  },
+  "keywords": [
+    "pwa",
+    "git",
+    "sync",
+    "workout",
+    "training",
+    "github",
+    "isomorphic-git"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "backlog.md": "^1.44.0",
     "isomorphic-git": "^1.25.0",
     "cors-anywhere": "^0.4.4"
   },
-  "devDependencies": {
-    "@playwright/test": "^1.40.0"
-  },
-  "scripts": {
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug",
-    "test:offline": "playwright test e2e/offline.spec.js --project=chromium",
-    "test:no-network": "playwright test e2e/no-network.spec.js --project=chromium",
-    "test:git": "node --test tests/git-integration.spec.js",
-    "test:git:watch": "node --watch --test tests/git-integration.spec.js"
-  }
+  "devDependencies": {}
 }
