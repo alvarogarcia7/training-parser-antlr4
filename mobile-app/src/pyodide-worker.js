@@ -43,10 +43,10 @@ async function initPyodide() {
     log('loadPyodide() starting (this may take 10-20s)...', 'DEBUG');
     self.postMessage({ type: 'loading', message: 'Loading Pyodide... (this takes 10-20 seconds on first load)' });
 
-    // Wrap in timeout to detect hangs
+    // Wrap in timeout to detect hangs (120s for slow CI/first-load environments)
     const loadPromise = loadPyodide();
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('loadPyodide timeout after 30 seconds')), 30000)
+      setTimeout(() => reject(new Error('loadPyodide timeout after 120 seconds')), 120000)
     );
 
     pyodide = await Promise.race([loadPromise, timeoutPromise]);

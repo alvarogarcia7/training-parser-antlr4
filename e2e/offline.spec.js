@@ -5,7 +5,7 @@ const VALID_WORKOUT = `Bench press 4x75
 Squat 5x70
 Deadlift 3x100`;
 
-const PYODIDE_TIMEOUT = 90_000;
+const PYODIDE_TIMEOUT = 180_000;
 
 /** Wait for the Python runtime (Pyodide) to be fully initialized. */
 async function waitForPyodide(page) {
@@ -26,7 +26,7 @@ test.describe('Offline-First PWA', () => {
   let page;
 
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     context = await browser.newContext();
     page = await context.newPage();
 

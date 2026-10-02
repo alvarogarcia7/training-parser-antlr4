@@ -18,7 +18,7 @@ import sys
 import os
 import webbrowser
 import re
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from functools import partial
 
 
@@ -145,7 +145,7 @@ def main() -> None:
     ensure_antlr4_bundled()
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
     handler = partial(PWAHandler, directory=".")
-    server = HTTPServer(("", port), handler)
+    server = ThreadingHTTPServer(("", port), handler)
 
     url = f"http://localhost:{port}/mobile-app/"
     print(f"\n  Training Parser PWA")
