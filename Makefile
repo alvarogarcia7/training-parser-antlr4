@@ -48,6 +48,33 @@ test: check-virtual-env
 	${MAKE} test-seasons
 .PHONY: test
 
+# Git sync testing targets
+test-git-sync:
+	node --test tests/git-integration.spec.js
+.PHONY: test-git-sync
+
+test-git-sync-watch:
+	node --watch --test tests/git-integration.spec.js
+.PHONY: test-git-sync-watch
+
+test-sync-e2e:
+	node --test e2e/git-sync-e2e.spec.js
+.PHONY: test-sync-e2e
+
+# CORS proxy for local git-protocol testing
+cors-proxy:
+	PORT=8081 node ./node_modules/cors-anywhere/server.js
+.PHONY: cors-proxy
+
+# Local git server for testing (port 8888)
+git-server:
+	git daemon --reuseaddr --base-path=/tmp --export-all --port=8888 --verbose
+.PHONY: git-server
+
+# Start both git server and cors-proxy for local testing
+dev-sync-local: git-server cors-proxy
+.PHONY: dev-sync-local
+
 validate-datasets:
 	${MAKE} validate-bench-centric
 	${MAKE} validate-set-centric

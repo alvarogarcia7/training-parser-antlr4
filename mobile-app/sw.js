@@ -1,7 +1,8 @@
 /* Service Worker for Training Parser PWA */
 
-const CACHE_NAME = 'training-parser-v3';
 const PYODIDE_VERSION = 'v0.27.0';
+let CACHE_VERSION = 'v1';
+let PYODIDE_CACHE_NAME = `training-parser-pyodide-${PYODIDE_VERSION}`;
 
 const APP_SHELL = [
   './',
@@ -12,124 +13,114 @@ const APP_SHELL = [
   './src/share.js',
   './src/git-sync.js',
   './src/pyodide-worker.js',
+  './src/config.js',
   './python/app_api.py',
-  // antlr4 runtime
-  './python/antlr4/__init__.py',
-  './python/antlr4/BufferedTokenStream.py',
-  './python/antlr4/CommonTokenFactory.py',
-  './python/antlr4/CommonTokenStream.py',
-  './python/antlr4/FileStream.py',
-  './python/antlr4/InputStream.py',
-  './python/antlr4/IntervalSet.py',
-  './python/antlr4/LL1Analyzer.py',
-  './python/antlr4/Lexer.py',
-  './python/antlr4/ListTokenSource.py',
-  './python/antlr4/Parser.py',
-  './python/antlr4/ParserInterpreter.py',
-  './python/antlr4/ParserRuleContext.py',
-  './python/antlr4/PredictionContext.py',
-  './python/antlr4/Recognizer.py',
-  './python/antlr4/RuleContext.py',
-  './python/antlr4/StdinStream.py',
-  './python/antlr4/Token.py',
-  './python/antlr4/TokenStreamRewriter.py',
-  './python/antlr4/Utils.py',
-  './python/antlr4/atn/__init__.py',
-  './python/antlr4/atn/ATN.py',
-  './python/antlr4/atn/ATNConfig.py',
-  './python/antlr4/atn/ATNConfigSet.py',
-  './python/antlr4/atn/ATNDeserializationOptions.py',
-  './python/antlr4/atn/ATNDeserializer.py',
-  './python/antlr4/atn/ATNSimulator.py',
-  './python/antlr4/atn/ATNState.py',
-  './python/antlr4/atn/ATNType.py',
-  './python/antlr4/atn/LexerATNSimulator.py',
-  './python/antlr4/atn/LexerAction.py',
-  './python/antlr4/atn/LexerActionExecutor.py',
-  './python/antlr4/atn/ParserATNSimulator.py',
-  './python/antlr4/atn/PredictionMode.py',
-  './python/antlr4/atn/SemanticContext.py',
-  './python/antlr4/atn/Transition.py',
-  './python/antlr4/dfa/__init__.py',
-  './python/antlr4/dfa/DFA.py',
-  './python/antlr4/dfa/DFASerializer.py',
-  './python/antlr4/dfa/DFAState.py',
-  './python/antlr4/error/__init__.py',
-  './python/antlr4/error/DiagnosticErrorListener.py',
-  './python/antlr4/error/ErrorListener.py',
-  './python/antlr4/error/ErrorStrategy.py',
-  './python/antlr4/error/Errors.py',
-  './python/antlr4/tree/__init__.py',
-  './python/antlr4/tree/Chunk.py',
-  './python/antlr4/tree/ParseTreeMatch.py',
-  './python/antlr4/tree/ParseTreePattern.py',
-  './python/antlr4/tree/ParseTreePatternMatcher.py',
-  './python/antlr4/tree/RuleTagToken.py',
-  './python/antlr4/tree/TokenTagToken.py',
-  './python/antlr4/tree/Tree.py',
-  './python/antlr4/tree/Trees.py',
-  './python/antlr4/xpath/__init__.py',
-  './python/antlr4/xpath/XPath.py',
 ];
 
-const PYTHON_SOURCES = [
-  '../src/parser/__init__.py',
-  '../src/parser/model.py',
-  '../src/parser/parser.py',
-  '../src/parser/standardize_name.py',
-  '../src/parser/serializer.py',
-  '../src/parser/error_listener.py',
-  '../src/parser/series_builder.py',
-  '../src/__init__.py',
-  '../src/data_access.py',
-  '../src/statistics.py',
-  '../dist/__init__.py',
-  '../dist/trainingLexer.py',
-  '../dist/trainingParser.py',
-  '../dist/trainingListener.py',
-  '../dist/trainingVisitor.py',
-  '../data/config/synonyms.yaml',
+// Vendored JS libraries (downloaded at build time via make vendor-js)
+const VENDOR_LIBS = [
+  './vendor/lightning-fs.min.js',
+  './vendor/isomorphic-git.min.js',
 ];
 
-// CDN libraries for git sync and filesystem
-const CDN_LIBS = [
-  'https://unpkg.com/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js',
-  'https://unpkg.com/isomorphic-git@1.27.1/index.umd.min.js',
-];
-
-// Pyodide runtime files to pre-cache
+// Vendored Pyodide runtime files (downloaded at build time via make vendor-pyodide)
 const PYODIDE_RUNTIME = [
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.mjs`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide_py.tar`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/python_stdlib.tar`,
+  `./vendor/pyodide/pyodide.js`,
+  `./vendor/pyodide/pyodide.mjs`,
+  `./vendor/pyodide/pyodide_py.tar`,
+  `./vendor/pyodide/python_stdlib.tar`,
 ];
+
+// Python archive files (bundled at build time via make vendor-python-archive)
+const VENDOR_ARCHIVES = [
+  './vendor/vendor-runtime.tar.gz',
+  './vendor/app.zip',
+];
+
+// Combined precache list for integrity checks
+const PRECACHE_URLS = [
+  ...APP_SHELL,
+  ...VENDOR_LIBS,
+  ...VENDOR_ARCHIVES,
+];
+
+// Check version.json on each session to invalidate old caches
+let versionCheckDone = false;
+let currentVersion = null;
+
+async function checkVersion() {
+  if (versionCheckDone) return;
+
+  try {
+    const resp = await fetch('./version.json', { cache: 'no-store' });
+    if (resp.ok) {
+      const data = await resp.json();
+      currentVersion = data.version;
+      CACHE_VERSION = data.version || 'v1';
+      PYODIDE_CACHE_NAME = `training-parser-pyodide-${PYODIDE_VERSION}-${CACHE_VERSION}`;
+    }
+  } catch (e) {
+    console.log('[sw] version.json check failed (non-critical)', e.message);
+  }
+  versionCheckDone = true;
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Cache app shell immediately
-      const shellPromise = cache.addAll(APP_SHELL);
+    (async () => {
+      const cacheName = `training-parser-${CACHE_VERSION}`;
+      const cache = await caches.open(cacheName);
 
-      // Cache Python sources, Pyodide runtime, and CDN libraries in background
+      // Cache app shell
+      await cache.addAll(APP_SHELL).catch(() => {
+        console.log('[sw] Some app shell items failed (non-critical)');
+      });
+
+      // Cache vendor archives and vendored libs in background
       // Don't fail install if these aren't available yet
       Promise.all([
-        cache.addAll(PYTHON_SOURCES).catch(() => {}),
-        cache.addAll(PYODIDE_RUNTIME).catch(() => {}),
-        cache.addAll(CDN_LIBS).catch(() => {}),
+        cache.addAll(VENDOR_ARCHIVES).catch(() => {}),
+        cache.addAll(VENDOR_LIBS).catch(() => {}),
       ]).catch(() => {});
 
-      return shellPromise;
-    })
+      // Pre-cache Pyodide runtime in separate cache
+      const pyodideCache = await caches.open(PYODIDE_CACHE_NAME);
+      pyodideCache.addAll(PYODIDE_RUNTIME).catch(() => {
+        console.log('[sw] Some Pyodide files failed (non-critical)');
+      });
+    })()
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    (async () => {
+      // Delete old version caches
+      const keys = await caches.keys();
+      const cachesToDelete = keys.filter(k =>
+        !k.includes(CACHE_VERSION) &&
+        !k.includes(PYODIDE_VERSION)
+      );
+
+      // Delete old Pyodide caches with different versions
+      const oldPyodideCaches = keys.filter(k =>
+        k.startsWith('training-parser-pyodide-') &&
+        !k.startsWith(`training-parser-pyodide-${PYODIDE_VERSION}`)
+      );
+
+      await Promise.all([
+        ...cachesToDelete.map(k => caches.delete(k)),
+        ...oldPyodideCaches.map(k => caches.delete(k)),
+      ]);
+
+      // Request storage persistence
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persist().catch(e => {
+          console.log('[sw] Storage persistence not available:', e.message);
+        });
+      }
+    })()
   );
   self.clients.claim();
 });
@@ -137,20 +128,35 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // Skip /requirements/ (docs)
+  if (url.pathname.startsWith('/requirements/')) {
+    return;
+  }
+
   // Handle share_target POST
   if (url.pathname.endsWith('/share-target') && event.request.method === 'POST') {
     event.respondWith(handleShareTarget(event.request));
     return;
   }
 
-  // Cache-first only for Pyodide CDN and CDN libs (large, immutable, versioned URLs)
-  const isPyodideCDN = url.hostname === 'cdn.jsdelivr.net' || url.hostname === 'unpkg.com';
-  if (isPyodideCDN) {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Cache-first for hashed/versioned assets (vendor archives, app shell)
+  if (url.pathname.includes('/vendor/') ||
+      url.pathname === '/' ||
+      url.pathname === '/index.html' ||
+      url.pathname.endsWith('.svg') ||
+      url.pathname.endsWith('.js') ||
+      url.pathname.endsWith('.css')) {
+
     event.respondWith(cacheFirstWithNetwork(event.request));
     return;
   }
 
-  // Network-first for all app files (Python sources, JS, HTML) so deployments propagate immediately
+  // Network-first for everything else
   event.respondWith(networkFirstWithCache(event.request));
 });
 
@@ -168,14 +174,23 @@ async function handleShareTarget(request) {
   return Response.redirect('./', 303);
 }
 
-async function cacheFirstWithNetwork(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
+async function cacheFirstWithNetwork(request, cacheName) {
+  cacheName = cacheName || `training-parser-${CACHE_VERSION}`;
+
+  try {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+  } catch (e) {
+    console.log('[sw] Cache match failed:', e.message);
+  }
+
   try {
     const response = await fetch(request);
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+      const cache = await caches.open(cacheName);
+      cache.put(request, response.clone()).catch(() => {
+        // Silently ignore cache write errors
+      });
     }
     return response;
   } catch {
@@ -184,16 +199,25 @@ async function cacheFirstWithNetwork(request) {
 }
 
 async function networkFirstWithCache(request) {
+  const cacheName = `training-parser-${CACHE_VERSION}`;
+
   try {
     const response = await fetch(request);
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+      const cache = await caches.open(cacheName);
+      cache.put(request, response.clone()).catch(() => {
+        // Silently ignore cache write errors
+      });
     }
     return response;
   } catch {
-    const cached = await caches.match(request);
-    return cached || new Response('Offline', { status: 503 });
+    try {
+      const cached = await caches.match(request);
+      if (cached) return cached;
+    } catch (e) {
+      console.log('[sw] Cache match failed:', e.message);
+    }
+    return new Response('Offline', { status: 503 });
   }
 }
 
@@ -210,4 +234,12 @@ async function notifyClientsToSync() {
     client.postMessage({ type: 'sync_requested' });
   }
 }
-// 20260929201739
+
+// Message handler for clients
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// 20261002
