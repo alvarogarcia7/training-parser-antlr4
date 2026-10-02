@@ -151,6 +151,9 @@ jobs:
         # at /mobile-app/ with COOP/COEP headers (required by Pyodide)
         rm -rf mobile-app
         cp -r dist/pwa mobile-app
+        # Expose vendor/ at server root too: the worker uses absolute paths
+        # like /vendor/pyodide/pyodide.js which resolve against http://host:8080/
+        ln -sf "$(pwd)/dist/pwa/vendor" vendor
 
     - name: Start test server
       run: |
