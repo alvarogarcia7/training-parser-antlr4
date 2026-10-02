@@ -26,19 +26,24 @@ jobs:
 
     - name: Check fast-forward
       run: |
-        if ! git merge-base --is-ancestor "${{ github.event.before }}" "${{ github.sha }}"; then
+        BEFORE="${{ github.event.before }}"
+        if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+          echo "✓ Branch creation — fast-forward check skipped"
+        elif ! git merge-base --is-ancestor "$BEFORE" "${{ github.sha }}"; then
           echo "❌ Not a fast-forward push"
           exit 1
+        else
+          echo "✓ Fast-forward push verified"
         fi
-        echo "✓ Fast-forward push verified"
 
     - name: Check commit reachable from main
       run: |
-        if ! git merge-base --is-ancestor "${{ github.sha }}" "origin/main"; then
-          echo "❌ Commit not reachable from main branch"
+        git fetch origin master
+        if ! git merge-base --is-ancestor "${{ github.sha }}" "origin/master"; then
+          echo "❌ Commit not reachable from master branch"
           exit 1
         fi
-        echo "✓ Commit reachable from main"
+        echo "✓ Commit reachable from master"
 
   build:
     needs: verify
