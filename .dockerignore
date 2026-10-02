@@ -1,0 +1,17 @@
+.git
+.venv
+venv
+dist/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.env.local
+mobile-app/pyodide/
+certs/
+output/
+*.log
+.pwa-server.pid
+.cors-proxy.pid
+antlr-*.jar

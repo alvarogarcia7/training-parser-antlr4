@@ -1,0 +1,54 @@
+# Stage 1: Builder — compiles grammar and assembles the PWA
+FROM python:3.14-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    default-jre-headless \
+    make \
+    zip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --no-cache-dir uv
+
+WORKDIR /app
+
+# Vendor Pyodide early so this layer is cached unless the script changes
+COPY bin/vendor-pyodide.sh bin/vendor-pyodide.sh
+RUN bash bin/vendor-pyodide.sh
+
+# Install Python dependencies
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen
+
+# Copy project source
+COPY . .
+
+# Set VIRTUAL_ENV so Makefile check-virtual-env passes, and activate the venv
+ENV VIRTUAL_ENV=/app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Bundle antlr4 runtime into mobile-app/python/ for vendor archive
+RUN python3 -c "\
+import os, shutil, antlr4; \
+dest = 'mobile-app/python/antlr4'; \
+os.path.isdir(dest) or shutil.copytree(os.path.dirname(antlr4.__file__), dest)"
+
+# Compile ANTLR grammar (downloads antlr jar if needed)
+RUN make compile-grammar
+
+# Create Python vendor archives and version manifest
+RUN make vendor-python-archive generate-version-json
+
+# Assemble the PWA into dist/pwa/ (picks up dist/vendor/pyodide/ from above)
+RUN make pwa-build
+
+# Stage 2: Runtime — nginx serving the built PWA
+FROM nginx:alpine
+
+COPY --from=builder /app/dist/pwa /usr/share/nginx/html
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO /dev/null http://127.0.0.1/ || exit 1

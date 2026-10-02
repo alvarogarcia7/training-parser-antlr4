@@ -283,3 +283,62 @@ seasons: check-virtual-env
 parse-all:
 	./bin/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all
+
+# ---- Docker deployment (ONORCA.DEV) ----
+# Copy .env.example to .env and adjust before running these targets.
+
+_require-env:
+	@test -f .env || (echo "Missing .env — copy .env.example to .env and fill it in"; exit 1)
+.PHONY: _require-env
+
+docker-build: _require-env
+	docker compose build
+.PHONY: docker-build
+
+docker-up: _require-env
+	docker compose up -d
+.PHONY: docker-up
+
+docker-down:
+	docker compose down
+.PHONY: docker-down
+
+docker-restart:
+	docker compose restart app
+.PHONY: docker-restart
+
+docker-logs:
+	docker compose logs -f app
+.PHONY: docker-logs
+
+docker-test: _require-env
+	@set -a; . ./.env; set +a; \
+	HOST=$${APP_HOST:-127.0.0.1}; [ "$$HOST" = "0.0.0.0" ] && HOST=127.0.0.1; \
+	URL=http://$$HOST:$${APP_PORT:-8080}/; \
+	echo "Waiting for service at $$URL ..."; \
+	MAX=30; N=0; \
+	while [ $$N -lt $$MAX ]; do \
+		if curl -sf $$URL > /dev/null 2>&1; then break; fi; \
+		N=$$((N+1)); sleep 2; \
+	done; \
+	if [ $$N -eq $$MAX ]; then echo "✗ Service did not start"; exit 1; fi; \
+	echo "✓ Service is up at $$URL"; \
+	HEADERS=$$(curl -sI $$URL); \
+	echo "$$HEADERS" | grep -qi "cross-origin-opener-policy" \
+		&& echo "✓ COOP header present" \
+		|| (echo "✗ COOP header missing"; exit 1); \
+	echo "$$HEADERS" | grep -qi "cross-origin-embedder-policy" \
+		&& echo "✓ COEP header present" \
+		|| (echo "✗ COEP header missing"; exit 1); \
+	curl -sf $$URL | grep -q "Training Parser" \
+		&& echo "✓ App HTML served correctly" \
+		|| (echo "✗ App HTML not found in response"; exit 1); \
+	curl -sfI $${URL}vendor/pyodide/pyodide.asm.wasm | grep -qi "application/wasm" \
+		&& echo "✓ Pyodide WASM served with correct MIME type" \
+		|| (echo "✗ Pyodide WASM missing or wrong MIME type"; exit 1); \
+	echo "✅ Deployment test passed"
+.PHONY: docker-test
+
+deploy: docker-build docker-up docker-test
+	@echo "✅ ONORCA.DEV deployment complete"
+.PHONY: deploy
