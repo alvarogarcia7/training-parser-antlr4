@@ -3,7 +3,6 @@ FROM python:3.14-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    wget \
     default-jre-headless \
     make \
     zip \
@@ -15,7 +14,7 @@ WORKDIR /app
 
 # Vendor Pyodide early so this layer is cached unless the script changes
 COPY bin/vendor-pyodide.sh bin/vendor-pyodide.sh
-RUN chmod +x bin/vendor-pyodide.sh && bash bin/vendor-pyodide.sh
+RUN bash bin/vendor-pyodide.sh
 
 # Install Python dependencies
 COPY pyproject.toml uv.lock ./
