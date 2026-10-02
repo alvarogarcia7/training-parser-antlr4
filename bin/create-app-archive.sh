@@ -4,7 +4,7 @@
 
 set -e
 
-TARGET_DIR="${1:-.}"
+TARGET_DIR="$(cd "${1:-.}" && pwd)"
 OUTPUT_ZIP="${TARGET_DIR}/app.zip"
 
 echo "Creating app.zip archive..."
