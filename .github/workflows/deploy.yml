@@ -147,6 +147,18 @@ jobs:
       run: |
         mkdir -p dist/pwa
         cp -r dist/site/* dist/pwa/
+        # Serve under /mobile-app/ to match Playwright baseURL + test paths
+        mkdir -p /tmp/test-serve/mobile-app
+        cp -r dist/pwa/* /tmp/test-serve/mobile-app/
+
+    - name: Start test server
+      run: |
+        python3 -m http.server 8080 --directory /tmp/test-serve &
+        echo $! > /tmp/test-server.pid
+        for i in $(seq 1 15); do
+          curl -s http://localhost:8080/mobile-app/ > /dev/null && break
+          sleep 1
+        done
 
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium
@@ -165,6 +177,10 @@ jobs:
       run: |
         source .venv/bin/activate
         npm run test:e2e
+
+    - name: Stop test server
+      if: always()
+      run: kill $(cat /tmp/test-server.pid) 2>/dev/null || true
 
   deploy:
     needs: test
