@@ -20,33 +20,15 @@ console.log('[worker] Script starting, about to load Pyodide...');
 log('Worker script started', 'DEBUG');
 
 try {
-  // Try loading from local environment first (GitHub Pages or same-domain deployment)
-  const localPyodidePaths = [
-    './pyodide/pyodide.js',        // Development/dist folder
-    '../pyodide/pyodide.js',       // Alternative path
-    '/pyodide/pyodide.js',         // Root-based
-  ];
-
-  let loaded = false;
-  for (const localPyodide of localPyodidePaths) {
-    try {
-      importScripts(localPyodide);
-      log(`✓ Pyodide loaded locally from: ${localPyodide}`, 'INFO');
-      loaded = true;
-      break;
-    } catch (e) {
-      log(`Local Pyodide not found at ${localPyodide}`, 'DEBUG');
-    }
-  }
-
-  if (!loaded) {
-    log('Local Pyodide not found, loading from CDN...', 'INFO');
-    importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js');
-    log('✓ Pyodide loaded from CDN', 'INFO');
-  }
+  // Load Pyodide from vendored location (no CDN fallback - offline-first)
+  const pyodidePath = '/vendor/pyodide/pyodide.js';
+  log(`Loading Pyodide from vendored location: ${pyodidePath}`, 'INFO');
+  importScripts(pyodidePath);
+  log(`✓ Pyodide loaded successfully from vendored assets`, 'INFO');
 } catch (e) {
-  log(`Failed to import Pyodide script: ${e.message}`, 'ERROR');
-  self.postMessage({ type: 'error', message: 'Failed to load Pyodide: ' + e.message });
+  const errorMsg = `Failed to load Pyodide from vendored location (/vendor/pyodide/pyodide.js). Ensure vendor assets are generated with 'make vendor-pyodide'. Error: ${e.message}`;
+  log(errorMsg, 'ERROR');
+  self.postMessage({ type: 'error', message: errorMsg });
   throw e;
 }
 
