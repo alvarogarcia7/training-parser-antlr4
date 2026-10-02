@@ -1,7 +1,7 @@
 ---
 id: TP-9
 title: Deploy PWA and docs to GitHub Pages from a fast-forward-only deployed branch
-status: Done
+status: To Do
 assignee: []
 created_date: '2026-10-02 07:49'
 labels:
@@ -25,17 +25,17 @@ Decisions: branch name `deployed` (input, ff-only); output stays on gh-pages (wh
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [x] #1 Workflow triggers only on push to the deployed branch; no path-filtered push, PR or dispatch triggers remain
-- [x] #2 Ruleset on deployed: block force pushes and deletion, restrict who can push
-- [x] #3 verify job fails unless the push is a fast-forward (github.event.forced false, before is an ancestor of sha) and sha is reachable from origin/main
-- [x] #4 Jobs build -> test -> deploy pass a single dist artifact: the tested files are the deployed files
-- [x] #5 Build produces the PWA at the site root and StrictDoc output under /requirements/, plus .nojekyll; deploy replaces the whole gh-pages site (no keep_files)
-- [x] #6 test job runs the e2e, no-network and offline tests from TP-8 with no continue-on-error; a failing test blocks deploy
-- [x] #7 build downloads Pyodide and compiles the grammar inside the job; nothing generated is committed to main
-- [x] #8 On success a live tag is moved to the deployed commit
-- [x] #9 pwa-e2e-tests.yml removed, publish-docs.yml no longer publishes, pwa-publish and docs-publish make targets replaced by a single site-build target; ci.yml still validates the docs on main
-- [x] #10 Dry run on a staging publish branch proves: ff push deploys, non-main commit fails verify, failing test skips deploy, docs and PWA both present
-- [x] #11 PWA_DEPLOYMENT.md and GITHUB_PAGES_SETUP.md updated, including the promote command: git push origin <sha>:deployed
+- [ ] #1 Workflow triggers only on push to the deployed branch; no path-filtered push, PR or dispatch triggers remain
+- [ ] #2 Ruleset on deployed: block force pushes and deletion, restrict who can push
+- [ ] #3 verify job fails unless the push is a fast-forward (github.event.forced false, before is an ancestor of sha) and sha is reachable from origin/main
+- [ ] #4 Jobs build -> test -> deploy pass a single dist artifact: the tested files are the deployed files
+- [ ] #5 Build produces the PWA at the site root and StrictDoc output under /requirements/, plus .nojekyll; deploy replaces the whole gh-pages site (no keep_files)
+- [ ] #6 test job runs the e2e, no-network and offline tests from TP-8 with no continue-on-error; a failing test blocks deploy
+- [ ] #7 build downloads Pyodide and compiles the grammar inside the job; nothing generated is committed to main
+- [ ] #8 On success a live tag is moved to the deployed commit
+- [ ] #9 pwa-e2e-tests.yml removed, publish-docs.yml no longer publishes, pwa-publish and docs-publish make targets replaced by a single site-build target; ci.yml still validates the docs on main
+- [ ] #10 Dry run on a staging publish branch proves: ff push deploys, non-main commit fails verify, failing test skips deploy, docs and PWA both present
+- [ ] #11 PWA_DEPLOYMENT.md and GITHUB_PAGES_SETUP.md updated, including the promote command: git push origin <sha>:deployed
 <!-- AC:END -->
 
 ## Implementation Plan
