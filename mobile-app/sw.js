@@ -13,27 +13,35 @@ const APP_SHELL = [
   './src/share.js',
   './src/git-sync.js',
   './src/pyodide-worker.js',
+  './src/config.js',
   './python/app_api.py',
 ];
 
-// CDN libraries for git sync and filesystem (immutable, versioned URLs)
-const CDN_LIBS = [
-  'https://unpkg.com/@isomorphic-git/lightning-fs@4.6.0/dist/lightning-fs.min.js',
-  'https://unpkg.com/isomorphic-git@1.27.1/index.umd.min.js',
+// Vendored JS libraries (downloaded at build time via make vendor-js)
+const VENDOR_LIBS = [
+  './vendor/lightning-fs.min.js',
+  './vendor/isomorphic-git.min.js',
 ];
 
-// Pyodide runtime files (large, immutable, versioned URLs)
+// Vendored Pyodide runtime files (downloaded at build time via make vendor-pyodide)
 const PYODIDE_RUNTIME = [
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.mjs`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide_py.tar`,
-  `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/python_stdlib.tar`,
+  `./vendor/pyodide/pyodide.js`,
+  `./vendor/pyodide/pyodide.mjs`,
+  `./vendor/pyodide/pyodide_py.tar`,
+  `./vendor/pyodide/python_stdlib.tar`,
 ];
 
-// Archive files (bundled, immutable after deployment)
+// Python archive files (bundled at build time via make vendor-python-archive)
 const VENDOR_ARCHIVES = [
   './vendor/vendor-runtime.tar.gz',
   './vendor/app.zip',
+];
+
+// Combined precache list for integrity checks
+const PRECACHE_URLS = [
+  ...APP_SHELL,
+  ...VENDOR_LIBS,
+  ...VENDOR_ARCHIVES,
 ];
 
 // Check version.json on each session to invalidate old caches
@@ -68,11 +76,11 @@ self.addEventListener('install', (event) => {
         console.log('[sw] Some app shell items failed (non-critical)');
       });
 
-      // Cache vendor archives, CDN libs, and Pyodide runtime in background
+      // Cache vendor archives and vendored libs in background
       // Don't fail install if these aren't available yet
       Promise.all([
         cache.addAll(VENDOR_ARCHIVES).catch(() => {}),
-        cache.addAll(CDN_LIBS).catch(() => {}),
+        cache.addAll(VENDOR_LIBS).catch(() => {}),
       ]).catch(() => {});
 
       // Pre-cache Pyodide runtime in separate cache
@@ -133,13 +141,6 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
-    return;
-  }
-
-  // Cache-first for Pyodide CDN and CDN libs (large, immutable, versioned URLs)
-  const isPyodideCDN = url.hostname === 'cdn.jsdelivr.net' || url.hostname === 'unpkg.com';
-  if (isPyodideCDN) {
-    event.respondWith(cacheFirstWithNetwork(event.request, PYODIDE_CACHE_NAME));
     return;
   }
 

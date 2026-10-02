@@ -49,17 +49,17 @@ test: check-virtual-env
 .PHONY: test
 
 # Git sync testing targets
-test:git:
+test-git-sync:
 	node --test tests/git-integration.spec.js
-.PHONY: test:git
+.PHONY: test-git-sync
 
-test:git:watch:
+test-git-sync-watch:
 	node --watch --test tests/git-integration.spec.js
-.PHONY: test:git:watch
+.PHONY: test-git-sync-watch
 
-test:e2e:
+test-sync-e2e:
 	node --test e2e/git-sync-e2e.spec.js
-.PHONY: test:e2e
+.PHONY: test-sync-e2e
 
 # CORS proxy for local git-protocol testing
 cors-proxy:
