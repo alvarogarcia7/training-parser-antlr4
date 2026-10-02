@@ -37,6 +37,7 @@ pwa-build-offline: download-pyodide pwa-build
 .PHONY: pwa-build-offline
 
 pwa-publish: pwa-build
+	@echo "[DEPRECATED] pwa-publish is deprecated - use GitHub Actions deploy workflow instead"
 	@echo "Publishing PWA to github-pages branch..."
 	@git worktree add -B gh-pages /tmp/pwa-deploy origin/gh-pages 2>/dev/null || git worktree add -B gh-pages /tmp/pwa-deploy HEAD
 	@find /tmp/pwa-deploy -mindepth 1 -maxdepth 1 ! -name 'requirements' ! -name '.git' -exec rm -rf {} +
@@ -47,6 +48,24 @@ pwa-publish: pwa-build
 	@echo "PWA published to github-pages branch"
 	@echo "GitHub Pages URL: https://$(shell git remote get-url origin | sed 's/.*github.com.\([^/]*\)\/\(.*\)\.git/\1.github.io\/\2/')"
 .PHONY: pwa-publish
+
+site-build: pwa-build docs-build
+	@echo "Building site with PWA at root and docs at /requirements/..."
+	@mkdir -p dist/site
+	@cp -r dist/pwa/* dist/site/
+	@mkdir -p dist/site/requirements
+	@cp -r requirements/output/* dist/site/requirements/
+	@touch dist/site/.nojekyll
+	@echo "✓ Site built to dist/site/ (PWA at root, docs at /requirements/)"
+.PHONY: site-build
+
+pwa-test-built:
+	@echo "Testing built PWA..."
+	@npm run test:offline || (echo "✗ Offline tests failed"; exit 1)
+	@npm run test:no-network || (echo "✗ No-network tests failed"; exit 1)
+	@npm run test:e2e || (echo "✗ E2E tests failed"; exit 1)
+	@echo "✓ All PWA tests passed"
+.PHONY: pwa-test-built
 
 pwa-serve-local: check-virtual-env
 	@echo "Starting local HTTPS server for PWA..."

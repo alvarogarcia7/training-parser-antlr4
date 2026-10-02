@@ -74,6 +74,7 @@ strictdoc-export: check-virtual-env
 #   make docs-publish
 # ------------------------------------------------------------------------------
 docs-publish: strictdoc-export
+	@echo "[DEPRECATED] docs-publish is deprecated - use GitHub Actions deploy workflow instead"
 	@echo "Publishing docs to github-pages branch..."
 	@git worktree add -B gh-pages /tmp/docs-deploy origin/gh-pages 2>/dev/null || git worktree add -B gh-pages /tmp/docs-deploy HEAD
 	@rm -rf /tmp/docs-deploy/requirements

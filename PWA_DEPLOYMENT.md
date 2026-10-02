@@ -2,19 +2,30 @@
 
 ## Overview
 
-The Progressive Web App (PWA) is deployed to GitHub Pages using a clean separation of concerns:
+The Progressive Web App (PWA) and documentation are deployed to GitHub Pages using a controlled deployment model:
 - **main/master branch**: Contains source code only (no build artifacts)
-- **gh-pages branch**: Contains built PWA files, automatically generated from main
-- **GitHub Actions**: Automates the build and deployment process
+- **deployed branch**: Fast-forward-only branch used to trigger deployments
+- **gh-pages branch**: Contains built site (PWA + docs), automatically generated from deployed branch
+- **GitHub Actions**: Automates build, test, and deployment process with verification checks
 
 ## Architecture
 
 ```
 main branch (source code)
     ↓
-GitHub Actions workflow (.github/workflows/deploy-pwa.yml)
+Maintainer pushes to deployed branch (fast-forward only)
     ↓
-Build process (make pwa-publish)
+GitHub Actions workflow (.github/workflows/deploy.yml)
+    ↓
+verify job (checks fast-forward, validates commit origin)
+    ↓
+build job (builds PWA + docs)
+    ↓
+test job (runs offline, no-network, e2e tests)
+    ↓
+deploy job (pushes to gh-pages with peaceiris action)
+    ↓
+live tag (marks successful deployment)
     ↓
 gh-pages branch (built artifacts)
     ↓
@@ -29,52 +40,113 @@ https://owner.github.io/repo-name/
 - Main branch contains only source code
 - Build artifacts are NEVER committed to main branch
 - All derived files are generated on-demand during deployment
+- Deployments are explicitly promoted via the `deployed` branch
 
-### 2. Automatic Deployment
-- Triggered on every push to main/master
-- Selective triggering based on path changes:
-  - `mobile-app/**` - PWA source code
-  - `src/parser/**` - Parser modules
-  - `src/**` - Data access and utilities
-  - `data/**` - Data files
-  - Workflow config files themselves
-- Can be manually triggered via `workflow_dispatch`
+### 2. Controlled Deployment
+- Triggered only by pushing to the `deployed` branch
+- Push must be a fast-forward (no force-push)
+- Commit must be reachable from main branch
+- Ensures deployments only come from reviewed, merged code
+- Fails fast if conditions are not met (no partial deployments)
 
-### 3. Build Process
-The deployment uses the `make pwa-publish` target which:
+### 3. Build and Test Process
+The deployment pipeline includes:
 
-1. **pwa-build**: Packages PWA for deployment
-   - Copies `mobile-app/*` to `dist/pwa/`
-   - Copies `src/` (including `src/parser/`), `dist/`, `data/` modules
-   - Creates a complete, self-contained PWA bundle
+1. **verify job**: Validates deployment eligibility
+   - Ensures push is fast-forward (not forced)
+   - Verifies commit is ancestor of current SHA
+   - Confirms commit is reachable from origin/main
+   - Fails if any check doesn't pass
 
-2. **gh-pages branch management**:
-   - Creates `gh-pages` branch if it doesn't exist
-   - Uses git worktree to isolate gh-pages branch
-   - Replaces all files with new PWA build
-   - Commits and pushes to origin/gh-pages
+2. **build job**: Builds PWA and documentation
+   - Runs `make site-build` to package PWA at root and docs at /requirements/
+   - Downloads Pyodide for offline support
+   - Creates .nojekyll file for proper GitHub Pages handling
+   - Uploads artifact for testing and deployment
+
+3. **test job**: Tests built artifacts
+   - Downloads built artifacts
+   - Runs `npm run test:offline` - tests offline functionality
+   - Runs `npm run test:no-network` - tests without network
+   - Runs `npm run test:e2e` - end-to-end browser tests
+   - **Fails deployment if tests don't pass** (no continue-on-error)
+   - Uses exact same files that will be deployed
+
+4. **deploy job**: Deploys tested artifacts
+   - Uses peaceiris/actions-gh-pages action
+   - Deploys to gh-pages branch with `force_orphan: true`
+   - Replaces entire gh-pages content (clean slate)
+   - Creates/updates `live` tag pointing to deployed commit
+
+## Deploying via the deployed Branch
+
+### Step-by-step deployment process
+
+1. **Test your changes locally** (on main/master branch)
+   ```bash
+   make site-build
+   make pwa-test-built  # Runs offline, no-network, and e2e tests
+   ```
+
+2. **Find the commit SHA to deploy**
+   ```bash
+   git log --oneline -5
+   # Pick a commit SHA that passed local tests
+   ```
+
+3. **Push the commit to deployed branch**
+   ```bash
+   git push origin <commit-sha>:deployed
+   ```
+   This creates or updates the `deployed` branch to point at your commit.
+
+4. **Watch the workflow**
+   - Go to GitHub Actions tab
+   - Find the "Deploy from deployed branch" workflow run
+   - Watch verify → build → test → deploy jobs execute in order
+   - If any job fails, the deployment stops
+
+5. **Check the live tag**
+   After successful deployment:
+   ```bash
+   git tag -l live
+   git rev-list -n 1 live
+   ```
+   The `live` tag should point to your deployed commit.
+
+### The live tag
+
+- Points to the last successful deployment
+- Updated automatically after each successful deploy
+- Force-updated (moved), not recreated
+- Useful for quick rollback: `git push origin <previous-sha>:deployed`
+
+### Rollback
+
+If deployment has issues:
+1. Find the previous good commit SHA
+2. Push it to deployed: `git push origin <previous-sha>:deployed`
+3. New workflow will run, test, and deploy the previous version
 
 ## Local Testing
 
-### Build PWA locally
+### Build PWA + docs locally
 ```bash
-make pwa-build
+make site-build
 ```
-Output: `dist/pwa/` directory contains the complete PWA
+Output: `dist/site/` directory contains complete site (PWA at root, docs at /requirements/)
 
-### Serve PWA locally over HTTP
+### Test built artifacts
 ```bash
-make pwa-serve-local
+make pwa-test-built
 ```
-- Runs on `https://localhost:8444`
-- Uses self-signed SSL certificates (required for service workers)
-- Good for testing before deployment
+This runs the same tests that the deployment pipeline runs.
 
-### Serve PWA from dist/pwa directory
+### Serve site locally
 ```bash
-python3 -m http.server -d dist/pwa 8080
+python3 -m http.server -d dist/site 8080
 ```
-- Simple HTTP server on `http://localhost:8080`
+Open http://localhost:8080/ to browse the site.
 
 ## GitHub Pages Configuration
 
@@ -85,60 +157,61 @@ The repository should be configured with:
 
 This is typically done in GitHub Settings → Pages → Build and deployment
 
-## CI/CD Integration
+## Branch Protection Rules
 
-The workflow includes proper permissions and environment setup:
-- `contents: write` - Allows pushing to gh-pages branch
-- `pages: write` - Required for GitHub Pages
-- `id-token: write` - For OpenID Connect
-- Automatic git configuration for commits
-
-## Manual Deployment
-
-If needed, you can manually deploy:
-```bash
-make pwa-publish
-```
-
-Note: This requires:
-- Local development environment with uv
-- Git credentials configured
-- Write access to the repository
+The `deployed` branch should have these protections configured via GitHub web UI:
+- Block force pushes (ensures fast-forward only)
+- Block deletion
+- Require status checks to pass: verify, build, test
+- Optionally: restrict push access to admins/maintainers only
 
 ## Troubleshooting
 
-### PWA not updated on GitHub Pages
-1. Check GitHub Actions workflow run for errors
-2. Verify gh-pages branch has latest build
-3. Check GitHub Pages settings point to gh-pages branch
-4. Clear browser cache (PWA caches aggressively)
+### Deployment fails at verify stage
+- **Force push detected**: Don't use `git push --force` to deployed branch
+- **Not a fast-forward**: Deployed branch is ahead of current commit; push a newer commit instead
+- **Not reachable from main**: Commit is not on main branch; merge to main first, then push to deployed
+
+### Deployment fails at test stage
+1. Pull latest code to main/master
+2. Run tests locally: `make pwa-test-built`
+3. Fix any failing tests
+4. Push commit to main/master
+5. After merge confirmed, retry deployment: `git push origin <sha>:deployed`
 
 ### Build fails
-1. Run `make pwa-build` locally to debug
+1. Run locally: `make site-build`
 2. Check that all source files exist:
    - `mobile-app/` directory
    - `src/` (including `src/parser/`), `data/` modules
-   - `dist/training{Lexer,Parser}.py` files
-3. Verify ANTLR files are generated: `make build`
+   - `requirements/` directory with .sdoc files
+   - `dist/training{Lexer,Parser}.py` files (run `make compile-grammar` if missing)
+3. Check Pyodide: `ls -la mobile-app/pyodide/` (if offline mode expected)
 
-### Git worktree conflicts
-If `make pwa-publish` fails with worktree errors:
-```bash
-git worktree list
-git worktree remove /tmp/pwa-deploy
-```
+### Website doesn't reflect latest deployment
+1. Check `live` tag points to latest commit: `git rev-list -n 1 live`
+2. Check GitHub Pages settings point to `gh-pages` branch
+3. Clear browser cache (PWA caches aggressively)
+4. Check gh-pages branch history: `git log --oneline gh-pages -5`
+
+### Rollback to previous version
+1. Find previous good commit: `git log --oneline <sha> -n 10`
+2. Deploy it: `git push origin <previous-sha>:deployed`
+3. Verify deployment succeeds and site reverts
 
 ## Files Involved
 
-- `.github/workflows/deploy-pwa.yml` - GitHub Actions workflow
-- `makefiles/pwa.mk` - Build targets
+- `.github/workflows/deploy.yml` - Main deployment workflow
+- `.github/workflows/ci.yml` - Validation only (no publishing)
+- `makefiles/pwa.mk` - PWA build targets
+- `makefiles/strictdocs.mk` - Documentation targets
 - `mobile-app/` - PWA source code
-- `dist/pwa/` - Built PWA (generated, not committed)
+- `requirements/` - Requirements documentation (StrictDoc)
+- `dist/site/` - Built site (generated, not committed)
 
-## Future Enhancements
-
-- Add pre-deployment tests (PWA loading tests)
-- Implement canary deployments to dev gh-pages branch first
-- Add performance metrics tracking
-- Implement rollback mechanism for failed deployments
-- Consider CDN caching strategy for service workers
+### Deprecated files
+- `.github/workflows/pwa-e2e-tests.yml` - Replaced by deploy.yml
+- `.github/workflows/deploy-pwa.yml` - Replaced by deploy.yml
+- `.github/workflows/publish-docs.yml` - Replaced by deploy.yml
+- `make pwa-publish` - Replaced by deploy workflow
+- `make docs-publish` - Replaced by deploy workflow
