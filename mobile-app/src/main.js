@@ -563,7 +563,4 @@ export async function initializeApp() {
   };
 }
 
-/**
- * Export for testing
- */
-export { SettingsManager, SettingsUI, GitSync };
+export { GitSync };

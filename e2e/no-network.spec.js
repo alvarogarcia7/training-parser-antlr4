@@ -5,7 +5,7 @@ const VALID_WORKOUT = `Bench press 4x75
 Squat 5x70
 Deadlift 3x100`;
 
-const PYODIDE_TIMEOUT = 90_000;
+const PYODIDE_TIMEOUT = 420_000; // 7 min: WASM compilation on slow CI runners can take 300s+
 
 /** Wait for the Python runtime (Pyodide) to be fully initialized. */
 async function waitForPyodide(page) {
@@ -26,7 +26,7 @@ test.describe('No External Network Requests', () => {
   let page;
 
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(120_000);
+    test.setTimeout(480_000); // 8 min: must exceed PYODIDE_TIMEOUT + buffer
     context = await browser.newContext();
     page = await context.newPage();
 

@@ -115,6 +115,7 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
     - uses: actions/checkout@v4
 
@@ -179,6 +180,14 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium
 
+    - name: Check pyodide files accessible via HTTP
+      run: |
+        for f in pyodide.js pyodide.asm.js pyodide.asm.wasm python_stdlib.zip pyodide-lock.json; do
+          size=$(curl -sI "http://localhost:8080/vendor/pyodide/${f}" | grep -i content-length | awk '{print $2}' | tr -d '\r')
+          ctype=$(curl -sI "http://localhost:8080/vendor/pyodide/${f}" | grep -i content-type | head -1 | tr -d '\r')
+          echo "${f}: size=${size} ${ctype}"
+        done
+
     - name: Run offline tests
       run: |
         source .venv/bin/activate
@@ -197,6 +206,17 @@ jobs:
     - name: Stop test server
       if: always()
       run: kill $(cat /tmp/test-server.pid) 2>/dev/null || true
+
+    - name: Upload Playwright report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 7
+        if-no-files-found: ignore
 
   deploy:
     needs: test

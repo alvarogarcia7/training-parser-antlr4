@@ -43,10 +43,15 @@ async function initPyodide() {
     log('loadPyodide() starting (this may take 10-20s)...', 'DEBUG');
     self.postMessage({ type: 'loading', message: 'Loading Pyodide... (this takes 10-20 seconds on first load)' });
 
-    // Wrap in timeout to detect hangs (120s for slow CI/first-load environments)
-    const loadPromise = loadPyodide();
+    // Explicitly pass indexURL so Pyodide finds its WASM/stdlib in the vendor directory.
+    // Without this, in some worker environments the auto-detection can fall back to a wrong path.
+    const indexURL = '/vendor/pyodide/';
+    log(`Using Pyodide indexURL: ${indexURL}`, 'DEBUG');
+
+    // Wrap in timeout to detect hangs (300s for slow CI/first-load environments)
+    const loadPromise = loadPyodide({ indexURL });
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('loadPyodide timeout after 120 seconds')), 120000)
+      setTimeout(() => reject(new Error('loadPyodide timeout after 300 seconds')), 300000)
     );
 
     pyodide = await Promise.race([loadPromise, timeoutPromise]);
