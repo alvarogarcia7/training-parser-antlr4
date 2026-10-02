@@ -5,7 +5,7 @@ const VALID_WORKOUT = `Bench press 4x75
 Squat 5x70
 Deadlift 3x100`;
 
-const PYODIDE_TIMEOUT = 180_000;
+const PYODIDE_TIMEOUT = 420_000; // 7 min: WASM compilation on slow CI runners can take 300s+
 
 /** Wait for the Python runtime (Pyodide) to be fully initialized. */
 async function waitForPyodide(page) {
@@ -26,9 +26,20 @@ test.describe('Offline-First PWA', () => {
   let page;
 
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(240_000);
+    test.setTimeout(480_000); // 8 min: must exceed PYODIDE_TIMEOUT + buffer
     context = await browser.newContext();
     page = await context.newPage();
+
+    // Capture browser console/error logs for CI diagnostics
+    page.on('console', msg => {
+      const text = msg.text();
+      if (msg.type() === 'error' || text.includes('[pyodide') || text.includes('[worker]') || text.includes('wasm')) {
+        console.log(`[browser:${msg.type()}] ${text}`);
+      }
+    });
+    page.on('pageerror', err => {
+      console.log(`[browser:pageerror] ${err.message}`);
+    });
 
     // Load the app while online
     await page.goto('/mobile-app/');

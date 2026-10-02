@@ -13,8 +13,8 @@ export default defineConfig({
   ],
   use: {
     baseURL: 'http://localhost:8080/',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: 'on',
+    screenshot: 'on',
   },
   webServer: process.env.CI ? undefined : {
     command: 'uv run python3 bin/serve.py',
@@ -28,6 +28,6 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  globalTimeout: 600000, // 10 minutes
-  timeout: process.env.CI ? 15000 : 15000, // 15s per test; Pyodide now loads once in beforeAll, not per test
+  globalTimeout: 1800000, // 30 minutes
+  timeout: process.env.CI ? 30000 : 15000, // individual test timeout (Pyodide loads once in beforeAll)
 });
