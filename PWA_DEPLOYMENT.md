@@ -135,10 +135,141 @@ git worktree remove /tmp/pwa-deploy
 - `mobile-app/` - PWA source code
 - `dist/pwa/` - Built PWA (generated, not committed)
 
+## Vendor Assets and Offline Support
+
+The PWA includes vendor assets (such as Pyodide) for offline-first functionality:
+
+### Vendor Assets Structure
+- **vendor/**: Contains minified JavaScript files and runtime dependencies
+- **Pyodide**: Python runtime for client-side parsing
+  - Included in `mobile-app/pyodide/` (if available locally)
+  - Automatically copied to `dist/pwa/vendor/` during build
+
+### Managing Vendor Assets
+- Update Pyodide: Download new version to `mobile-app/pyodide/` and run `make pwa-build`
+- Track only source files: `mobile-app/pyodide/**` are NOT committed (see .gitignore)
+- Built vendor files are in `dist/pwa/vendor/` (also not committed)
+
+### Cache Strategy
+- Service worker uses cache-first strategy for static assets
+- Cache version is managed by `CACHE_VERSION` in `mobile-app/sw.js`
+- Update `CACHE_VERSION` to invalidate all browser caches
+- Example: `CACHE_VERSION = 'v1.0.0'` (change to `v1.0.1` to force refresh)
+
+## Version.json and Cache Busting
+
+### Purpose
+The `version.json` file provides metadata for cache management:
+- Helps browsers detect PWA updates
+- Supports granular cache invalidation
+- Enables offline-aware version checking
+
+### Format
+```json
+{
+  "version": "1.0.0",
+  "pyodide_version": "0.24.0",
+  "cache_version": "v1.0.0",
+  "build_date": "2026-10-02",
+  "assets": ["index.html", "sw.js", "vendor/app.js"]
+}
+```
+
+### Cache Busting Strategy
+1. **CACHE_VERSION**: Updated in `sw.js` for major version bumps
+   - Forces all users to re-download static assets
+   - Use when making breaking changes
+
+2. **Build-specific caching**:
+   - Each PWA build has a unique identifier
+   - Served files include content hashes when available
+   - Minimizes unnecessary re-downloads
+
+3. **Service Worker updates**:
+   - Check version.json periodically (if available)
+   - Show "Update Available" notification to users
+   - Allow users to refresh to latest version
+
+## Testing Offline Functionality
+
+### Local Testing with Playwright
+
+#### Test offline parsing
+```bash
+make test-offline
+```
+This runs `e2e/offline.spec.js` which:
+- Loads the app while online
+- Takes the browser offline using Playwright's `setOffline()`
+- Verifies parsing still works using cached Pyodide
+- Reloads the page while offline (tests service worker cache)
+- Restores network and verifies continued operation
+
+#### Test with zero cross-origin requests
+```bash
+make test-no-network
+```
+This runs `e2e/no-network.spec.js` which:
+- Intercepts all network requests using Playwright
+- Blocks any cross-origin requests (simulating no external network)
+- Verifies app loads and functions completely with self-origin only
+- Ensures no CDN dependencies are hardcoded
+
+#### Run all PWA tests
+```bash
+make test-pwa
+```
+This runs all tests:
+1. `test-pwa-integrity`: Pytest checks for valid service worker, vendor assets
+2. `test-offline`: Offline operation tests
+3. `test-no-network`: No cross-origin network tests
+
+### Testing Integrity with pytest
+
+```bash
+make test-pwa-integrity
+```
+
+Checks:
+- Service worker has correct cache strategy
+- HTML files have no unpkg/jsDelivr CDN references
+- No external script sources in HTML
+- Service worker CACHE_VERSION is defined
+- PRECACHE_URLS match files in dist/pwa/
+- Vendor JavaScript files are minified
+- Service worker install/fetch handlers exist
+
+### Manual Testing
+
+#### Using built PWA
+```bash
+make pwa-build
+python3 -m http.server -d dist/pwa 8080
+```
+Then open `http://localhost:8080/` and test offline using browser DevTools:
+1. Open DevTools (F12)
+2. Go to Network tab
+3. Check "Offline" checkbox
+4. Reload page
+5. Try parsing a workout
+
+#### Using local HTTPS server
+```bash
+make pwa-serve-local
+```
+Access at `https://localhost:8444/` with self-signed certificate
+
+### Continuous Integration
+
+GitHub Actions automatically runs:
+- `make test-e2e` - All UI tests (including `ui.spec.js`)
+- `make test-offline` - Offline tests (after PR merge)
+- `make test-pwa-integrity` - Static analysis
+
 ## Future Enhancements
 
-- Add pre-deployment tests (PWA loading tests)
-- Implement canary deployments to dev gh-pages branch first
-- Add performance metrics tracking
-- Implement rollback mechanism for failed deployments
-- Consider CDN caching strategy for service workers
+- Add performance metrics tracking for offline operations
+- Implement selective sync for large datasets
+- Add progressive image loading for offline mode
+- Implement rollback mechanism for failed updates
+- Consider differential caching by user tier/device

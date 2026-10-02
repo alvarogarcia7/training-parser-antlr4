@@ -259,6 +259,73 @@ test-git-watch: check-virtual-env
 	@npm run test:git:watch
 .PHONY: test-git-watch
 
+# PWA Offline Testing
+# Comprehensive tests for offline-first functionality
+
+test-offline: check-virtual-env
+	@echo "Running offline functionality tests..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@echo "Installing Playwright browsers (chromium)..."
+	@npx playwright install --with-deps chromium > /dev/null 2>&1
+	@echo "Starting PWA server for offline tests..."
+	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+		echo "✓ PWA server already running"; \
+	else \
+		uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 & \
+		echo $$! > $(PWA_SERVER_PID); \
+		sleep 3; \
+	fi
+	@echo "Running offline.spec.js..."; \
+	npx playwright test e2e/offline.spec.js --project=chromium; \
+	TEST_RESULT=$$?; \
+	if [ -f $(PWA_SERVER_PID) ]; then \
+		kill $$(cat $(PWA_SERVER_PID)) 2>/dev/null || true; \
+		rm $(PWA_SERVER_PID); \
+	fi; \
+	exit $$TEST_RESULT
+.PHONY: test-offline
+
+test-no-network: check-virtual-env
+	@echo "Running no-network tests..."
+	@if [ ! -d node_modules ]; then \
+		echo "Installing npm dependencies..."; \
+		npm install; \
+	fi
+	@echo "Installing Playwright browsers (chromium)..."
+	@npx playwright install --with-deps chromium > /dev/null 2>&1
+	@echo "Starting PWA server for no-network tests..."
+	@if [ -f $(PWA_SERVER_PID) ] && kill -0 $$(cat $(PWA_SERVER_PID)) 2>/dev/null; then \
+		echo "✓ PWA server already running"; \
+	else \
+		uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 & \
+		echo $$! > $(PWA_SERVER_PID); \
+		sleep 3; \
+	fi
+	@echo "Running no-network.spec.js..."; \
+	npx playwright test e2e/no-network.spec.js --project=chromium; \
+	TEST_RESULT=$$?; \
+	if [ -f $(PWA_SERVER_PID) ]; then \
+		kill $$(cat $(PWA_SERVER_PID)) 2>/dev/null || true; \
+		rm $(PWA_SERVER_PID); \
+	fi; \
+	exit $$TEST_RESULT
+.PHONY: test-no-network
+
+test-pwa-integrity: check-virtual-env
+	@echo "Running PWA integrity tests..."
+	@echo "Building PWA first..."
+	@make pwa-build > /dev/null
+	@echo "Running pytest checks (pwa-checklist.py)..."
+	@uv run pytest tests/pwa-checklist.py -v
+.PHONY: test-pwa-integrity
+
+test-pwa: test-pwa-integrity test-offline test-no-network
+	@echo "✅ All PWA tests passed"
+.PHONY: test-pwa
+
 # CI Pipeline Babysitter
 # Monitor GitHub Actions workflow until completion
 
