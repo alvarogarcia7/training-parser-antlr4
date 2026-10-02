@@ -1,0 +1,194 @@
+name: Deploy from deployed branch
+
+on:
+  push:
+    branches: [ deployed ]
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check force push
+      run: |
+        if [ "${{ github.event.forced }}" = "true" ]; then
+          echo "❌ Force push detected - deployment not allowed"
+          exit 1
+        fi
+        echo "✓ Not a force push"
+
+    - name: Check fast-forward
+      run: |
+        if ! git merge-base --is-ancestor "${{ github.event.before }}" "${{ github.sha }}"; then
+          echo "❌ Not a fast-forward push"
+          exit 1
+        fi
+        echo "✓ Fast-forward push verified"
+
+    - name: Check commit reachable from main
+      run: |
+        if ! git merge-base --is-ancestor "${{ github.sha }}" "origin/main"; then
+          echo "❌ Commit not reachable from main branch"
+          exit 1
+        fi
+        echo "✓ Commit reachable from main"
+
+  build:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Install npm dependencies
+      run: npm install
+
+    - name: Install Python dependencies
+      run: uv sync
+
+    - name: Cache ANTLR grammar compilation
+      id: cache-grammar
+      uses: actions/cache@v4
+      with:
+        path: dist/
+        key: antlr-grammar-${{ hashFiles('training.g4') }}
+        restore-keys: |
+          antlr-grammar-
+
+    - name: Download ANTLR4
+      if: steps.cache-grammar.outputs.cache-hit != 'true'
+      run: curl -O https://www.antlr.org/download/antlr-4.9.3-complete.jar
+
+    - name: Compile grammar
+      if: steps.cache-grammar.outputs.cache-hit != 'true'
+      run: |
+        source .venv/bin/activate
+        make compile-grammar
+
+    - name: Download Pyodide
+      run: |
+        chmod +x bin/download-pyodide.sh
+        ./bin/download-pyodide.sh
+
+    - name: Build StrictDoc
+      run: |
+        source .venv/bin/activate
+        make strictdoc-export
+
+    - name: Build site
+      run: |
+        source .venv/bin/activate
+        make site-build
+
+    - name: Upload site artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: site-dist
+        path: dist/site/
+        retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Install npm dependencies
+      run: npm install
+
+    - name: Install Python dependencies
+      run: uv sync
+
+    - name: Download site artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: site-dist
+        path: dist/site/
+
+    - name: Prepare dist/pwa for tests
+      run: |
+        mkdir -p dist/pwa
+        cp -r dist/site/* dist/pwa/
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Run offline tests
+      run: |
+        source .venv/bin/activate
+        npm run test:offline
+
+    - name: Run no-network tests
+      run: |
+        source .venv/bin/activate
+        npm run test:no-network
+
+    - name: Run E2E tests
+      run: |
+        source .venv/bin/activate
+        npm run test:e2e
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download site artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: site-dist
+        path: dist/site/
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist/site
+        publish_branch: gh-pages
+        force_orphan: true
+
+    - name: Update live tag
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git tag -f live ${{ github.sha }}
+        git push origin live --force
