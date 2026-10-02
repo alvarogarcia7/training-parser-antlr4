@@ -46,9 +46,15 @@ pwa-build: check-virtual-env vendor-python-archive
 	@mkdir -p dist/pwa/vendor
 	@cp dist/vendor/vendor-runtime.tar.gz dist/pwa/vendor/
 	@cp dist/vendor/app.zip dist/pwa/vendor/
-	@if [ -d mobile-app/pyodide ]; then \
-		echo "Copying Pyodide to PWA..."; \
-		cp -r mobile-app/pyodide dist/pwa/; \
+	@if [ -d dist/vendor/pyodide ]; then \
+		echo "Copying Pyodide to PWA vendor..."; \
+		cp -r dist/vendor/pyodide dist/pwa/vendor/; \
+	elif [ -d mobile-app/pyodide ]; then \
+		echo "Copying Pyodide from mobile-app to PWA vendor..."; \
+		mkdir -p dist/pwa/vendor/pyodide; \
+		cp -r mobile-app/pyodide/. dist/pwa/vendor/pyodide/; \
+	else \
+		echo "WARNING: No Pyodide found — run 'make vendor-pyodide' first"; \
 	fi
 	@echo "PWA packaged to dist/pwa/"
 	@echo "To test locally: python3 -m http.server -d dist/pwa 8080"

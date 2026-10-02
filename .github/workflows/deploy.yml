@@ -97,8 +97,8 @@ jobs:
 
     - name: Download Pyodide
       run: |
-        chmod +x bin/download-pyodide.sh
-        ./bin/download-pyodide.sh
+        chmod +x bin/vendor-pyodide.sh
+        ./bin/vendor-pyodide.sh
 
     - name: Build site
       run: |
