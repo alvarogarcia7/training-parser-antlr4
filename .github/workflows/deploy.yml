@@ -147,13 +147,14 @@ jobs:
       run: |
         mkdir -p dist/pwa
         cp -r dist/site/* dist/pwa/
-        # Serve under /mobile-app/ to match Playwright baseURL + test paths
-        mkdir -p /tmp/test-serve/mobile-app
-        cp -r dist/pwa/* /tmp/test-serve/mobile-app/
+        # Replace mobile-app/ with built content so serve.py serves it
+        # at /mobile-app/ with COOP/COEP headers (required by Pyodide)
+        rm -rf mobile-app
+        cp -r dist/pwa mobile-app
 
     - name: Start test server
       run: |
-        python3 -m http.server 8080 --directory /tmp/test-serve &
+        uv run python3 bin/serve.py &
         echo $! > /tmp/test-server.pid
         for i in $(seq 1 15); do
           curl -s http://localhost:8080/mobile-app/ > /dev/null && break
