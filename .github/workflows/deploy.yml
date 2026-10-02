@@ -100,11 +100,6 @@ jobs:
         chmod +x bin/download-pyodide.sh
         ./bin/download-pyodide.sh
 
-    - name: Build StrictDoc
-      run: |
-        source .venv/bin/activate
-        make strictdoc-export
-
     - name: Build site
       run: |
         source .venv/bin/activate

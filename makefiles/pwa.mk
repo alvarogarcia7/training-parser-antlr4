@@ -78,6 +78,9 @@ pwa-publish: pwa-build
 	@echo "GitHub Pages URL: https://$(shell git remote get-url origin | sed 's/.*github.com.\([^/]*\)\/\(.*\)\.git/\1.github.io\/\2/')"
 .PHONY: pwa-publish
 
+docs-build: strictdoc-export
+.PHONY: docs-build
+
 site-build: pwa-build docs-build
 	@echo "Building site with PWA at root and docs at /requirements/..."
 	@mkdir -p dist/site
