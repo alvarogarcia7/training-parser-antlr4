@@ -1,5 +1,5 @@
 ---
-id: TP-7
+id: TP-11
 title: Detect training seasons and percentage of 1RM
 status: Done
 assignee: []
