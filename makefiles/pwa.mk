@@ -14,19 +14,17 @@ vendor-pyodide:
 	@./bin/vendor-pyodide.sh
 .PHONY: vendor-pyodide
 
-vendor-python-archive:
-	@echo "Building Python vendor archive..."
-	@mkdir -p dist/vendor/python
-	@echo "✓ Placeholder: Python archive bundling (antlr4 + libs)"
-	@echo "  Location: dist/vendor/python/vendor.tar"
-.PHONY: vendor-python-archive
-
-vendor-app-zip:
-	@echo "Building app.zip from source..."
+vendor-python-archive: check-virtual-env
+	@echo "Creating vendor archives..."
 	@mkdir -p dist/vendor
-	@cd mobile-app && zip -r -q ../vendor/app.zip src/ || true
-	@echo "✓ App source bundled to dist/vendor/app.zip"
-.PHONY: vendor-app-zip
+	@echo "Bundling Python runtime (antlr4)..."
+	@cd mobile-app && tar -czf ../dist/vendor/vendor-runtime.tar.gz python/ 2>/dev/null || true
+	@echo "✓ vendor-runtime.tar.gz created"
+	@echo "Bundling application code and data..."
+	@chmod +x bin/create-app-archive.sh
+	@./bin/create-app-archive.sh dist/vendor
+	@echo "✓ app.zip created"
+.PHONY: vendor-python-archive
 
 generate-version-json:
 	@echo "Generating version.json manifest..."
@@ -36,30 +34,22 @@ generate-version-json:
 .PHONY: generate-version-json
 
 # Vendor all dependencies in one target
-vendor-all: vendor-js vendor-pyodide vendor-python-archive vendor-app-zip generate-version-json
+vendor-all: vendor-js vendor-pyodide vendor-python-archive generate-version-json
 	@echo "✓ All assets vendored successfully"
 .PHONY: vendor-all
 
-pwa-build: check-virtual-env
+pwa-build: check-virtual-env vendor-python-archive
 	@echo "Packaging PWA for deployment..."
 	@mkdir -p dist/pwa
 	@cp -r mobile-app/* dist/pwa/
-	@echo "Copying Python modules into PWA..."
-	@cp -r src dist/pwa/
-	@mkdir -p dist/pwa/dist && find dist -maxdepth 1 -mindepth 1 -not -name pwa -exec cp -r {} dist/pwa/dist/ \;
-	@cp -r data dist/pwa/
-	@cp -r schema dist/pwa/
+	@echo "Copying vendor archives..."
+	@mkdir -p dist/pwa/vendor
+	@cp dist/vendor/vendor-runtime.tar.gz dist/pwa/vendor/
+	@cp dist/vendor/app.zip dist/pwa/vendor/
 	@if [ -d mobile-app/pyodide ]; then \
 		echo "Copying Pyodide to PWA..."; \
 		cp -r mobile-app/pyodide dist/pwa/; \
 	fi
-	@echo "Rewriting fetch paths for GitHub Pages subdirectory hosting..."
-	@sed -i \
-		-e "s|'/src/|'../src/|g" \
-		-e "s|'/dist/|'../dist/|g" \
-		-e "s|'/data/|'../data/|g" \
-		-e "s|'/schema/|'../schema/|g" \
-		dist/pwa/src/pyodide-worker.js
 	@echo "PWA packaged to dist/pwa/"
 	@echo "To test locally: python3 -m http.server -d dist/pwa 8080"
 	@echo "Open: http://localhost:8080/"

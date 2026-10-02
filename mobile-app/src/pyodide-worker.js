@@ -35,88 +35,6 @@ try {
 let pyodide = null;
 log('Script imports complete', 'DEBUG');
 
-const PYTHON_FILES = [
-  // [fetch_path, pyodide_fs_path]
-  // antlr4 runtime (bundled in mobile-app/python)
-  ['../python/antlr4/__init__.py',             '/home/pyodide/antlr4/__init__.py'],
-  ['../python/antlr4/BufferedTokenStream.py',  '/home/pyodide/antlr4/BufferedTokenStream.py'],
-  ['../python/antlr4/CommonTokenFactory.py',   '/home/pyodide/antlr4/CommonTokenFactory.py'],
-  ['../python/antlr4/CommonTokenStream.py',    '/home/pyodide/antlr4/CommonTokenStream.py'],
-  ['../python/antlr4/FileStream.py',           '/home/pyodide/antlr4/FileStream.py'],
-  ['../python/antlr4/InputStream.py',          '/home/pyodide/antlr4/InputStream.py'],
-  ['../python/antlr4/IntervalSet.py',          '/home/pyodide/antlr4/IntervalSet.py'],
-  ['../python/antlr4/LL1Analyzer.py',          '/home/pyodide/antlr4/LL1Analyzer.py'],
-  ['../python/antlr4/Lexer.py',                '/home/pyodide/antlr4/Lexer.py'],
-  ['../python/antlr4/ListTokenSource.py',      '/home/pyodide/antlr4/ListTokenSource.py'],
-  ['../python/antlr4/Parser.py',               '/home/pyodide/antlr4/Parser.py'],
-  ['../python/antlr4/ParserInterpreter.py',    '/home/pyodide/antlr4/ParserInterpreter.py'],
-  ['../python/antlr4/ParserRuleContext.py',    '/home/pyodide/antlr4/ParserRuleContext.py'],
-  ['../python/antlr4/PredictionContext.py',    '/home/pyodide/antlr4/PredictionContext.py'],
-  ['../python/antlr4/Recognizer.py',           '/home/pyodide/antlr4/Recognizer.py'],
-  ['../python/antlr4/RuleContext.py',          '/home/pyodide/antlr4/RuleContext.py'],
-  ['../python/antlr4/StdinStream.py',          '/home/pyodide/antlr4/StdinStream.py'],
-  ['../python/antlr4/Token.py',                '/home/pyodide/antlr4/Token.py'],
-  ['../python/antlr4/TokenStreamRewriter.py',  '/home/pyodide/antlr4/TokenStreamRewriter.py'],
-  ['../python/antlr4/Utils.py',                '/home/pyodide/antlr4/Utils.py'],
-  ['../python/antlr4/atn/__init__.py',         '/home/pyodide/antlr4/atn/__init__.py'],
-  ['../python/antlr4/atn/ATN.py',              '/home/pyodide/antlr4/atn/ATN.py'],
-  ['../python/antlr4/atn/ATNConfig.py',        '/home/pyodide/antlr4/atn/ATNConfig.py'],
-  ['../python/antlr4/atn/ATNConfigSet.py',     '/home/pyodide/antlr4/atn/ATNConfigSet.py'],
-  ['../python/antlr4/atn/ATNDeserializationOptions.py', '/home/pyodide/antlr4/atn/ATNDeserializationOptions.py'],
-  ['../python/antlr4/atn/ATNDeserializer.py',  '/home/pyodide/antlr4/atn/ATNDeserializer.py'],
-  ['../python/antlr4/atn/ATNSimulator.py',     '/home/pyodide/antlr4/atn/ATNSimulator.py'],
-  ['../python/antlr4/atn/ATNState.py',         '/home/pyodide/antlr4/atn/ATNState.py'],
-  ['../python/antlr4/atn/ATNType.py',          '/home/pyodide/antlr4/atn/ATNType.py'],
-  ['../python/antlr4/atn/LexerATNSimulator.py', '/home/pyodide/antlr4/atn/LexerATNSimulator.py'],
-  ['../python/antlr4/atn/LexerAction.py',      '/home/pyodide/antlr4/atn/LexerAction.py'],
-  ['../python/antlr4/atn/LexerActionExecutor.py', '/home/pyodide/antlr4/atn/LexerActionExecutor.py'],
-  ['../python/antlr4/atn/ParserATNSimulator.py', '/home/pyodide/antlr4/atn/ParserATNSimulator.py'],
-  ['../python/antlr4/atn/PredictionMode.py',  '/home/pyodide/antlr4/atn/PredictionMode.py'],
-  ['../python/antlr4/atn/SemanticContext.py',  '/home/pyodide/antlr4/atn/SemanticContext.py'],
-  ['../python/antlr4/atn/Transition.py',       '/home/pyodide/antlr4/atn/Transition.py'],
-  ['../python/antlr4/dfa/__init__.py',         '/home/pyodide/antlr4/dfa/__init__.py'],
-  ['../python/antlr4/dfa/DFA.py',              '/home/pyodide/antlr4/dfa/DFA.py'],
-  ['../python/antlr4/dfa/DFASerializer.py',    '/home/pyodide/antlr4/dfa/DFASerializer.py'],
-  ['../python/antlr4/dfa/DFAState.py',         '/home/pyodide/antlr4/dfa/DFAState.py'],
-  ['../python/antlr4/error/__init__.py',       '/home/pyodide/antlr4/error/__init__.py'],
-  ['../python/antlr4/error/DiagnosticErrorListener.py', '/home/pyodide/antlr4/error/DiagnosticErrorListener.py'],
-  ['../python/antlr4/error/ErrorListener.py',  '/home/pyodide/antlr4/error/ErrorListener.py'],
-  ['../python/antlr4/error/ErrorStrategy.py',  '/home/pyodide/antlr4/error/ErrorStrategy.py'],
-  ['../python/antlr4/error/Errors.py',         '/home/pyodide/antlr4/error/Errors.py'],
-  ['../python/antlr4/tree/__init__.py',        '/home/pyodide/antlr4/tree/__init__.py'],
-  ['../python/antlr4/tree/Chunk.py',           '/home/pyodide/antlr4/tree/Chunk.py'],
-  ['../python/antlr4/tree/ParseTreeMatch.py',  '/home/pyodide/antlr4/tree/ParseTreeMatch.py'],
-  ['../python/antlr4/tree/ParseTreePattern.py', '/home/pyodide/antlr4/tree/ParseTreePattern.py'],
-  ['../python/antlr4/tree/ParseTreePatternMatcher.py', '/home/pyodide/antlr4/tree/ParseTreePatternMatcher.py'],
-  ['../python/antlr4/tree/RuleTagToken.py',    '/home/pyodide/antlr4/tree/RuleTagToken.py'],
-  ['../python/antlr4/tree/TokenTagToken.py',   '/home/pyodide/antlr4/tree/TokenTagToken.py'],
-  ['../python/antlr4/tree/Tree.py',            '/home/pyodide/antlr4/tree/Tree.py'],
-  ['../python/antlr4/tree/Trees.py',           '/home/pyodide/antlr4/tree/Trees.py'],
-  ['../python/antlr4/xpath/__init__.py',       '/home/pyodide/antlr4/xpath/__init__.py'],
-  ['../python/antlr4/xpath/XPath.py',          '/home/pyodide/antlr4/xpath/XPath.py'],
-  // training parser modules (../../ because worker is in mobile-app/src/)
-  ['/src/parser/__init__.py',           '/home/pyodide/src/parser/__init__.py'],
-  ['/src/parser/model.py',              '/home/pyodide/src/parser/model.py'],
-  ['/src/parser/parser.py',             '/home/pyodide/src/parser/parser.py'],
-  ['/src/parser/standardize_name.py',   '/home/pyodide/src/parser/standardize_name.py'],
-  ['/src/parser/serializer.py',         '/home/pyodide/src/parser/serializer.py'],
-  ['/src/parser/error_listener.py',     '/home/pyodide/src/parser/error_listener.py'],
-  ['/src/parser/series_builder.py',     '/home/pyodide/src/parser/series_builder.py'],
-  ['/src/__init__.py',              '/home/pyodide/src/__init__.py'],
-  ['/src/data_access.py',           '/home/pyodide/src/data_access.py'],
-  ['/src/statistics.py',            '/home/pyodide/src/statistics.py'],
-  // dist/__init__.py is created programmatically below, not fetched
-  ['/dist/trainingLexer.py',        '/home/pyodide/dist/trainingLexer.py'],
-  ['/dist/trainingParser.py',       '/home/pyodide/dist/trainingParser.py'],
-  ['/dist/trainingListener.py',     '/home/pyodide/dist/trainingListener.py'],
-  ['/dist/trainingVisitor.py',      '/home/pyodide/dist/trainingVisitor.py'],
-  ['/data/config/synonyms.yaml',    '/home/pyodide/data/config/synonyms.yaml'],
-  ['/schema/envelope-set-centric.schema.json', '/home/pyodide/schema/envelope-set-centric.schema.json'],
-  ['/schema/set-centric.schema.json',          '/home/pyodide/schema/set-centric.schema.json'],
-  ['/schema/common-definitions.schema.json',   '/home/pyodide/schema/common-definitions.schema.json'],
-  ['../python/app_api.py',             '/home/pyodide/app_api.py'],
-];
-
 async function initPyodide() {
   log('initPyodide started', 'INFO');
   self.postMessage({ type: 'loading', message: 'Loading Python runtime...' });
@@ -160,95 +78,77 @@ async function initPyodide() {
   self.postMessage({ type: 'loading', message: 'Loading parser modules...' });
   log('Creating directories...', 'DEBUG');
 
-  // Create directories in Pyodide FS with error handling
-  const dirs = ['/home/pyodide/src', '/home/pyodide/src/parser', '/home/pyodide/dist', '/home/pyodide/data', '/home/pyodide/data/config', '/home/pyodide/antlr4', '/home/pyodide/schema'];
-  for (const dir of dirs) {
+  // Create base directory for Pyodide filesystem
+  try {
+    pyodide.FS.mkdir('/home/pyodide');
+  } catch (e) {
+    if (!e.message.includes('already exists')) {
+      log(`Failed to create /home/pyodide: ${e.message}`, 'WARN');
+    }
+  }
+  log('Base directory created', 'DEBUG');
+
+  // Load vendor archives: vendor-runtime.tar.gz (antlr4 + app_api.py) and app.zip
+  self.postMessage({ type: 'loading', message: 'Loading Python runtime archives...' });
+
+  try {
+    // Fetch and unpack vendor-runtime.tar.gz (antlr4 runtime)
+    log('Fetching vendor-runtime.tar.gz...', 'INFO');
+    let vendorRuntimeResp;
     try {
-      pyodide.FS.mkdir(dir);
+      vendorRuntimeResp = await fetch('/vendor/vendor-runtime.tar.gz');
     } catch (e) {
-      if (!e.message.includes('already exists')) {
-        log(`Failed to create ${dir}: ${e.message}`, 'WARN');
-      }
+      // Fallback to relative path for development
+      vendorRuntimeResp = await fetch('./vendor/vendor-runtime.tar.gz');
     }
-  }
-  log('Directories created', 'DEBUG');
 
-  // Write empty __init__.py for packages that don't have one on disk
-  const emptyInit = '';
-  try { pyodide.FS.writeFile('/home/pyodide/src/__init__.py', emptyInit, { encoding: 'utf8' }); } catch {}
-  try { pyodide.FS.writeFile('/home/pyodide/dist/__init__.py', emptyInit, { encoding: 'utf8' }); } catch {}
-
-  // Helper to ensure parent directories exist
-  function ensureParentDir(fsPath) {
-    const parts = fsPath.split('/').filter(p => p);
-    let currentPath = '';
-    for (const part of parts.slice(0, -1)) {
-      currentPath += '/' + part;
-      try {
-        pyodide.FS.mkdir(currentPath);
-      } catch (e) {
-        // Directory likely already exists
-      }
+    if (!vendorRuntimeResp.ok) {
+      throw new Error(`Failed to fetch vendor-runtime.tar.gz: HTTP ${vendorRuntimeResp.status}`);
     }
+
+    const vendorRuntimeBuffer = await vendorRuntimeResp.arrayBuffer();
+    log(`vendor-runtime.tar.gz fetched (${(vendorRuntimeBuffer.byteLength / 1024 / 1024).toFixed(2)} MB)`, 'INFO');
+
+    log('Unpacking vendor-runtime.tar.gz...', 'INFO');
+    self.postMessage({ type: 'loading', message: 'Unpacking Python runtime...' });
+    await pyodide.unpackArchive(vendorRuntimeBuffer, 'tar');
+    log('✓ vendor-runtime.tar.gz unpacked', 'INFO');
+
+  } catch (e) {
+    log(`Warning: Failed to load vendor runtime archive: ${e.message}`, 'WARN');
+    self.postMessage({ type: 'loading', message: 'Vendor runtime fallback mode...' });
   }
 
-  // Fetch and write each Python source file
-  log(`Fetching ${PYTHON_FILES.length} Python files...`, 'INFO');
-  self.postMessage({ type: 'loading', message: `Loading files (0/${PYTHON_FILES.length})...` });
-
-  const failedFiles = [];
-  let successCount = 0;
-
-  // Log sample of what we're loading
-  log(`Sample files: ${PYTHON_FILES.slice(0, 3).map(f => f[0]).join(', ')}...`, 'DEBUG');
-
-  for (let idx = 0; idx < PYTHON_FILES.length; idx++) {
-    const [fetchPath, fsPath] = PYTHON_FILES[idx];
+  try {
+    // Fetch and unpack app.zip (application code, schema, data)
+    log('Fetching app.zip...', 'INFO');
+    let appZipResp;
     try {
-      let resp;
-      try {
-        resp = await fetch(fetchPath);
-      } catch (fetchErr) {
-        throw new Error(`Network error: ${fetchErr.message}`);
-      }
-
-      if (resp.ok) {
-        let text;
-        try {
-          text = await resp.text();
-        } catch (readErr) {
-          throw new Error(`Failed to read response: ${readErr.message}`);
-        }
-
-        try {
-          ensureParentDir(fsPath);
-          pyodide.FS.writeFile(fsPath, text, { encoding: 'utf8' });
-          successCount++;
-
-          // Log progress every 10 files and first/last file
-          if (successCount === 1 || successCount % 10 === 0 || successCount === PYTHON_FILES.length) {
-            log(`Written ${successCount}/${PYTHON_FILES.length}: ${fsPath} (${text.length} bytes)`, 'DEBUG');
-            self.postMessage({ type: 'loading', message: `Loading files (${successCount}/${PYTHON_FILES.length})...` });
-          }
-        } catch (writeErr) {
-          failedFiles.push(`${fetchPath} (write failed: ${writeErr.message})`);
-          log(`Failed to write ${fsPath}: ${writeErr.message}`, 'ERROR');
-        }
-      } else {
-        failedFiles.push(`${fetchPath} (HTTP ${resp.status})`);
-        log(`Failed to fetch ${fetchPath}: HTTP ${resp.status}`, 'ERROR');
-      }
+      appZipResp = await fetch('/vendor/app.zip');
     } catch (e) {
-      failedFiles.push(fetchPath);
-      log(`Could not load ${fetchPath}: ${e.message}`, 'ERROR');
+      // Fallback to relative path for development
+      appZipResp = await fetch('./vendor/app.zip');
     }
-  }
-  log(`Loaded ${successCount}/${PYTHON_FILES.length} files`, 'INFO');
-  if (failedFiles.length > 0) {
-    log(`${failedFiles.length} file(s) failed: ${failedFiles.slice(0, 5).join(', ')}${failedFiles.length > 5 ? '...' : ''}`, 'WARN');
+
+    if (!appZipResp.ok) {
+      throw new Error(`Failed to fetch app.zip: HTTP ${appZipResp.status}`);
+    }
+
+    const appZipBuffer = await appZipResp.arrayBuffer();
+    log(`app.zip fetched (${(appZipBuffer.byteLength / 1024 / 1024).toFixed(2)} MB)`, 'INFO');
+
+    log('Unpacking app.zip...', 'INFO');
+    self.postMessage({ type: 'loading', message: 'Unpacking application code...' });
+    await pyodide.unpackArchive(appZipBuffer, 'zip');
+    log('✓ app.zip unpacked', 'INFO');
+
+  } catch (e) {
+    log(`Error: Failed to load app archive: ${e.message}`, 'ERROR');
+    self.postMessage({ type: 'error', message: 'Failed to load application code: ' + e.message });
+    throw e;
   }
 
-  // List what's actually in /home/pyodide to verify files were written
+  // List what's actually in /home/pyodide to verify archives were unpacked
   try {
     const pyodideDir = pyodide.FS.readdir('/home/pyodide');
     const pyodideDirContents = pyodideDir.filter(f => f !== '.' && f !== '..');
