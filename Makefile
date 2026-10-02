@@ -312,25 +312,30 @@ docker-logs:
 .PHONY: docker-logs
 
 docker-test: _require-env
-	@PORT=$$(grep -E '^APP_PORT=' .env | cut -d= -f2); PORT=$${PORT:-8080}; \
-	echo "Waiting for service on port $$PORT..."; \
+	@set -a; . ./.env; set +a; \
+	HOST=$${APP_HOST:-127.0.0.1}; [ "$$HOST" = "0.0.0.0" ] && HOST=127.0.0.1; \
+	URL=http://$$HOST:$${APP_PORT:-8080}/; \
+	echo "Waiting for service at $$URL ..."; \
 	MAX=30; N=0; \
 	while [ $$N -lt $$MAX ]; do \
-		if curl -sf http://localhost:$$PORT/ > /dev/null 2>&1; then break; fi; \
+		if curl -sf $$URL > /dev/null 2>&1; then break; fi; \
 		N=$$((N+1)); sleep 2; \
 	done; \
 	if [ $$N -eq $$MAX ]; then echo "✗ Service did not start"; exit 1; fi; \
-	echo "✓ Service is up at http://localhost:$$PORT/"; \
-	HEADERS=$$(curl -sI http://localhost:$$PORT/); \
+	echo "✓ Service is up at $$URL"; \
+	HEADERS=$$(curl -sI $$URL); \
 	echo "$$HEADERS" | grep -qi "cross-origin-opener-policy" \
 		&& echo "✓ COOP header present" \
 		|| (echo "✗ COOP header missing"; exit 1); \
 	echo "$$HEADERS" | grep -qi "cross-origin-embedder-policy" \
 		&& echo "✓ COEP header present" \
 		|| (echo "✗ COEP header missing"; exit 1); \
-	curl -sf http://localhost:$$PORT/ | grep -q "Training Parser" \
+	curl -sf $$URL | grep -q "Training Parser" \
 		&& echo "✓ App HTML served correctly" \
 		|| (echo "✗ App HTML not found in response"; exit 1); \
+	curl -sfI $${URL}vendor/pyodide/pyodide.asm.wasm | grep -qi "application/wasm" \
+		&& echo "✓ Pyodide WASM served with correct MIME type" \
+		|| (echo "✗ Pyodide WASM missing or wrong MIME type"; exit 1); \
 	echo "✅ Deployment test passed"
 .PHONY: docker-test
 

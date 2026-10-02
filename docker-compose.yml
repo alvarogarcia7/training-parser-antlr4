@@ -1,17 +1,28 @@
+# ONORCA.DEV deployment.
+# All tunables live in .env (see .env.example); Compose loads it automatically.
+#
+# Designed to share a Docker host with other services:
+#   - COMPOSE_PROJECT_NAME namespaces the containers/networks of this stack
+#   - no fixed container_name, so it never clashes with another stack
+#   - the host port is configurable and bound to loopback by default, so a
+#     reverse proxy on the host routes ONORCA.DEV -> 127.0.0.1:APP_PORT
+name: ${COMPOSE_PROJECT_NAME:-onorca}
+
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile.web
-    image: ${APP_IMAGE:-onorca}
+    image: ${APP_IMAGE:-onorca}:${APP_TAG:-latest}
     ports:
-      - "${APP_HOST:-0.0.0.0}:${APP_PORT:-8080}:80"
+      - "${APP_HOST:-127.0.0.1}:${APP_PORT:-8080}:80"
     restart: unless-stopped
-    env_file:
-      - .env
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/"]
-      interval: 30s
-      timeout: 5s
-      start_period: 10s
-      retries: 3
+    mem_limit: ${APP_MEM_LIMIT:-256m}
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Healthcheck is defined in Dockerfile.web
