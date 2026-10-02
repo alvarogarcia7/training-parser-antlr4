@@ -155,6 +155,16 @@ jobs:
         # like /vendor/pyodide/pyodide.js which resolve against http://host:8080/
         ln -sf "$(pwd)/dist/pwa/vendor" vendor
 
+    - name: Debug vendor directory
+      run: |
+        echo "=== Checking vendor directory ==="
+        ls -la vendor/ 2>/dev/null && echo "vendor symlink OK" || echo "vendor symlink MISSING"
+        ls -la dist/pwa/vendor/ 2>/dev/null | head -20
+        echo "=== Checking pyodide ==="
+        ls -lh dist/pwa/vendor/pyodide/ 2>/dev/null | head -10 || echo "pyodide NOT FOUND"
+        echo "=== Checking mobile-app ==="
+        ls dist/pwa/vendor/ 2>/dev/null | head -10
+
     - name: Start test server
       run: |
         uv run python3 bin/serve.py &
@@ -163,6 +173,8 @@ jobs:
           curl -s http://localhost:8080/mobile-app/ > /dev/null && break
           sleep 1
         done
+        echo "=== Checking vendor via HTTP ==="
+        curl -sI http://localhost:8080/vendor/pyodide/pyodide.js 2>&1 | head -5 || echo "HTTP check failed"
 
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium
