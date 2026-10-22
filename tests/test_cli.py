@@ -71,7 +71,8 @@ class TestDataSerializer(unittest.TestCase):
         # Verify first exercise structure
         bench = result['exercises'][0]
         self.assertEqual(bench['name'], 'Bench press')
-        self.assertEqual(bench['equipment'], 'other')
+        # "bench press" is a barbell default (CR3 equipment classification).
+        self.assertEqual(bench['equipment'], 'barbell')
         self.assertEqual(len(bench['sets']), 4)
 
         # Verify set structure
