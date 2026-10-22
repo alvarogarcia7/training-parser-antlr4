@@ -283,3 +283,14 @@ seasons: check-virtual-env
 parse-all:
 	./bin/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all
+
+# Validate data.txt and, only if it validates, insert it into the database.
+# Serialization validates every session against the JSON schema, so the DB is
+# updated only when the whole file is valid. The recipe exits 0 on success and
+# non-zero otherwise, so it can gate automation ("parsing must finish with
+# exit code 0"). Override FILE/DB_FILE to target a different file or database.
+FILE ?= data.txt
+DB_FILE ?= data/parsed/database.json
+db-insert: check-virtual-env
+	python3 bin/insert_data_to_db.py $(FILE) -d $(DB_FILE)
+.PHONY: db-insert
