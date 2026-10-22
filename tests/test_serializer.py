@@ -97,24 +97,26 @@ class TestSerializer(unittest.TestCase):
 
         self.assertEqual(len(result['exercises']), 4)
 
+        # Set numbers run continuously across exercises (not shared between
+        # exercises), so each exercise owns a distinct contiguous range.
         self.assertEqual(len(result['exercises'][0]['sets']), 1)
         self.assertEqual(result['exercises'][0]['sets'][0]['setNumber'], 1)
 
         self.assertEqual(len(result['exercises'][1]['sets']), 3)
         for i in range(3):
-            self.assertEqual(result['exercises'][1]['sets'][i]['setNumber'], i + 1)
+            self.assertEqual(result['exercises'][1]['sets'][i]['setNumber'], i + 2)
             self.assertEqual(result['exercises'][1]['sets'][i]['repetitions'], 8)
 
         self.assertEqual(len(result['exercises'][2]['sets']), 5)
         for i in range(5):
-            self.assertEqual(result['exercises'][2]['sets'][i]['setNumber'], i + 1)
+            self.assertEqual(result['exercises'][2]['sets'][i]['setNumber'], i + 5)
             self.assertEqual(result['exercises'][2]['sets'][i]['repetitions'], 5)
 
         self.assertEqual(len(result['exercises'][3]['sets']), 4)
         expected_reps = [12, 10, 8, 6]
         expected_weights = [40.0, 50.0, 60.0, 70.0]
         for i in range(4):
-            self.assertEqual(result['exercises'][3]['sets'][i]['setNumber'], i + 1)
+            self.assertEqual(result['exercises'][3]['sets'][i]['setNumber'], i + 10)
             self.assertEqual(result['exercises'][3]['sets'][i]['repetitions'], expected_reps[i])
             self.assertEqual(result['exercises'][3]['sets'][i]['weight']['amount'], expected_weights[i])
 
@@ -181,13 +183,12 @@ class TestSerializer(unittest.TestCase):
 
         result = serialize_to_set_centric(exercises, timestamp)
 
+        # Numbering continues across exercises: ex1 -> 1,2 ; ex2 -> 3,4,5.
         ex1_sets = result['exercises'][0]['sets']
-        for i, set_ in enumerate(ex1_sets, start=1):
-            self.assertEqual(set_['setNumber'], i)
+        self.assertEqual([s['setNumber'] for s in ex1_sets], [1, 2])
 
         ex2_sets = result['exercises'][1]['sets']
-        for i, set_ in enumerate(ex2_sets, start=1):
-            self.assertEqual(set_['setNumber'], i)
+        self.assertEqual([s['setNumber'] for s in ex2_sets], [3, 4, 5])
 
     def test_workout_id_generation_format(self) -> None:
         exercises = [

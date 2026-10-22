@@ -98,12 +98,18 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
 
     workout_id = f"w_{timestamp.strftime('%Y%m%d_%H%M%S')}"
 
+    # Set numbers run continuously across the whole workout so that sets are
+    # NOT shared between exercises: e.g. "Smith Machine Squat" gets 1,2,3 and
+    # "Squat" gets 4,5,6. Reusing the same set numbers across exercises is
+    # reserved for superseries (no rest between exercises), which must be
+    # specified explicitly rather than falling out of per-exercise numbering.
     exercise_blocks = []
+    next_set_number = 1
     for exercise in exercises:
         sets = []
-        for idx, set_ in enumerate(exercise.sets_, start=1):
+        for set_ in exercise.sets_:
             set_dict: dict[str, Any] = {
-                "setNumber": idx,
+                "setNumber": next_set_number,
                 "repetitions": set_.repetitions,
                 "weight": {
                     "amount": set_.weight.amount,
@@ -113,6 +119,7 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
             if set_.rir is not None:
                 set_dict["rir"] = set_.rir
             sets.append(set_dict)
+            next_set_number += 1
 
         exercise_blocks.append({
             "name": exercise.name,
