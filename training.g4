@@ -38,6 +38,11 @@ sep        : X | DOT ;
 double_sep : XX | DOTDOT ;
 rir_dash   : DASH? INT ;
 
+// A single weight inside a fixed-reps multi-weight list, optionally carrying
+// its own RIR (e.g. '65-4'). Lets each weight in '10..50-4,65-4,65-3' hold a
+// distinct RIR while keeping the shared fixed-rep count from the '10..' prefix.
+fixed_rep_weight : weight_dot rir_dash? ;
+
 set_:
   // --- Order matters. See §5.1 for the rationale. ---
 
@@ -58,7 +63,9 @@ set_:
   | INT sep INT sep weight rir_dash?                        #whole_set_
 
   // 4. Fixed-reps multi-weight, v1 style (comma separator, dot decimals).
-  | INT double_sep weight_dot (COMMA weight_dot)* rir_dash? #fixed_reps_multiple_weight_v1
+  //    Each weight may carry its own RIR, so the shared fixed-rep count applies
+  //    to every weight: '10..50-4,65-4,65-3' == '10..50-4,10.65-4,10.65-3'.
+  | INT double_sep fixed_rep_weight (COMMA fixed_rep_weight)* #fixed_reps_multiple_weight_v1
 
   // 5. Fixed-reps multi-weight, v2 style (slash separator, either decimal).
   | INT double_sep weight (SLASH weight)+ rir_dash?         #fixed_reps_multiple_weight_v2

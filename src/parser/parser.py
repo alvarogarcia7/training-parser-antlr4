@@ -187,7 +187,8 @@ class Formatter(trainingVisitor):
 
     def visitFixed_reps_multiple_weight_v1(self, ctx: trainingParser.Fixed_reps_multiple_weight_v1Context) -> Any:
         try:
-            super().visitFixed_reps_multiple_weight_v1(ctx)
+            # The leading INT (before the double separator) is the shared rep
+            # count that applies to every weight in the list.
             int_tokens = ctx.INT()
             if int_tokens is None:
                 return
@@ -199,16 +200,53 @@ class Formatter(trainingVisitor):
             else:
                 repetitions = int(int_tokens.getText())
 
-            # Check if there's a RIR value
-            rir: int | None = None
-            rir_ctx = ctx.rir_dash()
-            if rir_ctx is not None:
-                text = rir_ctx.getText()
-                if text.startswith('-'):
-                    text = text[1:]
-                rir = int(text)
+            # Collect each weight together with its own optional RIR.
+            weighted_reps: list[tuple[int, float, int | None]] = []
+            for fw in ctx.fixed_rep_weight():
+                weight_dot_ctx = fw.weight_dot()
+                if weight_dot_ctx is None:
+                    continue
 
-            self.builder.add_fixed_reps_multiple_weights(repetitions, rir)
+                element_rir: int | None = None
+                rir_ctx = fw.rir_dash()
+                if rir_ctx is not None:
+                    text = rir_ctx.getText()
+                    if text.startswith('-'):
+                        text = text[1:]
+                    element_rir = int(text)
+
+                # A dotted element 'A.B' is normally a decimal weight at the
+                # shared fixed rep count (e.g. '8xx60.5' == 8 reps @ 60.5kg).
+                # BUT when the leading integer restates the fixed rep count
+                # ('10..50,10.65' where 10 == 10), it is a reps.weight
+                # restatement (10 reps @ 65) matching the single-rep-with-weight
+                # convention. This makes '10..50-4,65-4' == '10..50-4,10.65-4'.
+                weight_ints = weight_dot_ctx.INT()
+                if (
+                    weight_dot_ctx.DOT() is not None
+                    and len(weight_ints) == 2
+                    and int(weight_ints[0].getText()) == repetitions
+                ):
+                    weight_value = float(weight_ints[1].getText())
+                else:
+                    weight_value = float(weight_dot_ctx.getText().removesuffix('k').replace(',', '.'))
+                weighted_reps.append((repetitions, weight_value, element_rir))
+
+            # A lone RIR on the final weight is a trailing RIR for the whole
+            # set and applies to every weight ('5xx80,90,100-3' == all rir 3).
+            # When several weights carry their own RIR, keep them per-weight
+            # ('10..50-4,65-4,65-4,65-3' -> 4,4,4,3).
+            explicit_rirs = [r for _, _, r in weighted_reps if r is not None]
+            if (
+                len(weighted_reps) >= 2
+                and len(explicit_rirs) == 1
+                and weighted_reps[-1][2] is not None
+            ):
+                shared_rir = weighted_reps[-1][2]
+                weighted_reps = [(reps, w, shared_rir) for reps, w, _ in weighted_reps]
+
+            for reps, weight_value, series_rir in weighted_reps:
+                self.builder.add_series(reps, weight_value, series_rir)
         except (ValueError, AttributeError, TypeError):
             # Skip malformed fixed reps sets
             pass
