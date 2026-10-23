@@ -167,12 +167,19 @@ run: check-virtual-env
 	$(MAKE) to-clipboard
 .PHONY: run
 
+archive-data-generic:
+	@echo "DEST=$(shell date "+%Y-%m-%d") is mandatory OR use make archive-data for the default"
+	@set -u && echo $${DEST} > /dev/null
+	touch           data/workdir/$${DEST}.txt
+	echo ""      >> data/workdir/$${DEST}.txt
+	echo ""      >> data/workdir/$${DEST}.txt
+	cat data.txt >> data/workdir/$${DEST}.txt
+.PHONY: archive-data-generic
+
 archive-data:
-	touch           data/workdir/$(shell date "+%Y-%m-%d").txt
-	echo ""      >> data/workdir/$(shell date "+%Y-%m-%d").txt
-	echo ""      >> data/workdir/$(shell date "+%Y-%m-%d").txt
-	cat data.txt >> data/workdir/$(shell date "+%Y-%m-%d").txt
+	DEST=$(shell date "+%Y-%m-%d") ${MAKE} archive-data-generic
 	$(MAKE) save-data
+.PHONY: archive-data
 
 save-data:
 	$(MAKE) -C ./data/workdir save
@@ -291,6 +298,8 @@ parse-all:
 # exit code 0"). Override FILE/DB_FILE to target a different file or database.
 FILE ?= data.txt
 DB_FILE ?= data/parsed/database.json
-db-insert: check-virtual-env
-	python3 bin/insert_data_to_db.py $(FILE) -d $(DB_FILE)
-.PHONY: db-insert
+insert-db: check-virtual-env
+	DEST=$(shell date "+%Y-%m-%d") ${MAKE} archive-data-generic
+	python3 bin/insert_data_to_db.py data/workdir/$(shell date "+%Y-%m-%d").txt -d $(DB_FILE)
+	${MAKE} save-data
+.PHONY: insert-db
