@@ -78,7 +78,7 @@
     },
     "equipment": {
       "type": "string",
-      "enum": ["barbell", "dumbbell", "machine", "bodyweight", "cable", "kettlebell", "other"]
+      "enum": ["smith machine","barbell", "dumbbell", "machine", "bodyweight", "cable", "kettlebell", "other"]
     },
     "weightUnit": {
       "type": "string",

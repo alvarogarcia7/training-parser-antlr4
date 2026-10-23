@@ -21,7 +21,7 @@ import yaml
 
 # Values allowed by schema/common-definitions.schema.json#/$defs/equipment.
 VALID_EQUIPMENT = frozenset(
-    {"barbell", "dumbbell", "machine", "bodyweight", "cable", "kettlebell", "other"}
+    {"smith machine","barbell", "dumbbell", "machine", "bodyweight", "cable", "kettlebell", "other"}
 )
 DEFAULT_EQUIPMENT = "other"
 BARBELL = "barbell"

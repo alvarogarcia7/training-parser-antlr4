@@ -11,9 +11,11 @@
 #   3. otherwise: "other".
 
 equipment:
+  - type: smith machine
+    keywords:
+      - smith machine
   - type: machine
     keywords:
-      - smith machine   # "Smith Machine ..." implies a machine exercise
       - machine
   - type: dumbbell
     keywords:
@@ -22,12 +24,14 @@ equipment:
   - type: barbell
     keywords:
       - barbell
+      - bb
   - type: cable
     keywords:
       - cable
   - type: kettlebell
     keywords:
       - kettlebell
+      - kb
   - type: bodyweight
     keywords:
       - bodyweight
