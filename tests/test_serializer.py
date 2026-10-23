@@ -26,7 +26,8 @@ class TestSerializer(unittest.TestCase):
 
         exercise = result['exercises'][0]
         self.assertEqual(exercise['name'], 'Bench Press')
-        self.assertEqual(exercise['equipment'], 'other')
+        # "bench press" is a barbell default (CR3 equipment classification).
+        self.assertEqual(exercise['equipment'], 'barbell')
         self.assertEqual(len(exercise['sets']), 2)
 
         self.assertEqual(exercise['sets'][0]['setNumber'], 1)

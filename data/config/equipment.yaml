@@ -1,0 +1,40 @@
+# Equipment classification configuration
+#
+# Maps exercise names to an equipment type (one of the values allowed by the
+# JSON schema: barbell, dumbbell, machine, bodyweight, cable, kettlebell, other).
+#
+# Resolution order for an exercise name (case-insensitive):
+#   1. keyword match: if the name CONTAINS any keyword below, use that type.
+#      Entries are tried in order, so more specific keywords come first.
+#   2. barbell fallback: if no keyword matched and the name is one of the
+#      barbell_defaults, use "barbell".
+#   3. otherwise: "other".
+
+equipment:
+  - type: machine
+    keywords:
+      - smith machine   # "Smith Machine ..." implies a machine exercise
+      - machine
+  - type: dumbbell
+    keywords:
+      - dumbbell
+      - db
+  - type: barbell
+    keywords:
+      - barbell
+  - type: cable
+    keywords:
+      - cable
+  - type: kettlebell
+    keywords:
+      - kettlebell
+  - type: bodyweight
+    keywords:
+      - bodyweight
+
+# Exercises that default to barbell when no keyword above matched.
+barbell_defaults:
+  - squat
+  - bench press
+  - deadlift
+  - overhead press

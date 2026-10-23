@@ -6,6 +6,7 @@ from typing import Any, Optional
 import jsonschema
 
 from src.parser.model import Exercise
+from src.parser.equipment import classify_equipment
 
 
 def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[datetime] = None) -> dict[str, Any]:
@@ -42,7 +43,7 @@ def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[da
 
         exercise_blocks.append({
             "name": exercise.name,
-            "equipment": "other",
+            "equipment": classify_equipment(exercise.name),
             "sets": sets
         })
 
@@ -123,7 +124,7 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
 
         exercise_blocks.append({
             "name": exercise.name,
-            "equipment": "other",
+            "equipment": classify_equipment(exercise.name),
             "sets": sets
         })
 
