@@ -48,33 +48,6 @@ test: check-virtual-env
 	${MAKE} test-seasons
 .PHONY: test
 
-# Git sync testing targets
-test-git-sync:
-	node --test tests/git-integration.spec.js
-.PHONY: test-git-sync
-
-test-git-sync-watch:
-	node --watch --test tests/git-integration.spec.js
-.PHONY: test-git-sync-watch
-
-test-sync-e2e:
-	node --test e2e/git-sync-e2e.spec.js
-.PHONY: test-sync-e2e
-
-# CORS proxy for local git-protocol testing
-cors-proxy:
-	PORT=8081 node ./node_modules/cors-anywhere/server.js
-.PHONY: cors-proxy
-
-# Local git server for testing (port 8888)
-git-server:
-	git daemon --reuseaddr --base-path=/tmp --export-all --port=8888 --verbose
-.PHONY: git-server
-
-# Start both git server and cors-proxy for local testing
-dev-sync-local: git-server cors-proxy
-.PHONY: dev-sync-local
-
 validate-datasets:
 	${MAKE} validate-bench-centric
 	${MAKE} validate-set-centric
@@ -167,19 +140,12 @@ run: check-virtual-env
 	$(MAKE) to-clipboard
 .PHONY: run
 
-archive-data-generic:
-	@echo "DEST=$(shell date "+%Y-%m-%d") is mandatory OR use make archive-data for the default"
-	@set -u && echo $${DEST} > /dev/null
-	touch           data/workdir/$${DEST}.txt
-	echo ""      >> data/workdir/$${DEST}.txt
-	echo ""      >> data/workdir/$${DEST}.txt
-	cat data.txt >> data/workdir/$${DEST}.txt
-.PHONY: archive-data-generic
-
 archive-data:
-	DEST=$(shell date "+%Y-%m-%d") ${MAKE} archive-data-generic
+	touch           data/workdir/$(shell date "+%Y-%m-%d").txt
+	echo ""      >> data/workdir/$(shell date "+%Y-%m-%d").txt
+	echo ""      >> data/workdir/$(shell date "+%Y-%m-%d").txt
+	cat data.txt >> data/workdir/$(shell date "+%Y-%m-%d").txt
 	$(MAKE) save-data
-.PHONY: archive-data
 
 save-data:
 	$(MAKE) -C ./data/workdir save
@@ -276,12 +242,12 @@ organize-files:
 .PHONY: organize-files
 
 
-DIR?=data/workdir/bulk
+DIR?=data/workdir/bulk/set/
 seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: data/config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
-	set -u && echo ${DIR}
+	set -u && echo $${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
 	python3 bin/detect_seasons.py $(DIR)/set
@@ -290,16 +256,3 @@ seasons: check-virtual-env
 parse-all:
 	./bin/parse_bulk.sh -o data/workdir/bulk data/workdir/202*txt
 .PHONY: parse-all
-
-# Validate data.txt and, only if it validates, insert it into the database.
-# Serialization validates every session against the JSON schema, so the DB is
-# updated only when the whole file is valid. The recipe exits 0 on success and
-# non-zero otherwise, so it can gate automation ("parsing must finish with
-# exit code 0"). Override FILE/DB_FILE to target a different file or database.
-FILE ?= data.txt
-DB_FILE ?= data/parsed/database.json
-insert-db: check-virtual-env
-	DEST=$(shell date "+%Y-%m-%d") ${MAKE} archive-data-generic
-	python3 bin/insert_data_to_db.py data/workdir/$(shell date "+%Y-%m-%d").txt -d $(DB_FILE)
-	${MAKE} save-data
-.PHONY: insert-db
