@@ -276,12 +276,12 @@ organize-files:
 .PHONY: organize-files
 
 
-DIR?=data/workdir/bulk/set/
+DIR?=data/workdir/bulk
 seasons: check-virtual-env
 	@echo "Detect training seasons and %1RM per exercise (config: data/config/seasons.yaml)"
 	@echo "Usage: make seasons DIR=<directory with set-centric JSON files>"
 	@echo ""
-	set -u && echo $${DIR}
+	set -u && echo ${DIR}
 	-mkdir -p $(DIR)/bench
 	-mkdir -p $(DIR)/set
 	python3 bin/detect_seasons.py $(DIR)/set
