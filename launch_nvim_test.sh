@@ -5,6 +5,7 @@ set -e
 
 # Get the project directory
 PROJECT_DIR="$HOME/repos/workspaces/.vibe-kanban-workspaces/4808-configure-the-nv/training-parser-antlr4"
+PROJECT_DIR="$PWD"
 
 # Activate virtual environment
 source "$PROJECT_DIR/.venv/bin/activate"
