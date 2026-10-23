@@ -1,7 +1,7 @@
 ---
 id: TP-10
 title: 'Git sync reliability: GitHub API backend and shallow git-protocol backend'
-status: Done
+status: To Do
 assignee: []
 created_date: '2026-10-02 07:50'
 labels:
@@ -34,15 +34,15 @@ Also correct backlog/decisions/decision-2 which claims GitHub Pages -> GitHub wo
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [x] #1 A sync interface (pull, push, list, load) with two backends; backend chosen by settings, defaulting to the GitHub API on non-localhost and git-protocol on localhost
-- [x] #2 GitHub REST backend (contents API) works from the github.io origin with a fine-grained PAT scoped to one repo; no proxy
-- [x] #3 Git-protocol backend: shallow single-branch clone (depth 1), fetch or clone before the first commit, fast-forward pull, push with no force, symrefs-based default branch, typed error codes, token sent only via Authorization (never in the URL or .git/config)
-- [x] #4 Local development uses the existing cors-anywhere (PORT=8081 node ./node_modules/cors-anywhere/server.js), documented and wrapped in a make target
-- [x] #5 Workout files get unique names (date plus short id) so merges do not conflict; existing YYYY-MM-DD.json files still load
-- [x] #6 navigator.locks guards writes; reconnect sync is queued and idempotent; logging goes through one leveled logger
-- [x] #7 Node tests exercise the same module the browser uses against a bare-repo test server for: empty remote, main, master, diverged history, rejected push, bad token, offline
-- [x] #8 e2e with a test git server that stays up for the whole run: push from page A, pull on page B, assert contents; e2e test 4 no longer accepts a failed push
-- [x] #9 decision-2 and the sync guides (PWA_SYNC_GUIDE, GIT_SYNC_TROUBLESHOOTING) corrected
+- [ ] #1 A sync interface (pull, push, list, load) with two backends; backend chosen by settings, defaulting to the GitHub API on non-localhost and git-protocol on localhost
+- [ ] #2 GitHub REST backend (contents API) works from the github.io origin with a fine-grained PAT scoped to one repo; no proxy
+- [ ] #3 Git-protocol backend: shallow single-branch clone (depth 1), fetch or clone before the first commit, fast-forward pull, push with no force, symrefs-based default branch, typed error codes, token sent only via Authorization (never in the URL or .git/config)
+- [ ] #4 Local development uses the existing cors-anywhere (PORT=8081 node ./node_modules/cors-anywhere/server.js), documented and wrapped in a make target
+- [ ] #5 Workout files get unique names (date plus short id) so merges do not conflict; existing YYYY-MM-DD.json files still load
+- [ ] #6 navigator.locks guards writes; reconnect sync is queued and idempotent; logging goes through one leveled logger
+- [ ] #7 Node tests exercise the same module the browser uses against a bare-repo test server for: empty remote, main, master, diverged history, rejected push, bad token, offline
+- [ ] #8 e2e with a test git server that stays up for the whole run: push from page A, pull on page B, assert contents; e2e test 4 no longer accepts a failed push
+- [ ] #9 decision-2 and the sync guides (PWA_SYNC_GUIDE, GIT_SYNC_TROUBLESHOOTING) corrected
 <!-- AC:END -->
 
 ## Implementation Plan

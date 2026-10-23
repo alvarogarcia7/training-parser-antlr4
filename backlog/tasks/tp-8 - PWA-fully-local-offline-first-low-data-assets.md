@@ -1,7 +1,7 @@
 ---
 id: TP-8
 title: 'PWA: fully local, offline-first, low-data assets'
-status: Done
+status: To Do
 assignee: []
 created_date: '2026-10-02 07:49'
 labels:
@@ -27,16 +27,16 @@ Decisions: vendor assets at build time (not committed); bundle Python as a rarel
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [x] #1 No runtime request leaves the app origin (enforced by an e2e test that aborts all cross-origin requests)
-- [x] #2 Pyodide, isomorphic-git and lightning-fs are vendored at build time from npm/download scripts and are not committed
-- [x] #3 CDN fallback removed from pyodide-worker.js and index.html; a missing local asset shows a clear error; CSP no longer allows CDN origins
-- [x] #4 Python code is shipped as a vendor archive (antlr4 runtime + libs) and app.zip (src, generated parser, synonyms, schema) loaded via pyodide.unpackArchive(); PYTHON_FILES lists and sed path rewrites are removed
-- [x] #5 sw.js is cache-first for hashed/versioned assets; Pyodide has its own cache keyed by Pyodide version; old caches are deleted on activate
-- [x] #6 Launch fetches only a tiny version.json; when it changes, only entries not already cached are downloaded; update is applied via an update-available prompt, not skipWaiting mid-session
-- [x] #7 sw.js ignores /requirements/ (docs share the site root) and navigator.storage.persist() is requested
-- [x] #8 Offline e2e passes (load once, setOffline, reload, parse works) against the built dist/pwa served by a plain static server
-- [x] #9 pytest check: no https:// hosts in index.html/sw.js/worker and every precache entry exists in the build output
-- [x] #10 PWA_DEPLOYMENT.md and local-testing docs updated
+- [ ] #1 No runtime request leaves the app origin (enforced by an e2e test that aborts all cross-origin requests)
+- [ ] #2 Pyodide, isomorphic-git and lightning-fs are vendored at build time from npm/download scripts and are not committed
+- [ ] #3 CDN fallback removed from pyodide-worker.js and index.html; a missing local asset shows a clear error; CSP no longer allows CDN origins
+- [ ] #4 Python code is shipped as a vendor archive (antlr4 runtime + libs) and app.zip (src, generated parser, synonyms, schema) loaded via pyodide.unpackArchive(); PYTHON_FILES lists and sed path rewrites are removed
+- [ ] #5 sw.js is cache-first for hashed/versioned assets; Pyodide has its own cache keyed by Pyodide version; old caches are deleted on activate
+- [ ] #6 Launch fetches only a tiny version.json; when it changes, only entries not already cached are downloaded; update is applied via an update-available prompt, not skipWaiting mid-session
+- [ ] #7 sw.js ignores /requirements/ (docs share the site root) and navigator.storage.persist() is requested
+- [ ] #8 Offline e2e passes (load once, setOffline, reload, parse works) against the built dist/pwa served by a plain static server
+- [ ] #9 pytest check: no https:// hosts in index.html/sw.js/worker and every precache entry exists in the build output
+- [ ] #10 PWA_DEPLOYMENT.md and local-testing docs updated
 <!-- AC:END -->
 
 ## Implementation Plan
