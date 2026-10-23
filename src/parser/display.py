@@ -2,6 +2,7 @@
 from typing import Any
 
 from src.parser.model import Exercise, Set_, Weight
+from src.parser.equipment import classify_equipment
 from src.data_access import VolumeFormatter
 
 
@@ -53,7 +54,7 @@ def serialize_exercise(exercise: Exercise) -> dict[str, Any]:
 
     return {
         "name": exercise.name,
-        "equipment": "other",
+        "equipment": classify_equipment(exercise.name),
         "sets": sets
     }
 

@@ -89,6 +89,15 @@ class trainingListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by trainingParser#fixed_rep_weight.
+    def enterFixed_rep_weight(self, ctx:trainingParser.Fixed_rep_weightContext):
+        pass
+
+    # Exit a parse tree produced by trainingParser#fixed_rep_weight.
+    def exitFixed_rep_weight(self, ctx:trainingParser.Fixed_rep_weightContext):
+        pass
+
+
     # Enter a parse tree produced by trainingParser#weight_.
     def enterWeight_(self, ctx:trainingParser.Weight_Context):
         pass

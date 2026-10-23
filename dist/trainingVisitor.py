@@ -54,6 +54,11 @@ class trainingVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by trainingParser#fixed_rep_weight.
+    def visitFixed_rep_weight(self, ctx:trainingParser.Fixed_rep_weightContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by trainingParser#weight_.
     def visitWeight_(self, ctx:trainingParser.Weight_Context):
         return self.visitChildren(ctx)
