@@ -1,7 +1,7 @@
 """Tests for CR3: equipment classification from a configuration file.
 
 An exercise name that includes an equipment keyword implies that equipment
-("Smith Machine ..." -> machine, "Dumbbell ..." -> dumbbell, "Barbell ..." ->
+("Smith Machine ..." -> smith machine, "Dumbbell ..." -> dumbbell, "Barbell ..." ->
 barbell). Exercises with no keyword match that are known barbell lifts (squat,
 bench press, deadlift, overhead press) default to barbell. Everything else is
 "other".
@@ -27,8 +27,8 @@ TIMESTAMP = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
 class TestEquipmentClassifier:
     def test_classify(self) -> None:
         cases = [
-            ("Smith Machine Squat", "machine"),
-            ("smith machine bench press", "machine"),
+            ("Smith Machine Squat", "smith machine"),
+            ("smith machine bench press", "smith machine"),
             ("Machine Row", "machine"),
             ("Dumbbell Curl", "dumbbell"),
             ("Barbell Row", "barbell"),
@@ -49,7 +49,7 @@ class TestEquipmentClassifier:
 
     def test_keyword_beats_barbell_default(self) -> None:
         # "squat" is a barbell default, but "smith machine" keyword wins.
-        assert classify_equipment("Smith Machine Squat") == "machine"
+        assert classify_equipment("Smith Machine Squat") == "smith machine"
 
     def test_result_is_always_a_valid_enum_value(self) -> None:
         for name in ["Smith Machine Squat", "Squat", "Dumbbell Curl", "Plank"]:
@@ -82,7 +82,7 @@ class TestEquipmentInSerialization:
         ]
         result = serialize_to_set_centric(exercises, TIMESTAMP)
         equipments = [e["equipment"] for e in result["exercises"]]
-        assert equipments == ["machine", "barbell", "dumbbell", "other"]
+        assert equipments == ["smith machine", "barbell", "dumbbell", "other"]
 
     def test_bench_centric_populates_equipment(self) -> None:
         exercises = [Exercise("Bench Press", [Set_(5, Weight(80, "kg"))])]
