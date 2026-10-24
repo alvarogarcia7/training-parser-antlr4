@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21")
         buf.write("\u009e\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\3\2\6\2\32")
         buf.write("\n\2\r\2\16\2\33\3\3\3\3\3\4\3\4\3\4\5\4#\n\4\3\4\5\4")
@@ -90,7 +90,7 @@ class trainingParser ( Parser ):
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "INT", "DOTDOT", "DOT", 
                       "XX", "X", "COMMA", "SLASH", "DASH", "K_UNIT", "HYPHENATED_NAME", 
-                      "NAME", "NEWLINE", "WS" ]
+                      "NAME", "NEWLINE", "WS", "COMMENT" ]
 
     RULE_workout = 0
     RULE_exercise_name = 1
@@ -123,6 +123,7 @@ class trainingParser ( Parser ):
     NAME=12
     NEWLINE=13
     WS=14
+    COMMENT=15
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
