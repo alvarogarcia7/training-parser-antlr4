@@ -18,6 +18,12 @@ HYPHENATED_NAME: ALPHABET* '-' ALPHABET+ ;
 NAME: [a-zA-Záéíóúñ] ALPHABET* (WS+ ALPHABET+)* ;
 NEWLINE: '\r'? '\n' ;
 WS:     [ \t]+ -> skip ;
+// Lines starting with '#' are comments and must not be parsed (TP-16).
+// The column==0 predicate anchors this to the line start so a mid-line '#'
+// (e.g. inside '@#$') is left untouched and still raised as an error.
+// Consume the trailing newline too so a whole comment line disappears entirely
+// rather than leaving a stray NEWLINE token that breaks 'workout: exercise+'.
+COMMENT: {self.column == 0}? '#' ~[\r\n]* ('\r'? '\n')? -> skip ;
 
 // Parser rules
 workout: exercise+;
