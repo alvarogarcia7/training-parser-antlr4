@@ -28,6 +28,7 @@ from src.parser.serializer import serialize_to_bench_centric, serialize_to_set_c
 from src.parser import StandardizeName
 from src.parser.model import Exercise
 from src.data_access import DataAccess
+from src.session_stats import SessionStat, parse_session_stats
 
 DATE_LINE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ class Session(NamedTuple):
     """One training session found in an input file."""
     date: Optional[str]  # YYYY-MM-DD, or None if the file has no date line
     exercises: list[Exercise]
+    stats: list[SessionStat] = []  # device-reported stats from '# stats:' lines
 
 
 class ExportedSession(NamedTuple):
@@ -80,9 +82,13 @@ def read_sessions(input_file: Path) -> list[Session]:
     data_access = DataAccess(StandardizeName(REPO_ROOT / "data" / "config" / "synonyms.yaml"))
     sessions: list[Session] = []
     for date, lines in split_sessions(input_file.read_text(encoding='utf-8')):
-        exercises = data_access.parse_text("\n".join(lines))
+        stats = parse_session_stats(lines)
+        # Comment lines ('#', including '# stats:') are metadata, not exercises;
+        # keep them out of the grammar so they don't produce spurious exercises.
+        exercise_lines = [line for line in lines if not line.lstrip().startswith('#')]
+        exercises = data_access.parse_text("\n".join(exercise_lines))
         if exercises:
-            sessions.append(Session(date, exercises))
+            sessions.append(Session(date, exercises, stats))
         elif any(line.strip() and not line.strip().startswith('#') for line in lines):
             # There was content but none of it parsed: failing is better than
             # silently dropping a session from the output.
@@ -146,8 +152,8 @@ def export_session(
     timestamp = session_timestamp(session)
     wid = workout_id(input_file, index, len(sessions) > 1, timestamp)
 
-    set_data = serialize_to_set_centric(session.exercises, timestamp)
-    bench_data = serialize_to_bench_centric(session.exercises, timestamp)
+    set_data = serialize_to_set_centric(session.exercises, timestamp, session.stats)
+    bench_data = serialize_to_bench_centric(session.exercises, timestamp, session.stats)
     set_data["workout_id"] = bench_data["workout_id"] = wid
 
     set_file = output_dir / SET_DIR / f"{stem}_set.json"
@@ -157,6 +163,47 @@ def export_session(
 
     workout = {**set_data, "source_file": str(input_file)}
     return ExportedSession(input_file, set_file, bench_file, workout)
+
+
+def statistics_report(inputs: list[Path]) -> str:
+    """Summarise, per file, which inputs carry ``# stats:`` lines and parse.
+
+    For every input this reports how many stats lines were detected, how many
+    yielded data ("parsed") and how many were detected but empty ("no data"),
+    plus the list of files with no statistics at all. Printed by :func:`run` so
+    it shows up when the pipeline is driven from ``bin/parse_bulk.sh``.
+    """
+    with_stats: list[str] = []
+    without_stats: list[str] = []
+    for input_file in inputs:
+        try:
+            text = input_file.read_text(encoding='utf-8')
+        except OSError:
+            continue
+        stats = parse_session_stats(text.splitlines())
+        if stats:
+            parsed = sum(1 for s in stats if s.has_data())
+            no_data = len(stats) - parsed
+            with_stats.append(
+                f"    {input_file}: {len(stats)} detected, "
+                f"{parsed} parsed, {no_data} with no data"
+            )
+        else:
+            without_stats.append(f"    {input_file}")
+
+    lines = [
+        "",
+        "Statistics summary:",
+        f"  Files with statistics:    {len(with_stats)} of {len(inputs)}",
+        f"  Files without statistics: {len(without_stats)} of {len(inputs)}",
+    ]
+    if with_stats:
+        lines.append("  Detected:")
+        lines.extend(with_stats)
+    if without_stats:
+        lines.append("  None detected:")
+        lines.extend(without_stats)
+    return "\n".join(lines)
 
 
 def upsert_workouts(database_file: Path, workouts: list[dict[str, Any]]) -> None:
@@ -248,5 +295,7 @@ def run(
         if exported:
             produced.append(str(database))
         manifest.write_text("".join(f"{p}\n" for p in produced), encoding='utf-8')
+
+    print(statistics_report(resolved_inputs))
 
     return 1 if failures else 0

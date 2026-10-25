@@ -448,5 +448,35 @@ class TestSerializer(unittest.TestCase):
         self.assertEqual(result['exercises'][0]['sets'][0]['repetitions'], 100)
 
 
+class TestSerializerWithStats(unittest.TestCase):
+    """Session statistics (`# stats:` lines) flow into the statistics field."""
+
+    def _exercises(self) -> list[Exercise]:
+        return [Exercise('Squat', [Set_(5, Weight(100.0, 'kg'))])]
+
+    def test_stats_populate_statistics_and_validate(self) -> None:
+        from src.session_stats import parse_session_stats
+
+        stats = parse_session_stats([
+            "# stats: (apple watch) 500 total kcal, 402 active kcal, 50 min, 111 average bpm, 71-162 range bpm",
+            "# stats: (polar) 355 kcal, 50 min, 108-140 bpm, 54% from fat",
+        ])
+        timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
+
+        # serialize_to_set_centric validates against the schema internally.
+        result = serialize_to_set_centric(self._exercises(), timestamp, stats)
+
+        entries = result['statistics']['entries']
+        self.assertEqual([e['source'] for e in entries], ['apple watch', 'polar'])
+        self.assertEqual(entries[0]['kcal'], {'total': 500, 'active': 402})
+        self.assertEqual(entries[0]['bpm'], {'average': 111, 'min': 71, 'max': 162})
+        self.assertEqual(entries[1]['fat_percent'], 54)
+
+    def test_no_stats_keeps_empty_statistics(self) -> None:
+        timestamp = datetime(2024, 1, 15, 10, 30, 0, tzinfo=timezone.utc)
+        result = serialize_to_set_centric(self._exercises(), timestamp)
+        self.assertEqual(result['statistics'], {})
+
+
 if __name__ == '__main__':
     unittest.main()
