@@ -636,7 +636,8 @@ class TestBulkParserSessionStats(unittest.TestCase):
         workouts = sorted(json.loads(database.read_text())["workouts"], key=lambda w: w["date"])
         day1, day2 = workouts
         self.assertEqual(day1["statistics"]["entries"][0]["source"], "apple watch")
-        self.assertNotIn("source", day2["statistics"]["entries"][0])
+        # Source is always present; a line naming no device becomes "unknown".
+        self.assertEqual(day2["statistics"]["entries"][0]["source"], "unknown")
         self.assertEqual(day2["statistics"]["entries"][0]["zone_minutes"], 22)
 
     def test_statistics_report(self) -> None:

@@ -417,10 +417,19 @@ class TestStatisticsEntry(unittest.TestCase):
 
     def test_duration_over_an_hour(self) -> None:
         stat = SessionStat(duration_min=95)
-        self.assertEqual(stat.to_statistics_entry(), {"duration": "01:35:00"})
+        self.assertEqual(
+            stat.to_statistics_entry(),
+            {"source": "unknown", "duration": "01:35:00"},
+        )
 
-    def test_empty_entry(self) -> None:
-        self.assertEqual(SessionStat().to_statistics_entry(), {})
+    def test_empty_entry_still_has_source(self) -> None:
+        # source is always present; a line with no device becomes "unknown".
+        self.assertEqual(SessionStat().to_statistics_entry(), {"source": "unknown"})
+
+    def test_sourceless_line_gets_unknown(self) -> None:
+        stat = parse_stats_line("# Stats: 43 min, 120-153 bpm, 382 kcal")
+        assert stat is not None
+        self.assertEqual(stat.to_statistics_entry()["source"], "unknown")
 
 
 class TestToStatistics(unittest.TestCase):

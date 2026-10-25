@@ -48,6 +48,9 @@ from typing import Any, Iterable
 # Heart rate cannot plausibly exceed this; higher readings are treated as noise.
 MAX_BPM = 220
 
+# Label used in the exported statistics when a stats line names no device.
+UNKNOWN_SOURCE = "unknown"
+
 _INT = re.compile(r"\d+")
 _RANGE = re.compile(r"(\d+)\s*-\s*(\d+)")
 # Minutes: "50 min", "50m", "10 minutos" (but not "360kcal").
@@ -110,13 +113,12 @@ class SessionStat:
     def to_statistics_entry(self) -> dict[str, Any]:
         """Serialise to a ``statsEntry`` as defined in the workout JSON schema.
 
-        Only fields that are present are emitted, and ``bpm``/``kcal`` are
-        nested objects so the entry slots directly into a workout's
-        ``statistics.entries`` array.
+        ``source`` is always present (falling back to ``"unknown"`` when the
+        line named no device). Other fields are emitted only when present, and
+        ``bpm``/``kcal`` are nested objects so the entry slots directly into a
+        workout's ``statistics.entries`` array.
         """
-        entry: dict[str, Any] = {}
-        if self.source is not None:
-            entry["source"] = self.source
+        entry: dict[str, Any] = {"source": self.source or UNKNOWN_SOURCE}
         if self.duration_min is not None:
             entry["duration"] = _minutes_to_hms(self.duration_min)
 

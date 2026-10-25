@@ -72,10 +72,11 @@
     "statsEntry": {
       "type": "object",
       "description": "Statistics reported by a single device or source for one session",
+      "required": ["source"],
       "properties": {
         "source": {
           "type": "string",
-          "description": "Device or app that reported these stats (e.g., apple watch, polar)"
+          "description": "Device or app that reported these stats (e.g., apple watch, polar); 'unknown' when the line named no device"
         },
         "duration": {
           "type": "string",
