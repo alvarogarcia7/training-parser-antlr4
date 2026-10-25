@@ -29,6 +29,78 @@
         }
       }
     },
+    "bpm": {
+      "type": "object",
+      "description": "Heart rate statistics in beats per minute",
+      "properties": {
+        "average": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 220,
+          "description": "Average heart rate"
+        },
+        "min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 220,
+          "description": "Minimum heart rate"
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 220,
+          "description": "Maximum heart rate"
+        }
+      }
+    },
+    "kcal": {
+      "type": "object",
+      "description": "Calorie expenditure",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total calories burned"
+        },
+        "active": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Active calories burned (excludes resting expenditure)"
+        }
+      }
+    },
+    "statsEntry": {
+      "type": "object",
+      "description": "Statistics reported by a single device or source for one session",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Device or app that reported these stats (e.g., apple watch, polar)"
+        },
+        "duration": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}$",
+          "description": "Session duration in HH:MM:SS format"
+        },
+        "bpm": {
+          "$ref": "#/$defs/bpm"
+        },
+        "kcal": {
+          "$ref": "#/$defs/kcal"
+        },
+        "fat_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of calories burned from fat"
+        },
+        "zone_minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minutes spent in the target heart-rate zone"
+        }
+      }
+    },
     "statistics": {
       "type": "object",
       "description": "Workout statistics and metrics",
@@ -43,35 +115,16 @@
           "description": "Workout duration in HH:MM:SS format"
         },
         "bpm": {
-          "type": "object",
-          "description": "Heart rate statistics in beats per minute",
-          "properties": {
-            "average": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Average heart rate"
-            },
-            "min": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Minimum heart rate"
-            },
-            "max": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Maximum heart rate"
-            }
-          }
+          "$ref": "#/$defs/bpm"
         },
         "kcal": {
-          "type": "object",
-          "description": "Calorie expenditure",
-          "properties": {
-            "total": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Total calories burned"
-            }
+          "$ref": "#/$defs/kcal"
+        },
+        "entries": {
+          "type": "array",
+          "description": "Per-source statistics; allows multiple trackers (e.g. apple watch and polar) for one session",
+          "items": {
+            "$ref": "#/$defs/statsEntry"
           }
         }
       }

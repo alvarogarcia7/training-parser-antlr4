@@ -8,6 +8,7 @@ from src.session_stats import (
     is_stats_line,
     parse_session_stats,
     parse_stats_line,
+    to_statistics,
 )
 
 APPLE = "# stats: (apple watch) 500 total kcal, 402 active kcal, 50 min, 111 average bpm, 71-162 range bpm"
@@ -162,6 +163,58 @@ class TestToDict(unittest.TestCase):
                 "max_bpm": 162,
             },
         )
+
+
+class TestStatisticsEntry(unittest.TestCase):
+    """Conversion to the schema's ``statsEntry`` shape."""
+
+    def test_apple_watch_entry(self) -> None:
+        stat = parse_stats_line(APPLE)
+        assert stat is not None
+        self.assertEqual(
+            stat.to_statistics_entry(),
+            {
+                "source": "apple watch",
+                "duration": "00:50:00",
+                "bpm": {"average": 111, "min": 71, "max": 162},
+                "kcal": {"total": 500, "active": 402},
+            },
+        )
+
+    def test_polar_entry(self) -> None:
+        stat = parse_stats_line(POLAR)
+        assert stat is not None
+        self.assertEqual(
+            stat.to_statistics_entry(),
+            {
+                "source": "polar",
+                "duration": "00:50:00",
+                "bpm": {"average": 108, "max": 140},
+                "kcal": {"total": 355},
+                "fat_percent": 54,
+            },
+        )
+
+    def test_duration_over_an_hour(self) -> None:
+        stat = SessionStat(duration_min=95)
+        self.assertEqual(stat.to_statistics_entry(), {"duration": "01:35:00"})
+
+    def test_empty_entry(self) -> None:
+        self.assertEqual(SessionStat().to_statistics_entry(), {})
+
+
+class TestToStatistics(unittest.TestCase):
+    """Building the workout ``statistics`` object."""
+
+    def test_empty_is_empty_object(self) -> None:
+        self.assertEqual(to_statistics([]), {})
+
+    def test_multiple_entries(self) -> None:
+        stats = parse_session_stats([APPLE, POLAR])
+        result = to_statistics(stats)
+        self.assertEqual(len(result["entries"]), 2)
+        self.assertEqual(result["entries"][0]["source"], "apple watch")
+        self.assertEqual(result["entries"][1]["source"], "polar")
 
 
 if __name__ == "__main__":

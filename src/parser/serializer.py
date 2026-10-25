@@ -7,15 +7,21 @@ import jsonschema
 
 from src.parser.model import Exercise
 from src.parser.equipment import classify_equipment
+from src.session_stats import SessionStat, to_statistics
 
 
-def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[datetime] = None) -> dict[str, Any]:
+def serialize_to_bench_centric(
+    exercises: list[Exercise],
+    timestamp: Optional[datetime] = None,
+    stats: Optional[list[SessionStat]] = None,
+) -> dict[str, Any]:
     """
     Serialize exercises to bench-centric JSON format and validate against schema.
 
     Args:
         exercises: List of Exercise objects to serialize
         timestamp: Optional timestamp for the workout (defaults to current time)
+        stats: Optional device-reported session statistics (``# stats:`` lines)
 
     Returns:
         Dictionary in bench-centric format, validated against JSON schema
@@ -53,7 +59,7 @@ def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[da
         "date": timestamp.isoformat(),
         "location": "",
         "notes": "",
-        "statistics": {},
+        "statistics": to_statistics(stats or []),
         "exercises": exercise_blocks
     }
 
@@ -80,13 +86,18 @@ def serialize_to_bench_centric(exercises: list[Exercise], timestamp: Optional[da
     return result
 
 
-def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[datetime] = None) -> dict[str, Any]:
+def serialize_to_set_centric(
+    exercises: list[Exercise],
+    timestamp: Optional[datetime] = None,
+    stats: Optional[list[SessionStat]] = None,
+) -> dict[str, Any]:
     """
     Serialize exercises to set-centric JSON format and validate against schema.
 
     Args:
         exercises: List of Exercise objects to serialize
         timestamp: Optional timestamp for the workout (defaults to current time)
+        stats: Optional device-reported session statistics (``# stats:`` lines)
 
     Returns:
         Dictionary in set-centric format, validated against JSON schema
@@ -134,7 +145,7 @@ def serialize_to_set_centric(exercises: list[Exercise], timestamp: Optional[date
         "date": timestamp.isoformat(),
         "location": "",
         "notes": "",
-        "statistics": {},
+        "statistics": to_statistics(stats or []),
         "exercises": exercise_blocks
     }
 

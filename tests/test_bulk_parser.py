@@ -578,5 +578,43 @@ Row en maquina 41k: 15, 8
         self.assertIn("not found", result.stderr.lower())
 
 
+class TestBulkParserSessionStats(unittest.TestCase):
+    """`# stats:` lines become statistics, not exercises, in the DB output."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_stats_lines_populate_statistics(self) -> None:
+        from src.bulk_export import run
+
+        training = (
+            "2026-10-24\n"
+            "# stats: (apple watch) 500 total kcal, 402 active kcal, 50 min, 111 average bpm, 71-162 range bpm\n"
+            "# stats: (polar) 355 kcal, 50 min, 108-140 bpm, 54% from fat\n"
+            "Squat: 5x5 100k\n"
+            "Bench Press: 3x8 60k\n"
+        )
+        input_file = self.root / "day.txt"
+        input_file.write_text(training)
+        database = self.root / "db.json"
+
+        rc = run([input_file], self.root / "out", database)
+        self.assertEqual(rc, 0)
+
+        workout = json.loads(database.read_text())["workouts"][0]
+
+        # Comment/stats lines must not be parsed as exercises.
+        self.assertEqual([e["name"] for e in workout["exercises"]], ["Squat", "Bench Press"])
+
+        entries = workout["statistics"]["entries"]
+        self.assertEqual([e["source"] for e in entries], ["apple watch", "polar"])
+        self.assertEqual(entries[0]["bpm"], {"average": 111, "min": 71, "max": 162})
+        self.assertEqual(entries[1]["kcal"], {"total": 355})
+
+
 if __name__ == "__main__":
     unittest.main()

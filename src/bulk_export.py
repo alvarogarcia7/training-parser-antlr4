@@ -28,6 +28,7 @@ from src.parser.serializer import serialize_to_bench_centric, serialize_to_set_c
 from src.parser import StandardizeName
 from src.parser.model import Exercise
 from src.data_access import DataAccess
+from src.session_stats import SessionStat, parse_session_stats
 
 DATE_LINE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ class Session(NamedTuple):
     """One training session found in an input file."""
     date: Optional[str]  # YYYY-MM-DD, or None if the file has no date line
     exercises: list[Exercise]
+    stats: list[SessionStat] = []  # device-reported stats from '# stats:' lines
 
 
 class ExportedSession(NamedTuple):
@@ -80,9 +82,13 @@ def read_sessions(input_file: Path) -> list[Session]:
     data_access = DataAccess(StandardizeName(REPO_ROOT / "data" / "config" / "synonyms.yaml"))
     sessions: list[Session] = []
     for date, lines in split_sessions(input_file.read_text(encoding='utf-8')):
-        exercises = data_access.parse_text("\n".join(lines))
+        stats = parse_session_stats(lines)
+        # Comment lines ('#', including '# stats:') are metadata, not exercises;
+        # keep them out of the grammar so they don't produce spurious exercises.
+        exercise_lines = [line for line in lines if not line.lstrip().startswith('#')]
+        exercises = data_access.parse_text("\n".join(exercise_lines))
         if exercises:
-            sessions.append(Session(date, exercises))
+            sessions.append(Session(date, exercises, stats))
         elif any(line.strip() and not line.strip().startswith('#') for line in lines):
             # There was content but none of it parsed: failing is better than
             # silently dropping a session from the output.
@@ -146,8 +152,8 @@ def export_session(
     timestamp = session_timestamp(session)
     wid = workout_id(input_file, index, len(sessions) > 1, timestamp)
 
-    set_data = serialize_to_set_centric(session.exercises, timestamp)
-    bench_data = serialize_to_bench_centric(session.exercises, timestamp)
+    set_data = serialize_to_set_centric(session.exercises, timestamp, session.stats)
+    bench_data = serialize_to_bench_centric(session.exercises, timestamp, session.stats)
     set_data["workout_id"] = bench_data["workout_id"] = wid
 
     set_file = output_dir / SET_DIR / f"{stem}_set.json"

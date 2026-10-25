@@ -59,7 +59,7 @@ class SessionStat:
     raw: str = field(default="")
 
     def to_dict(self) -> dict[str, Any]:
-        """Serialise to a dict, omitting metrics that were not present."""
+        """Serialise to a flat dict, omitting metrics that were not present."""
         out: dict[str, Any] = {}
         if self.source is not None:
             out["source"] = self.source
@@ -77,6 +77,45 @@ class SessionStat:
             if value is not None:
                 out[key] = value
         return out
+
+    def to_statistics_entry(self) -> dict[str, Any]:
+        """Serialise to a ``statsEntry`` as defined in the workout JSON schema.
+
+        Only fields that are present are emitted, and ``bpm``/``kcal`` are
+        nested objects so the entry slots directly into a workout's
+        ``statistics.entries`` array.
+        """
+        entry: dict[str, Any] = {}
+        if self.source is not None:
+            entry["source"] = self.source
+        if self.duration_min is not None:
+            entry["duration"] = _minutes_to_hms(self.duration_min)
+
+        bpm = {
+            "average": self.avg_bpm,
+            "min": self.min_bpm,
+            "max": self.max_bpm,
+        }
+        bpm = {k: v for k, v in bpm.items() if v is not None}
+        if bpm:
+            entry["bpm"] = bpm
+
+        kcal = {"total": self.total_kcal, "active": self.active_kcal}
+        kcal = {k: v for k, v in kcal.items() if v is not None}
+        if kcal:
+            entry["kcal"] = kcal
+
+        if self.fat_percent is not None:
+            entry["fat_percent"] = self.fat_percent
+        if self.zone_minutes is not None:
+            entry["zone_minutes"] = self.zone_minutes
+        return entry
+
+
+def _minutes_to_hms(minutes: int) -> str:
+    """Format a whole-minute duration as ``HH:MM:SS`` (seconds always 00)."""
+    hours, mins = divmod(minutes, 60)
+    return f"{hours:02d}:{mins:02d}:00"
 
 
 def _first_int(text: str) -> int | None:
@@ -184,3 +223,15 @@ def parse_session_stats(source: str | Iterable[str]) -> list[SessionStat]:
         if parsed is not None:
             stats.append(parsed)
     return stats
+
+
+def to_statistics(stats: list[SessionStat]) -> dict[str, Any]:
+    """Build a workout ``statistics`` object from parsed session stats.
+
+    Returns ``{}`` when there are no stats (preserving the empty-object default
+    used throughout the serializers), otherwise ``{"entries": [...]}`` with one
+    ``statsEntry`` per source.
+    """
+    if not stats:
+        return {}
+    return {"entries": [stat.to_statistics_entry() for stat in stats]}
