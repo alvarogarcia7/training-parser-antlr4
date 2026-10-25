@@ -5,7 +5,7 @@ fi
 java >/dev/null 2>&1
 if [[ ! $? -eq 0 ]]; then
   echo "Java not found / not working. Overriding java"
-  export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+  export PATH="/opt/homebrew/opt/openjdk@23/bin:$PATH"
 fi
 
 if ! command uv > /dev/null ; then
