@@ -127,6 +127,69 @@ class TestToleranceAndValidation(unittest.TestCase):
         self.assertEqual(stat.duration_min, 45)
 
 
+class TestExpandedFormats(unittest.TestCase):
+    """Real-world notation variants from the TP-17 implementation notes."""
+
+    def test_no_colon_and_bare_hash(self) -> None:
+        self.assertTrue(is_stats_line("# Stats 35 min, 58 zone min, 138-164 bpm, 421 kcal"))
+        self.assertTrue(is_stats_line("#Stats: 35 min"))
+        stat = parse_stats_line("# Stats 35 min, 58 zone min, 138-164 bpm, 421 kcal")
+        assert stat is not None
+        self.assertEqual(stat.duration_min, 35)
+        self.assertEqual(stat.zone_minutes, 58)
+        self.assertEqual((stat.avg_bpm, stat.max_bpm), (138, 164))
+        self.assertEqual(stat.total_kcal, 421)
+
+    def test_minutes_m_suffix(self) -> None:
+        stat = parse_stats_line("# Stats: 59m, 22 zm, 104-146 bpm, 360kcal")
+        assert stat is not None
+        self.assertEqual(stat.duration_min, 59)
+        self.assertEqual(stat.zone_minutes, 22)
+        self.assertEqual(stat.total_kcal, 360)  # "360kcal", no space
+
+    def test_zm_attached_to_number(self) -> None:
+        stat = parse_stats_line("# Stats: 96m, 66zm, 116-163bpm, 813 kcal")
+        assert stat is not None
+        self.assertEqual(stat.zone_minutes, 66)  # "66zm"
+        self.assertEqual((stat.avg_bpm, stat.max_bpm), (116, 163))  # "116-163bpm"
+
+    def test_cardio_load(self) -> None:
+        stat = parse_stats_line(
+            "# stats: (polar rosa) 56 min, 98-138 bpm, cardio load 24, 310 kcal, 60% fat"
+        )
+        assert stat is not None
+        self.assertEqual(stat.source, "polar rosa")
+        self.assertEqual(stat.cardio_load, 24)
+        self.assertEqual(stat.fat_percent, 60)
+
+    def test_activity_percent_is_not_fat(self) -> None:
+        # "56% actividad" is activity %, not fat — must not populate fat_percent.
+        stat = parse_stats_line(
+            "# Stats: 32 min actividad, 104-153 bpm, 714 kcal, 56% actividad"
+        )
+        assert stat is not None
+        self.assertIsNone(stat.fat_percent)
+        self.assertEqual(stat.duration_min, 32)
+        self.assertEqual(stat.total_kcal, 714)
+
+    def test_out_of_range_bpm_typo_does_not_clobber(self) -> None:
+        # "746 bpm" is a typo (> 220) and must not wipe the real range values.
+        stat = parse_stats_line("# Stats: 74m, 88zm, 126-161 bpm, 746 bpm")
+        assert stat is not None
+        self.assertEqual((stat.avg_bpm, stat.max_bpm), (126, 161))
+
+    def test_zone_only_line(self) -> None:
+        stat = parse_stats_line("# Stats: 44 zone minutes")
+        assert stat is not None
+        self.assertEqual(stat.zone_minutes, 44)
+        self.assertTrue(stat.has_data())
+
+    def test_empty_stats_line_has_no_data(self) -> None:
+        stat = parse_stats_line("# Stats:")
+        assert stat is not None
+        self.assertFalse(stat.has_data())
+
+
 class TestMultipleStats(unittest.TestCase):
     def test_parse_multiple_lines_from_text(self) -> None:
         text = f"{APPLE}\nSquat: 5x5 100k\n{POLAR}\n"

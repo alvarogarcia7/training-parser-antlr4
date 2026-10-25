@@ -165,6 +165,47 @@ def export_session(
     return ExportedSession(input_file, set_file, bench_file, workout)
 
 
+def statistics_report(inputs: list[Path]) -> str:
+    """Summarise, per file, which inputs carry ``# stats:`` lines and parse.
+
+    For every input this reports how many stats lines were detected, how many
+    yielded data ("parsed") and how many were detected but empty ("no data"),
+    plus the list of files with no statistics at all. Printed by :func:`run` so
+    it shows up when the pipeline is driven from ``bin/parse_bulk.sh``.
+    """
+    with_stats: list[str] = []
+    without_stats: list[str] = []
+    for input_file in inputs:
+        try:
+            text = input_file.read_text(encoding='utf-8')
+        except OSError:
+            continue
+        stats = parse_session_stats(text.splitlines())
+        if stats:
+            parsed = sum(1 for s in stats if s.has_data())
+            no_data = len(stats) - parsed
+            with_stats.append(
+                f"    {input_file}: {len(stats)} detected, "
+                f"{parsed} parsed, {no_data} with no data"
+            )
+        else:
+            without_stats.append(f"    {input_file}")
+
+    lines = [
+        "",
+        "Statistics summary:",
+        f"  Files with statistics:    {len(with_stats)} of {len(inputs)}",
+        f"  Files without statistics: {len(without_stats)} of {len(inputs)}",
+    ]
+    if with_stats:
+        lines.append("  Detected:")
+        lines.extend(with_stats)
+    if without_stats:
+        lines.append("  None detected:")
+        lines.extend(without_stats)
+    return "\n".join(lines)
+
+
 def upsert_workouts(database_file: Path, workouts: list[dict[str, Any]]) -> None:
     """Add workouts to the database; a workout with a known id replaces the old entry.
 
@@ -254,5 +295,7 @@ def run(
         if exported:
             produced.append(str(database))
         manifest.write_text("".join(f"{p}\n" for p in produced), encoding='utf-8')
+
+    print(statistics_report(resolved_inputs))
 
     return 1 if failures else 0

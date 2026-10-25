@@ -98,6 +98,11 @@
           "type": "integer",
           "minimum": 0,
           "description": "Minutes spent in the target heart-rate zone"
+        },
+        "cardio_load": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Device-reported cardio load for the session"
         }
       }
     },

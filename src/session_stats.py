@@ -4,13 +4,26 @@ Training files may carry device-reported session metadata on comment lines, e.g.
 
     # stats: (apple watch) 500 total kcal, 402 active kcal, 50 min, 111 average bpm, 71-162 range bpm
     # stats: (polar) 355 kcal, 50 min, 108-140 bpm, 54% from fat
+    # Stats 43 min, 37 zone min, 120-153 bpm, 382 kcal
+    # Stats: 59m, 22 zm, 104-146 bpm, 360kcal
 
 A single training session may carry several ``# stats:`` lines (one per device).
-Each line names its source in parentheses and lists comma-separated fields. Parsing
+A line may name its source in parentheses and lists comma-separated fields. Parsing
 is deliberately tolerant: whatever fields are recognised are extracted and the rest
 are left unset, so partial, human-typed input still yields as much as possible.
 
-Heart-rate conventions (from the task description):
+The notation varies a lot across devices and languages, so the parser accepts:
+
+- An optional colon (``# stats:`` or ``# Stats``) and an optional ``#``.
+- Minutes written as ``50 min``, ``50m`` or ``10 minutos``.
+- Zone minutes as ``37 zone min``, ``zone minutes``, ``min zone``, ``22 zm`` or
+  ``66zm``.
+- ``kcal`` with or without a space (``360kcal``), optionally ``total``/``active``.
+- ``cardio load N``.
+- Fat percentage only when the field actually mentions fat (``60% fat``), so a
+  ``56% actividad`` is not mistaken for it.
+
+Heart-rate conventions:
 
 - A labelled ``range`` (Apple Watch's ``71-162 range bpm``) is min-max: ``min_bpm``
   71, ``max_bpm`` 162. This is kept distinct from the separately reported
@@ -18,8 +31,12 @@ Heart-rate conventions (from the task description):
 - A bare dash range (Polar's ``108-140 bpm``) is average-max: ``avg_bpm`` 108,
   ``max_bpm`` 140.
 - A single value (``111 average bpm`` or a bare ``x bpm``) is the average.
-- ``zm`` means zone minutes.
-- Heart rate has an absolute ceiling of 220 bpm; values above it are discarded.
+- Heart rate has an absolute ceiling of 220 bpm; values above it are discarded
+  (they are usually typos, e.g. a kcal figure written as ``746 bpm``). An out-of-
+  range reading never overwrites a value already parsed on the same line.
+
+The first recognised value for a metric wins, so a later stray number cannot clobber
+an earlier, more specific one.
 """
 
 from __future__ import annotations
@@ -33,8 +50,12 @@ MAX_BPM = 220
 
 _INT = re.compile(r"\d+")
 _RANGE = re.compile(r"(\d+)\s*-\s*(\d+)")
-# A ``# stats:`` line: optional leading '#', then 'stats' and a colon.
-_STATS_PREFIX = re.compile(r"^\s*#?\s*stats\s*:\s*(.*)$", re.IGNORECASE)
+# Minutes: "50 min", "50m", "10 minutos" (but not "360kcal").
+_MINUTES = re.compile(r"(\d+)\s*(?:minutos?|min|m)\b", re.IGNORECASE)
+# Zone minutes written attached to the number: "22zm", "66zm".
+_ZM = re.compile(r"(\d+)\s*zm\b", re.IGNORECASE)
+# A ``# stats`` line: optional leading '#', then 'stats' with an optional colon.
+_STATS_PREFIX = re.compile(r"^\s*#?\s*stats\b\s*:?\s*(.*)$", re.IGNORECASE)
 # Leading "(source)" tag, e.g. "(apple watch)".
 _SOURCE = re.compile(r"^\(([^)]*)\)\s*(.*)$")
 
@@ -56,23 +77,31 @@ class SessionStat:
     max_bpm: int | None = None
     zone_minutes: int | None = None
     fat_percent: int | None = None
+    cardio_load: int | None = None
     raw: str = field(default="")
+
+    _METRICS = (
+        "total_kcal",
+        "active_kcal",
+        "duration_min",
+        "avg_bpm",
+        "min_bpm",
+        "max_bpm",
+        "zone_minutes",
+        "fat_percent",
+        "cardio_load",
+    )
+
+    def has_data(self) -> bool:
+        """True if at least one metric was parsed (the source alone doesn't count)."""
+        return any(getattr(self, key) is not None for key in self._METRICS)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialise to a flat dict, omitting metrics that were not present."""
         out: dict[str, Any] = {}
         if self.source is not None:
             out["source"] = self.source
-        for key in (
-            "total_kcal",
-            "active_kcal",
-            "duration_min",
-            "avg_bpm",
-            "min_bpm",
-            "max_bpm",
-            "zone_minutes",
-            "fat_percent",
-        ):
+        for key in self._METRICS:
             value = getattr(self, key)
             if value is not None:
                 out[key] = value
@@ -109,6 +138,8 @@ class SessionStat:
             entry["fat_percent"] = self.fat_percent
         if self.zone_minutes is not None:
             entry["zone_minutes"] = self.zone_minutes
+        if self.cardio_load is not None:
+            entry["cardio_load"] = self.cardio_load
         return entry
 
 
@@ -131,6 +162,15 @@ def _clamp_bpm(value: int | None) -> int | None:
     return value
 
 
+def _set(stat: SessionStat, attr: str, value: int | None) -> None:
+    """Record ``value`` on ``stat.attr`` only if it is set and not already taken.
+
+    First-wins: a later stray number on the same line cannot clobber an earlier,
+    more specific value (and ``None`` never overwrites a real reading)."""
+    if value is not None and getattr(stat, attr) is None:
+        setattr(stat, attr, value)
+
+
 def _apply_field(stat: SessionStat, raw_field: str) -> None:
     """Classify a single comma-separated field and record it on ``stat``."""
     low = raw_field.lower()
@@ -138,42 +178,52 @@ def _apply_field(stat: SessionStat, raw_field: str) -> None:
     if "bpm" in low:
         range_match = _RANGE.search(raw_field)
         if range_match:
-            low_start = _clamp_bpm(int(range_match.group(1)))
-            high = _clamp_bpm(int(range_match.group(2)))
-            stat.max_bpm = high
+            start = _clamp_bpm(int(range_match.group(1)))
+            end = _clamp_bpm(int(range_match.group(2)))
+            _set(stat, "max_bpm", end)
             if "range" in low:
                 # A labelled range is min-max; keep it separate from any
                 # separately reported average (e.g. Apple Watch).
-                stat.min_bpm = low_start
+                _set(stat, "min_bpm", start)
             else:
                 # A bare "a-b bpm" (e.g. Polar) means average-max.
-                stat.avg_bpm = low_start
+                _set(stat, "avg_bpm", start)
         else:
             # A single value ("111 average bpm" or a bare "x bpm") is the average.
-            stat.avg_bpm = _clamp_bpm(_first_int(raw_field))
+            # An out-of-range typo (e.g. "746 bpm") clamps to None and is ignored.
+            _set(stat, "avg_bpm", _clamp_bpm(_first_int(raw_field)))
         return
 
     if "kcal" in low:
         value = _first_int(raw_field)
-        if value is None:
-            return
         if "active" in low:
-            stat.active_kcal = value
+            _set(stat, "active_kcal", value)
         else:
-            # "500 total kcal" and Polar's bare "355 kcal" are both totals.
-            stat.total_kcal = value
+            # "500 total kcal", Polar's bare "355 kcal" and "360kcal" are totals.
+            _set(stat, "total_kcal", value)
         return
 
-    if "%" in low or "fat" in low:
-        stat.fat_percent = _first_int(raw_field)
+    # Fat percentage, but only when the field actually says "fat"/"grasa" - a
+    # "56% actividad" (activity) must not be read as fat.
+    if "%" in low and ("fat" in low or "grasa" in low):
+        _set(stat, "fat_percent", _first_int(raw_field))
         return
 
-    if re.search(r"\bzm\b", low) or "zone" in low:
-        stat.zone_minutes = _first_int(raw_field)
+    if "cardio" in low and "load" in low:
+        _set(stat, "cardio_load", _first_int(raw_field))
         return
 
-    if "min" in low:
-        stat.duration_min = _first_int(raw_field)
+    # Zone minutes: "zone"/"zm" in any spelling ("37 zone min", "min zone",
+    # "zone minutes", "22 zm", "66zm").
+    zm_match = _ZM.search(raw_field)
+    if "zone" in low or zm_match is not None:
+        value = int(zm_match.group(1)) if zm_match else _first_int(raw_field)
+        _set(stat, "zone_minutes", value)
+        return
+
+    minutes = _MINUTES.search(raw_field)
+    if minutes is not None:
+        _set(stat, "duration_min", int(minutes.group(1)))
         return
 
 

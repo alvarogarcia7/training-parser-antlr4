@@ -615,6 +615,48 @@ class TestBulkParserSessionStats(unittest.TestCase):
         self.assertEqual(entries[0]["bpm"], {"average": 111, "min": 71, "max": 162})
         self.assertEqual(entries[1]["kcal"], {"total": 355})
 
+    def test_stats_are_per_session(self) -> None:
+        from src.bulk_export import run
+
+        training = (
+            "2026-10-01\n"
+            "# stats: (apple watch) 416 total kcal, 55 min, 95 average bpm\n"
+            "Squat: 5x5 100k\n"
+            "\n"
+            "2026-10-02\n"
+            "# Stats: 59m, 22 zm, 104-146 bpm, 360kcal\n"
+            "Bench Press: 3x8 60k\n"
+        )
+        input_file = self.root / "multi.txt"
+        input_file.write_text(training)
+        database = self.root / "db.json"
+
+        self.assertEqual(run([input_file], self.root / "out", database), 0)
+
+        workouts = sorted(json.loads(database.read_text())["workouts"], key=lambda w: w["date"])
+        day1, day2 = workouts
+        self.assertEqual(day1["statistics"]["entries"][0]["source"], "apple watch")
+        self.assertNotIn("source", day2["statistics"]["entries"][0])
+        self.assertEqual(day2["statistics"]["entries"][0]["zone_minutes"], 22)
+
+    def test_statistics_report(self) -> None:
+        from src.bulk_export import statistics_report
+
+        with_stats = self.root / "a.txt"
+        with_stats.write_text("2026-10-01\n# Stats: 50 min, 100-140 bpm\nSquat: 5x5 100k\n")
+        empty_stats = self.root / "b.txt"
+        empty_stats.write_text("2026-10-02\n# Stats:\nRow: 3x10 40k\n")
+        none = self.root / "c.txt"
+        none.write_text("2026-10-03\nDeadlift: 5x3 140k\n")
+
+        report = statistics_report([with_stats, empty_stats, none])
+
+        self.assertIn("Files with statistics:    2 of 3", report)
+        self.assertIn("Files without statistics: 1 of 3", report)
+        self.assertIn("a.txt: 1 detected, 1 parsed, 0 with no data", report)
+        self.assertIn("b.txt: 1 detected, 0 parsed, 1 with no data", report)
+        self.assertIn("c.txt", report.split("None detected:")[1])
+
 
 if __name__ == "__main__":
     unittest.main()
