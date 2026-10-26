@@ -100,13 +100,12 @@ grammar-clean:
 	rm -rf dist/
 .PHONY: grammar-clean
 
-dist/trainingLexer.py: training.g4 $(ANTLR_JAR)
+dist/trainingLexer.py dist/trainingListener.py dist/trainingParser.py dist/trainingVisitor.py: training.g4 $(ANTLR_JAR)
 	${JAVA} --version >/dev/null # Assert it works
 	${JAVA} -jar $(ANTLR_JAR) -Dlanguage=Python3 training.g4 -listener -visitor -o dist
-	@echo "Grammar generated"; \
+	@echo "Grammar generated"
 
-compile-grammar: training.g4 $(ANTLR_JAR) dist/trainingLexer.py dist/trainingListener.py dist/trainingParser.py dist/trainingVisitor.py
-	${MAKE} dist/trainingLexer.py
+compile-grammar: dist/trainingLexer.py
 
 run: check-virtual-env
 	FILE=data.txt $(MAKE) output.csv
