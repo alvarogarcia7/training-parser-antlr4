@@ -6,9 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
 
 jobs:
   build-and-publish:
@@ -34,14 +36,18 @@ jobs:
         source .venv/bin/activate
         make strictdoc-export
 
-    - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'requirements/output'
+    - name: Configure git identity
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+    - name: Fetch gh-pages branch
+      run: git fetch origin gh-pages
+
+    - name: Publish docs to gh-pages
+      run: |
+        source .venv/bin/activate
+        make docs-publish
 
     - name: Print deployment URL
       run: |

@@ -9,7 +9,7 @@ This script shows how to:
 """
 
 from pathlib import Path
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 
 def example_default_synonyms() -> None:
@@ -17,7 +17,7 @@ def example_default_synonyms() -> None:
     print("=== Example 1: Default Synonyms ===")
     standardizer = StandardizeName()
 
-    test_names = ["bench", "oh", "lat pull-down", "Custom Exercise Name"]
+    test_names = ["bp", "oh", "lat pull-down", "Custom Exercise Name"]
 
     for name in test_names:
         result = standardizer.run(name)
@@ -28,7 +28,7 @@ def example_default_synonyms() -> None:
 def example_yaml_config() -> None:
     """Example loading synonyms from YAML file."""
     print("=== Example 2: YAML Configuration ===")
-    config_path = Path("data/synonyms.yaml")
+    config_path = Path("data/config/synonyms.yaml")
 
     if not config_path.exists():
         print(f"  Warning: {config_path} not found")
@@ -36,7 +36,7 @@ def example_yaml_config() -> None:
 
     standardizer = StandardizeName(config_path=config_path)
 
-    test_names = ["bench", "bp", "overhead"]
+    test_names = ["bp", "op", "mbp"]
 
     for name in test_names:
         result = standardizer.run(name)

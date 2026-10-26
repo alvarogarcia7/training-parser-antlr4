@@ -70,7 +70,7 @@ set_:
 
 ### Files Modified
 - `training.g4` - Grammar definition with new rules
-- `parser/parser.py` - Added visitor methods for new patterns
+- `src/parser/parser.py` - Added visitor methods for new patterns
 
 ---
 
@@ -78,13 +78,13 @@ set_:
 
 ### New Tests Added: 28 Total
 
-#### Unit Tests (`parser/test_parser.py`): 15 tests
+#### Unit Tests (`tests/test_parser.py`): 15 tests
 - 6 dot notation tests (basic, with k, multiple sets, decimal, RIR, etc.)
 - 5 range notation tests (basic, multiple weights, decimal, single weight, etc.)
 - 3 mixed format tests
 - 1 enabled previously disabled test
 
-#### End-to-End Tests (`parser/test_grammar_formats_e2e.py`): 17 tests
+#### End-to-End Tests (`tests/test_grammar_formats_e2e.py`): 17 tests
 - 7 dot notation tests (comprehensive coverage)
 - 7 range notation tests (all use cases)
 - 6 mixed format tests (combination scenarios)
@@ -146,7 +146,7 @@ set_:
 ### Code Changes
 
 #### Parser Visitors
-Added two new visitor methods in `parser/parser.py`:
+Added two new visitor methods in `src/parser/parser.py`:
 
 1. **`visitWhole_set_dots_()`**
    - Handles `N.N.weight [rir]` pattern
@@ -159,8 +159,8 @@ Added two new visitor methods in `parser/parser.py`:
    - Reuses existing `builder.add_fixed_reps_multiple_weights()`
 
 #### No Changes Required
-- ✅ `parser/series_builder.py` - No changes (existing methods reused)
-- ✅ `parser/model.py` - No changes (existing data structures)
+- ✅ `src/parser/series_builder.py` - No changes (existing methods reused)
+- ✅ `src/parser/model.py` - No changes (existing data structures)
 - ✅ API - No breaking changes
 
 ---

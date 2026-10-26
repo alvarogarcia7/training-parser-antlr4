@@ -39,6 +39,7 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync
+        npm install
 
     - name: Enable virtual environment
       run: |-
@@ -73,13 +74,13 @@ jobs:
     - name: Run splitter.py against data.txt.sample
       run: |
         source .venv/bin/activate
-        python splitter.py data.txt.sample --output e2e-output-data.csv
+        python bin/splitter.py data.txt.sample --output e2e-output-data.csv
         echo "✓ Successfully processed data.txt.sample"
 
     - name: Run splitter.py against training-sample.txt
       run: |
         source .venv/bin/activate
-        python splitter.py training-sample.txt --output e2e-output-training.csv
+        python bin/splitter.py training-sample.txt --output e2e-output-training.csv
         echo "✓ Successfully processed training-sample.txt"
 
     - name: Verify output files exist
@@ -103,4 +104,53 @@ jobs:
         path: |
           e2e-output-data.csv
           e2e-output-training.csv
+        retention-days: 7
+
+  git-integration-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: |
+        npm install
+
+    - name: Set up local git server
+      run: |
+        git config --global init.defaultBranch main
+        mkdir -p /tmp/git-server
+        cp bin/git-http-server.js /tmp/git-server/ || true
+        cd /tmp/git-server
+        for repo in test-repo-empty test-repo-main test-repo-master; do
+          git init --bare $repo.git || true
+        done
+        echo "Git server setup complete"
+
+    - name: Start git server in background
+      run: |
+        cd /tmp/git-server
+        timeout 300 node git-http-server.js > /tmp/git-server.log 2>&1 &
+        sleep 2
+        echo "Git server started"
+
+    - name: Run git integration tests
+      run: |
+        npm run test:git
+      env:
+        CI: 'true'
+
+    - name: Upload git server logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: git-server-logs
+        path: /tmp/git-server.log
         retention-days: 7

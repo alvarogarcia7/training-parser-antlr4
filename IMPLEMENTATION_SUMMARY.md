@@ -36,19 +36,19 @@ This document summarizes the implementation of the new dot-based notation gramma
   - `INT '..' weight ('/' weight)* #range_reps_multiple_weight`
 
 ### Parser Implementation
-- **`parser/parser.py`**: Added two new visitor methods
+- **`src/parser/parser.py`**: Added two new visitor methods
   - `visitWhole_set_dots_()`: Handles `N.N.weight` pattern
   - `visitRange_reps_multiple_weight()`: Handles `N..weight/weight` pattern
   - Both methods reuse existing `SeriesBuilder` methods
 
 ### Tests Added
-- **`parser/test_parser.py`**: Added 11 new tests
+- **`tests/test_parser.py`**: Added 11 new tests
   - 6 tests for dot notation (basic, with k, multiple sets, decimal, with RIR, etc.)
   - 5 tests for range notation (basic, multiple weights, decimal, etc.)
   - 3 tests for mixed notations
   - Enabled 1 previously disabled test
 
-- **`parser/test_grammar_formats_e2e.py`**: Added 17 new comprehensive tests
+- **`tests/test_grammar_formats_e2e.py`**: Added 17 new comprehensive tests
   - 7 tests for dot notation
   - 7 tests for range notation
   - 6 tests for mixed format combinations

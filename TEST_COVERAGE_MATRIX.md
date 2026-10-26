@@ -142,7 +142,7 @@ Note: Total is 35 because some tests overlap in coverage areas, but unique test 
 | Range notation rule | 1 | 1 | ✅ 100% |
 | Weight decimal support | 1 | 1 | ✅ 100% |
 
-### Parser (parser/parser.py)
+### Parser (src/parser/parser.py)
 | Component | Required | Implemented | Status |
 |-----------|----------|-------------|--------|
 | `visitWhole_set_dots_` | 1 | 1 | ✅ 100% |
@@ -150,7 +150,7 @@ Note: Total is 35 because some tests overlap in coverage areas, but unique test 
 | Weight extraction | Reused | Reused | ✅ 100% |
 | RIR support | Reused | Reused | ✅ 100% |
 
-### Series Builder (parser/series_builder.py)
+### Series Builder (src/parser/series_builder.py)
 | Component | Required | Implemented | Status |
 |-----------|----------|-------------|--------|
 | Changes needed | 0 | 0 | ✅ N/A |

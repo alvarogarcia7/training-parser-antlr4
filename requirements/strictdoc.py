@@ -1,5 +1,8 @@
-from strictdoc.backend.sdoc.models.document_config import DocumentConfig
+from strictdoc.core.project_config import ProjectConfig
 
-project_config = DocumentConfig(
-    project_title="Training Parser - ANTLR4 Grammar Documentation",
-)
+# From https://github.com/strictdoc-project/strictdoc/blob/main/strictdoc_config.py
+def create_config() -> ProjectConfig:
+    config = ProjectConfig(
+        dir_for_sdoc_cache="requirements/output/_cache",
+    )
+    return config

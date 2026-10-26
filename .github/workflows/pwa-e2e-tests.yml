@@ -1,0 +1,134 @@
+name: PWA E2E Tests
+
+on:
+  pull_request:
+    paths:
+      - 'mobile-app/**'
+      - 'src/parser/**'
+      - 'src/**'
+      - 'data/**'
+      - 'schema/**'
+      - 'training.g4'
+      - 'Makefile'
+      - 'makefiles/**'
+      - 'e2e/**'
+      - 'playwright.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'bin/serve.py'
+      - 'bin/git-http-server.js'
+
+jobs:
+  e2e-ui-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Install dependencies
+      run: |
+        uv sync
+        npm install
+
+    - name: Set up local git server
+      run: |
+        mkdir -p /tmp/git-server
+        cp bin/git-http-server.js /tmp/git-server/ || true
+        cd /tmp/git-server
+        git config --global init.defaultBranch main
+        git init --bare test-repo.git || true
+        mkdir -p temp-setup || true
+        cd temp-setup
+        git clone ../test-repo.git . || true
+        git config user.email "test@local" || true
+        git config user.name "Test User" || true
+        echo "# Test Training Workout" > README.md
+        git add README.md || true
+        git commit -m "Initial workout data" || true
+        git push -u origin main || true
+        cd /tmp/git-server
+        rm -rf temp-setup
+        (timeout 5 node git-http-server.js > /tmp/git-server.log 2>&1 &)
+        echo "Git server setup complete"
+
+    - name: Install Playwright browsers and system dependencies
+      run: |
+        npx playwright install --with-deps chromium
+
+    - name: Cache Pyodide
+      id: cache-pyodide
+      uses: actions/cache@v4
+      with:
+        path: mobile-app/pyodide
+        key: pyodide-${{ hashFiles('bin/download-pyodide.sh') }}
+        restore-keys: pyodide-
+
+    - name: Download Pyodide for offline use
+      if: steps.cache-pyodide.outputs.cache-hit != 'true'
+      run: make download-pyodide
+
+    - name: Start PWA dev server
+      run: |
+        echo "Starting PWA server..."
+        uv run python3 bin/serve.py > /tmp/pwa-server.log 2>&1 &
+        SERVER_PID=$!
+        echo "Server PID: $SERVER_PID"
+
+        # Wait for server to start
+        for i in {1..30}; do
+          if curl -s http://localhost:8080/mobile-app/index.html > /dev/null 2>&1; then
+            echo "✓ PWA server is ready on attempt $i"
+            exit 0
+          fi
+          echo "Attempt $i: Waiting for server..."
+          sleep 1
+        done
+
+        echo "✗ Server failed to start"
+        echo "=== Server logs ==="
+        cat /tmp/pwa-server.log
+        kill $SERVER_PID 2>/dev/null || true
+        exit 1
+
+    - name: Run E2E UI tests
+      continue-on-error: true
+      run: |
+        npm run test:e2e
+      env:
+        CI: 'true'
+
+    - name: Show server logs if tests failed
+      if: failure()
+      run: |
+        echo "=== Server logs from test run ==="
+        tail -50 /tmp/pwa-server.log || echo "No server logs found"
+
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 7
+
+    - name: Upload test results JSON
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-test-results-json
+        path: test-results.json
+        retention-days: 7

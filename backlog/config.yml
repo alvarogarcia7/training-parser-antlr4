@@ -1,6 +1,6 @@
 project_name: "Training Parser ANTLR4"
-default_status: "To Do"
-statuses: ["To Do", "In Progress", "Done"]
+default_status: "Backlog"
+statuses: ["Backlog", "Blocked", "To Do", "In Progress", "In Review", "Done"]
 labels: []
 date_format: yyyy-mm-dd
 max_column_width: 20

@@ -27,15 +27,15 @@ The script will show how different exercise name inputs are standardized:
 
 ```
 === Example 1: Default Synonyms ===
-  'bench' -> 'Bench Press'
+  'bp' -> 'Bench Press'
   'oh' -> 'Overhead Press'
   'lat pull-down' -> 'Machine Lateral Pull-Down'
   'Custom Exercise Name' -> 'Custom Exercise Name'
 
 === Example 2: YAML Configuration ===
-  'bench' -> 'Bench Press'
   'bp' -> 'Bench Press'
-  'overhead' -> 'Overhead Press'
+  'op' -> 'Overhead Press'
+  'mbp' -> 'Machine Bench Press'
 ...
 ```
 

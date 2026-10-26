@@ -3,7 +3,7 @@ Example demonstrating error handling with incorrect input in full workout sessio
 Shows how to parse partially correct workout data and display errors with line/column information.
 """
 
-from parser import Parser
+from src.parser import Parser
 
 
 def print_separator(title: str = "") -> None:

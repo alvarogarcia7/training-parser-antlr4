@@ -6,7 +6,7 @@
 # maintain structured requirements in .sdoc files.
 #
 # Prerequisites:
-#   - StrictDoc must be installed (uv sync or pip install strictdoc)
+#   - StrictDoc must be installed (uv sync)
 #   - Requirements must be located in the requirements/ directory
 #   - If installed with uv, commands will use 'uv run strictdoc'
 # ==============================================================================
@@ -61,6 +61,29 @@ strictdoc-server: check-virtual-env
 strictdoc-export: check-virtual-env
 	$(STRICTDOC) export requirements/ --output-dir requirements/output/
 .PHONY: strictdoc-export
+
+# ------------------------------------------------------------------------------
+# docs-publish: Publish StrictDoc HTML to the gh-pages branch
+# ------------------------------------------------------------------------------
+# Builds the StrictDoc HTML documentation and publishes it to the
+# `requirements/` subdirectory of the `gh-pages` branch, without touching
+# any other content already published there (e.g. the PWA at the branch
+# root).
+#
+# Usage:
+#   make docs-publish
+# ------------------------------------------------------------------------------
+docs-publish: strictdoc-export
+	@echo "Publishing docs to github-pages branch..."
+	@git worktree add -B gh-pages /tmp/docs-deploy origin/gh-pages 2>/dev/null || git worktree add -B gh-pages /tmp/docs-deploy HEAD
+	@rm -rf /tmp/docs-deploy/requirements
+	@mkdir -p /tmp/docs-deploy/requirements
+	@cp -r requirements/output/* /tmp/docs-deploy/requirements/
+	@cd /tmp/docs-deploy && git add -A && git commit -m "Deploy docs from $(shell git rev-parse --short HEAD)" && git push origin gh-pages || echo "No changes to commit"
+	@git worktree remove /tmp/docs-deploy || true
+	@echo "Documentation published to github-pages branch"
+	@echo "GitHub Pages URL: https://$(shell git remote get-url origin | sed 's/.*github.com.\([^/]*\)\/\(.*\)\.git/\1.github.io\/\2/')/requirements/"
+.PHONY: docs-publish
 
 # ------------------------------------------------------------------------------
 # strictdoc-validate: Validate Requirements Syntax and Consistency

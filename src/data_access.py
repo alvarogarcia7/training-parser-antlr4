@@ -7,7 +7,7 @@ This library provides a unified interface for:
 - Standardizing exercise names
 - Serializing to different JSON formats
 """
-
+import datetime
 import re
 from pathlib import Path
 from typing import Any, Optional, TextIO, TypedDict, List
@@ -16,8 +16,8 @@ from antlr4 import CommonTokenStream, InputStream
 
 from dist.trainingLexer import trainingLexer
 from dist.trainingParser import trainingParser
-from parser import Exercise, StandardizeName, Formatter
-from parser.serializer import serialize_to_set_centric
+from src.parser import Exercise, StandardizeName, Formatter
+from src.parser.serializer import serialize_to_set_centric
 
 
 RawWorkoutSession = TypedDict('RawWorkoutSession', {
@@ -29,6 +29,20 @@ ParsedWorkoutSession = TypedDict('ParsedWorkoutSession', {
     'date': str,
     'parsed': list[Exercise],
     'notes': str})
+
+
+class VolumeFormatter:
+    """Formats volume values for display."""
+
+    @staticmethod
+    def format_volume_thousands(volume: float) -> str:
+        """Format volume in thousands notation (e.g., '34.1 k kg' or '34 k kg')."""
+        if volume < 1000:
+            return str(int(volume) if volume == int(volume) else volume)
+        thousands = volume / 1000
+        if thousands == int(thousands):
+            return f"{int(thousands)} k kg"
+        return f"{thousands:.1f} k kg"
 
 
 class DataReader:
@@ -43,6 +57,7 @@ class DataReader:
     def read_lines(file_path: str) -> list[str]:
         """Read file as lines, preserving line structure."""
         lines: list[str] = []
+        assert Path(file_path).absolute().exists(), f"File {file_path} does not exist"
         with open(file_path, 'r') as f:
             while True:
                 line = f.readline()
@@ -91,17 +106,26 @@ class DataParser:
             List of parsed Exercise objects
         """
         content = DataReader.read_file(file_path)
-        lines = content.split('\n')
+        return DataParser.parse_lines_filtered(content.split('\n'))
 
-        # Filter out date lines (YYYY-MM-DD) and empty lines
+    @staticmethod
+    def parse_lines_filtered(lines: list[str]) -> list[Exercise]:
+        """
+        Parse training log lines, filtering out date lines (YYYY-MM-DD) and empty lines.
+
+        Args:
+            lines: Lines of a training log
+
+        Returns:
+            List of parsed Exercise objects
+        """
         filtered_lines = []
         for line in lines:
             line = line.strip()
             if line and not re.match(r'^\d{4}-\d{2}-\d{2}$', line):
                 filtered_lines.append(line)
 
-        filtered_content = '\n'.join(filtered_lines)
-        return DataParser.parse_raw_text(filtered_content)
+        return DataParser.parse_raw_text('\n'.join(filtered_lines))
 
 
 class SessionGrouper:
@@ -241,7 +265,9 @@ class DataSerializer:
         Returns:
             List of lists, each inner list is a TSV row (including header)
         """
-        rows: list[list[str]] = [['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight']]
+        rows: list[list[str]] = [['Date', 'Exercise', 'Sets', 'Avg Reps', 'Weight', 'Notes']]
+
+        today = datetime.date.today().isoformat()
 
         for session in sessions:
             for exercise in session['parsed']:
@@ -257,7 +283,8 @@ class DataSerializer:
                         flattened_ex.name,
                         "{:d}".format(len(repetitions)),
                         "{:d}".format(int(sum(repetitions) / len(repetitions))),
-                        "{:.1f}".format(flattened_ex.sets_[0].weight.amount).replace('.', ',')
+                        "{:.1f}".format(flattened_ex.sets_[0].weight.amount).replace('.', ','),
+                        f"Origen=training-parser (ANTLR) ({today}.txt)"
                     ]
                     rows.append(row)
 
@@ -294,6 +321,20 @@ class DataAccess:
             List of standardized Exercise objects
         """
         exercises = DataParser.parse_file_filtered(file_path)
+        self._standardize_names(exercises)
+        return exercises
+
+    def parse_text(self, text: str) -> list[Exercise]:
+        """
+        Parse training log text (a single session), filtering date lines.
+
+        Args:
+            text: Training log text; date lines (YYYY-MM-DD) and empty lines are ignored
+
+        Returns:
+            List of standardized Exercise objects
+        """
+        exercises = DataParser.parse_lines_filtered(text.split('\n'))
         self._standardize_names(exercises)
         return exercises
 

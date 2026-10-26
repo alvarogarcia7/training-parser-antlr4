@@ -13,13 +13,31 @@ repos:
         entry: make typecheck
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
+        stages: [manual]
       - id: compile-grammar
         name: ANTLRv4 Compile Grammar
         entry: make compile-grammar
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
+      - id: validate-synonyms
+        name: Validate Exercise Synonyms
+        entry: make validate-synonyms
+        language: system
+        pass_filenames: false
+        files: ^(data/config/synonyms\.yaml|schema/exercise_synonyms\.schema\.json|src/parser/standardize_name\.py|bin/validate_synonyms_yaml\.py)$
       - id: unittest
         name: Python Unit Tests
         entry: make test-python
         language: system
         pass_filenames: false
+        exclude: ^mobile-app/
+        stages: [manual]
+      - id: webapp-tests
+        name: PWA Browser Tests
+        entry: make test-webapp
+        language: system
+        pass_filenames: false
+        files: ^mobile-app/
+        stages: [manual]

@@ -19,7 +19,7 @@ The training parser now supports robust error handling that allows parsing to co
 The new `parse()` method returns a `ParseResult` object containing both exercises and errors:
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 # Parse input with potential errors
 parser = Parser.from_string("""
@@ -70,7 +70,7 @@ Each `ParseError` contains:
 For backward compatibility, the original `parse_sessions()` method still works:
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 # This will raise ValueError if there are any errors
 try:
@@ -84,7 +84,7 @@ except ValueError as e:
 ### Example 1: Valid Input
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 input_text = """
 Bench press 75k: 4, 4x5
@@ -103,7 +103,7 @@ print(f"Errors: {len(result.errors)}")
 ### Example 2: Input with Errors
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 # Input with an invalid character 'l' instead of 'k'
 input_text = """
@@ -130,7 +130,7 @@ for error in result.errors:
 ### Example 3: Using Error Summary
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 input_text = """
 Bench press 75k: 4, 4x5
@@ -151,7 +151,7 @@ print(summary)
 ### Example 4: File Parsing with Error Handling
 
 ```python
-from parser import Parser
+from src.parser import Parser
 from antlr4 import InputStream
 
 def parse_file(file_path: str):
@@ -195,7 +195,7 @@ This will demonstrate:
 The parser uses a custom `TrainingErrorListener` that captures all syntax errors reported by ANTLR:
 
 ```python
-from parser import TrainingErrorListener
+from src.parser import TrainingErrorListener
 
 error_listener = TrainingErrorListener()
 # Attach to lexer and parser

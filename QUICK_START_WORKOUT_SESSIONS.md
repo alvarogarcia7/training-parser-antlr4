@@ -4,10 +4,10 @@
 
 ```bash
 # Run workout session tests
-python -m pytest parser/test_workout_sessions.py -v
+python -m pytest tests/test_workout_sessions.py -v
 
 # Run all tests including workout sessions
-python -m pytest parser/test_parser.py parser/test_workout_sessions.py -v
+python -m pytest tests/test_parser.py tests/test_workout_sessions.py -v
 ```
 
 ## Running the Examples
@@ -28,7 +28,7 @@ python examples/parse_with_errors.py examples/sample_workouts.txt
 ### Parse a Complete Workout
 
 ```python
-from parser import Parser
+from src.parser import Parser
 
 # Define your workout session
 workout = """
@@ -137,7 +137,7 @@ def test_workout_session_get_total_volume():
 ## File Structure
 
 ```
-parser/
+tests/
   test_workout_sessions.py    # 17 comprehensive tests
 
 examples/
@@ -185,4 +185,4 @@ docs/
 - Read `WORKOUT_SESSION_TESTING.md` for complete documentation
 - Run `python examples/error_handling_example.py` to see examples
 - Check `examples/sample_workouts.txt` for workout templates
-- Run tests with `python -m pytest parser/test_workout_sessions.py -v`
+- Run tests with `python -m pytest tests/test_workout_sessions.py -v`

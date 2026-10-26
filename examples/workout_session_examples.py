@@ -3,7 +3,7 @@ Examples of complete workout session parsing with various training scenarios.
 Demonstrates real-world use cases for tracking full workouts.
 """
 
-from parser import Parser
+from src.parser import Parser
 
 
 def example_powerlifting_session() -> None:
@@ -32,7 +32,7 @@ Bench press 80k: 8, 8, 8
         lifts = {}
         for exercise in result.exercises:
             if exercise.name not in lifts:
-                lifts[exercise.name] = {'max_weight': 0, 'total_volume': 0}
+                lifts[exercise.name] = {'max_weight': 0.0, 'total_volume': 0.0}
 
             for set_ in exercise.sets_:
                 if set_.weight.amount > lifts[exercise.name]['max_weight']:

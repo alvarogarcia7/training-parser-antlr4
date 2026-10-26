@@ -89,7 +89,7 @@ set_:
 
 
 ### Test Requirements
-Add comprehensive tests to `parser/test_parser.py` and `parser/test_grammar_formats_e2e.py`:
+Add comprehensive tests to `tests/test_parser.py` and `tests/test_grammar_formats_e2e.py`:
 
 1. **Whole Set Dot Notation Tests**:
    - Basic: `1.10.23` → 1 set of 10 reps at 23kg

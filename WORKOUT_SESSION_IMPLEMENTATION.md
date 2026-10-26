@@ -6,7 +6,7 @@ Implemented comprehensive testing and examples for **complete workout sessions**
 
 ## Files Created
 
-### 1. Test Suite: `parser/test_workout_sessions.py`
+### 1. Test Suite: `tests/test_workout_sessions.py`
 
 **17 comprehensive test cases** covering:
 
@@ -228,7 +228,7 @@ success_rate = len(result.exercises) / total_exercises
 
 ### Basic Session Logging
 ```python
-from parser import Parser
+from src.parser import Parser
 
 workout = """
 Bench press 80k: 5, 5, 5
@@ -295,7 +295,7 @@ for exercise_name, weights in progression.items():
 
 ```bash
 # Run workout session tests
-python -m pytest parser/test_workout_sessions.py -v
+python -m pytest tests/test_workout_sessions.py -v
 
 # Run all parser tests
 python -m pytest parser/ -v

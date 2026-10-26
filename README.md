@@ -17,7 +17,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv
 source .venv/bin/activate
 uv sync --all-extras
-python3 scripts/download_antlr.py  # Downloads ANTLR jar if not present
+python3 bin/download_antlr.py  # Downloads ANTLR jar if not present
 make install-githooks
 ```
 
@@ -43,7 +43,7 @@ After installation, the following commands are available:
 - `make typecheck` - Run mypy type checking
 - `make test` - Run all tests (typecheck + compile-grammar + pytest)
 - `make test-python` - Run pytest only
-- `python main.py` - Run sample parser directly
+- `python bin/main.py` - Run sample parser directly
 
 **Note**: ANTLR jar is automatically downloaded when needed. The Makefile checks if it exists before downloading.
 
@@ -78,7 +78,7 @@ The training-parser now includes a full-featured Language Server Protocol implem
 **Quick Start:**
 ```bash
 # Install with LSP support
-uv pip install -e ".[dev]"
+uv sync --all-extras
 
 # Start the LSP server (for editor integration)
 training-lsp
@@ -103,39 +103,91 @@ The parser supports loading custom exercise name mappings from YAML or JSON file
 **Quick Example:**
 
 ```python
-from parser import StandardizeName
+from src.parser import StandardizeName
 
 # Use default synonyms
 standardizer = StandardizeName()
-standardizer.run("bench")  # Returns "Bench Press"
+standardizer.run("bp")  # Returns "Bench Press"
 
 # Load custom synonyms from file
-standardizer = StandardizeName(config_path="data/synonyms.yaml")
+standardizer = StandardizeName(config_path="data/config/synonyms.yaml")
 standardizer.run("press de banca")  # Returns "Bench Press" (Spanish)
 ```
 
 See [data/SYNONYMS_README.md](data/SYNONYMS_README.md) for detailed documentation and [examples/](examples/) for usage examples.
+
+### Training Seasons and %1RM
+
+`bin/detect_seasons.py` splits a training history into **seasons**: a season
+ends when there is a break of at least `min_break_days` days without a training
+session, and the next session starts a new season. For every season, each
+exercise gets an estimated 1RM using the **Brzycki** formula
+(`1RM = weight * 36 / (37 - reps)`, best set of the season) and each set is
+reported as a percentage of that 1RM (50 kg with a 100 kg 1RM -> 50%).
+
+Settings live in [data/config/seasons.yaml](data/config/seasons.yaml):
+
+```yaml
+min_break_days: 21    # days without training that end a season
+min_sessions: 1       # seasons with fewer sessions are reported as ignored
+max_reps_for_1rm: 10  # only sets with <= this many reps drive the 1RM estimate
+```
+
+The input is a directory with one or more set-centric JSON files (searched
+recursively; each file holds one workout, enveloped or bare, or an array of
+workouts). Other JSON formats are rejected.
+
+```bash
+python bin/detect_seasons.py data/parsed/
+python bin/detect_seasons.py data/parsed/ --format json
+python bin/detect_seasons.py data/parsed/ --config my-seasons.yaml --min-break-days 30
+make seasons DIR=data/parsed/
+```
+
+## Phase 2: iOS-Friendly Keyboard Syntax
+
+The parser now supports Phase 2 iOS-friendly alternatives to standard notation:
+
+- **Dot separator** (`.` = `x`): `5.5.39` instead of `5x5x39`
+- **Double-dot separator** (`..` = `xx`): `1..24` instead of `1xx24`
+- **Slash weight separator** (`/` = `,`): `20xx40/50/60` instead of `20xx40,50,60`
+- **Comma-decimal weights** (`,` as decimal in slash contexts): `27,5` = 27.5kg
+- **RIR dash notation** (`-N` instead of space-N): `5.5.39-8` for RIR 8
+
+### Migration from Phase 1
+
+If you have existing logs using Phase 1 space-based RIR syntax, migrate them using:
+
+```bash
+# Convert space-RIR to dash-RIR
+# Example: "3x5x100k 2" becomes "3x5x100k-2"
+sed -E 's/([0-9]+[xX][0-9]+[xX][0-9]+(\.[0-9]+)?k?)\s+([0-9]+)(\s*[,$\n])/\1-\3\4/g' old-log.txt > new-log.txt
+```
+
+See [SYNTAX.md](SYNTAX.md) for detailed Phase 2 documentation and examples.
 
 ## Project Structure
 
 ```
 .
 ├── training.g4              # ANTLR4 grammar definition
-├── parser/                  # Parser implementation
-│   ├── model.py            # Data models
-│   ├── parser.py           # Parser and visitor
-│   └── standardize_name.py # Exercise name standardization
-├── lsp/                     # Language Server Protocol implementation
-│   ├── server.py           # LSP server
-│   ├── diagnostics.py      # Error detection
-│   ├── completion.py       # Auto-completion
-│   ├── hover.py            # Hover information
-│   ├── formatting.py       # Code formatting
-│   ├── semantic_tokens.py  # Syntax highlighting
-│   ├── code_actions.py     # Quick fixes
-│   └── vscode-extension/   # VS Code extension
+├── bin/                     # Programs (parser, splitter, validators, weight parser, ...)
+├── src/                     # Libraries
+│   ├── parser/              # Parser implementation
+│   │   ├── model.py         # Data models
+│   │   ├── parser.py        # Parser and visitor
+│   │   └── standardize_name.py # Exercise name standardization
+│   └── lsp/                 # Language Server Protocol implementation
+│       ├── server.py        # LSP server
+│       ├── diagnostics.py   # Error detection
+│       ├── completion.py    # Auto-completion
+│       ├── hover.py         # Hover information
+│       ├── formatting.py    # Code formatting
+│       ├── semantic_tokens.py # Syntax highlighting
+│       ├── code_actions.py  # Quick fixes
+│       └── vscode-extension/ # VS Code extension
 ├── data/                    # Configuration files
-│   ├── synonyms.yaml       # Default synonyms (YAML)
+│   ├── config/             # synonyms.yaml, seasons.yaml
 │   └── SYNONYMS_README.md  # Synonyms documentation
 ├── examples/                # Example scripts
 ├── dist/                    # Generated ANTLR4 code (auto-generated)

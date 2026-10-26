@@ -98,7 +98,7 @@ This validation produced comprehensive documentation:
 - Positioned correctly in set_ production
 - Rule label matches specification
 
-### Parser Implementation (parser/parser.py)
+### Parser Implementation (src/parser/parser.py)
 
 ✅ **Lines 137-165**: `visitWhole_set_dots_()`
 - Extracts sets, reps, weight correctly
@@ -112,7 +112,7 @@ This validation produced comprehensive documentation:
 - Calls `builder.add_fixed_reps_multiple_weights()` as specified
 - Error handling implemented
 
-### SeriesBuilder (parser/series_builder.py)
+### SeriesBuilder (src/parser/series_builder.py)
 
 ✅ **No changes made** (as specified in PRD)
 - Existing methods successfully reused

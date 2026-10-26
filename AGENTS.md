@@ -23,7 +23,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv sync --all-extras
 
 # Download ANTLR jar (required for grammar compilation)
-python3 scripts/download_antlr.py
+python3 bin/download_antlr.py
 
 # Install pre-commit hooks
 make install-githooks
@@ -35,13 +35,13 @@ make install-githooks
 - **Test**: `make test` (runs typecheck, compile-grammar, pytest, grammar-format tests, validation, examples, JSON export test, and compare v1 vs v2)
 - **Test Grammar Formats**: `make test-grammar-formats` (runs e2e grammar format tests)
 - **Export JSON**: `make test-json-export` (tests conversion to set-centric JSON format)
-- **Run Parser**: `python main.py` (parses sample training data)
-- **Run Splitter**: `python splitter.py <file>` (exports to CSV format)
-- **Parse to JSON**: `python parse_to_json.py <input.txt> --output <output.json>` (step 1: parse and standardize)
-- **Compact Display**: `python compact_from_json.py <input.json>` (step 2: display JSON in compact form with totals)
-- **Export to JSON**: `python main_export.py <input.txt> -o <output.json>` (full export pipeline)
+- **Run Parser**: `python bin/main.py` (parses sample training data)
+- **Run Splitter**: `python bin/splitter.py <file>` (exports to CSV format)
+- **Parse to JSON**: `python bin/parse_to_json.py <input.txt> --output <output.json>` (step 1: parse and standardize)
+- **Compact Display**: `python bin/compact_from_json.py <input.json>` (step 2: display JSON in compact form with totals)
+- **Export to JSON**: `python bin/main_export.py <input.txt> -o <output.json>` (full export pipeline)
 - **Validate**: `make validate-set-centric` (validates JSON against schema)
-- **Dev server**: N/A (parser library, use `python main.py` for sample)
+- **Dev server**: N/A (parser library, use `python bin/main.py` for sample)
 
 ## Tech Stack
 - **Language**: Python 3.12+
@@ -55,16 +55,16 @@ make install-githooks
 ## Architecture
 - `training.g4`: ANTLR4 grammar defining workout syntax (supports x and dot notations)
 - `dist/`: Generated ANTLR4 lexer and parser (auto-generated, excluded from git)
-- `parser/`: Core parser implementation
+- `src/parser/`: Core parser implementation
   - `model.py`: Data structures (Exercise, Set_, Weight)
   - `parser.py`: ANTLR visitor pattern implementation
   - `serializer.py`: Converts Exercise objects to set-centric JSON
   - `standardize_name.py`: Exercise name normalization
-- `main.py`: CLI entry point for parsing
-- `main_export.py`: CLI for JSON export with validation
-- `splitter.py`: CSV export tool
-- `parse_to_json.py`: Step 1 of 2-step process (parse text to JSON with standardized names)
-- `compact_from_json.py`: Step 2 of 2-step process (display JSON in compact form with totals)
+- `bin/main.py`: CLI entry point for parsing
+- `bin/main_export.py`: CLI for JSON export with validation
+- `bin/splitter.py`: CSV export tool
+- `bin/parse_to_json.py`: Step 1 of 2-step process (parse text to JSON with standardized names)
+- `bin/compact_from_json.py`: Step 2 of 2-step process (display JSON in compact form with totals)
 - `src/data_access.py`: Unified data access library for reading, parsing, and serializing
 - `schema/`: JSON schema definitions (set-centric, bench-centric, common-definitions)
 - `tests/`: Unit tests and validation tests
@@ -87,5 +87,5 @@ make install-githooks
 - **ANTLR Compilation Error**: Java JDK is available at `~/.sdkman/candidates/java/current/bin/java`. Use this path to compile the grammar if needed. Do not attempt to install Java or use antlr-ng as alternatives.
 - **Import Errors**: Run `uv sync --all-extras` to ensure all dependencies are installed
 - **Type Errors**: Run `make typecheck` and fix issues before committing
-- **Test Failures**: Run individual test files with `pytest parser/test_*.py`
+- **Test Failures**: Run individual test files with `pytest src/parser/test_*.py`
 - **Missing dist/ directory**: If `dist/trainingLexer.py` or `dist/trainingParser.py` is missing, run `make compile-grammar` to generate them from `training.g4`

@@ -1,39 +1,43 @@
 {
-  "workout_id": "w_2026_01_23",
-  "type": "bench-centric",
-  "date": "2026-01-23T18:45:00Z",
-  "location": "My Gym",
-  "statistics": {
-	  "tracker": "Apple Watch",
-	  "duration": "00:47:48",
-	  "bpm": {
-		  "average": 137,
-		  "min": 90,
-		  "max": 165
-	  },
-	  "kcal": {
-		  "total": 529
-	  }
-  },
-  "notes": "",
-  "exercises": [
-    {
-      "name": "Bench Press",
-      "equipment": "barbell",
-      "superset_id": "A",
-      "sets": [
-        { "reps": 8, "weight": 80, "unit": "kg", "rpe": 7 },
-        { "reps": 8, "weight": 80, "unit": "kg", "rpe": 8 },
-        { "reps": 6, "weight": 85, "unit": "kg", "rpe": 9 }
-      ]
+  "type": "bench-centric.v1",
+  "schema": "http://com.trainingparser/bench-centric_v1.schema.json",
+  "payload": {
+    "workout_id": "w_2026_01_23",
+    "type": "bench-centric",
+    "date": "2026-01-23T18:45:00Z",
+    "location": "My Gym",
+    "statistics": {
+      "tracker": "Apple Watch",
+      "duration": "00:47:48",
+      "bpm": {
+        "average": 137,
+        "min": 90,
+        "max": 165
+      },
+      "kcal": {
+        "total": 529
+      }
     },
-    {
-      "name": "Barbell Row",
-      "equipment": "barbell",
-      "superset_id": "A",
-      "sets": [
-        { "reps": 10, "weight": 70, "unit": "kg" }
-      ]
-    }
-  ]
+    "notes": "",
+    "exercises": [
+      {
+        "name": "Bench Press",
+        "equipment": "barbell",
+        "superset_id": "A",
+        "sets": [
+          { "reps": 8, "weight": 80, "unit": "kg", "rpe": 7 },
+          { "reps": 8, "weight": 80, "unit": "kg", "rpe": 8 },
+          { "reps": 6, "weight": 85, "unit": "kg", "rpe": 9 }
+        ]
+      },
+      {
+        "name": "Barbell Row",
+        "equipment": "barbell",
+        "superset_id": "A",
+        "sets": [
+          { "reps": 10, "weight": 70, "unit": "kg" }
+        ]
+      }
+    ]
+  }
 }

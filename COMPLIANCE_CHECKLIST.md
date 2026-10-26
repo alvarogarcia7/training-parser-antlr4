@@ -38,7 +38,7 @@
 
 **Implementation Location**:
 - Grammar: `training.g4` line 18
-- Parser: `parser/parser.py` lines 137-165
+- Parser: `src/parser/parser.py` lines 137-165
 - Tests: `test_parser.py` + `test_grammar_formats_e2e.py`
 
 **Status**: ✅ **FULLY COMPLIANT**
@@ -61,7 +61,7 @@
 
 **Implementation Location**:
 - Grammar: `training.g4` line 21
-- Parser: `parser/parser.py` lines 167-176
+- Parser: `src/parser/parser.py` lines 167-176
 - Tests: `test_parser.py` + `test_grammar_formats_e2e.py`
 
 **Status**: ✅ **FULLY COMPLIANT**
@@ -141,7 +141,7 @@
 - [x] Call: `builder.add_whole_set(...)`
 - [x] Similar to: `visitWhole_set_`
 
-**Implementation**: `parser/parser.py` lines 137-165
+**Implementation**: `src/parser/parser.py` lines 137-165
 
 **Status**: ✅ **FULLY COMPLIANT**
 
@@ -157,7 +157,7 @@
 - [x] Call: `builder.add_fixed_reps_multiple_weights(...)`
 - [x] Similar to: `visitFixed_reps_multiple_weight`
 
-**Implementation**: `parser/parser.py` lines 167-176
+**Implementation**: `src/parser/parser.py` lines 167-176
 
 **Status**: ✅ **FULLY COMPLIANT**
 
@@ -171,7 +171,7 @@
 - [x] Existing method `add_whole_set()` can be reused
 - [x] Existing method `add_fixed_reps_multiple_weights()` can be reused
 
-**Implementation**: `parser/series_builder.py` (no changes)
+**Implementation**: `src/parser/series_builder.py` (no changes)
 
 **Status**: ✅ **FULLY COMPLIANT**
 
